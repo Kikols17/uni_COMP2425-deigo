@@ -2,12 +2,17 @@
 
 
 # build compiler
-compiler: gocompiler.l
-	lex gocompiler.l && gcc lex.yy.c -o lexer
+lexer: gocompiler.l lex.yy.c
+	gcc lex.yy.c -o lexer
+
+
+# build lex.yy.c
+lex.yy.c: gocompiler.l
+	lex gocompiler.l
 
 
 # run compiler
-run: compiler
+run: lexer
 	./lexer
 
 
