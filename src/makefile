@@ -2,18 +2,23 @@
 
 
 # build compiler
-lexer: gocompiler.l lex.yy.c
-	gcc lex.yy.c -o lexer
+gocompiler: gocompiler.l gocompiler.yy.c
+	gcc gocompiler.yy.c -o ../gocompiler
 
 
 # build lex.yy.c
-lex.yy.c: gocompiler.l
+gocompiler.yy.c: gocompiler.l
 	lex gocompiler.l
+	mv lex.yy.c gocompiler.yy.c
 
 
 # run compiler
-run: lexer
-	./lexer
+run: ../gocompiler
+	./../gocompiler
+
+# run tests at test_cases folder
+test_1: gocompiler
+	../test_cases/test.sh ../src/gocompiler.l -m 1
 
 
 
@@ -25,5 +30,5 @@ zip:
 
 # clean
 clean:
-	rm -f lexer lex.yy.c
+	rm -f ../gocompiler gocompiler.yy.c
 	rm -f ../gocompiler.zip
