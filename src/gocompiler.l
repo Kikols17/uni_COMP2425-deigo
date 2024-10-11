@@ -20,8 +20,7 @@
 
 whitespace  [ \t\n]
 digit       [0-9]
-letter      [a-zA-Z]
-punctuation [()=,*/+-]
+letter      [a-zA-Z_]
 escape      [fnrt\"]
 
 %X COMMENT
@@ -30,14 +29,51 @@ escape      [fnrt\"]
 {whitespace}*                   { ; }
 
 
-"integer"                       { printf("INTEGER\n"); }
-"double"                        { printf("DOUBLE\n"); }
-"if"                            { printf("IF\n"); }
-"then"                          { printf("THEN\n"); }
+";"                             { printf("SEMICOLON\n"); }
+","                             { printf("COMMA\n"); }
+"_"                             { printf("BLANKID\n"); }
+
+"="                             { printf("ASSIGN\n"); }
+"*"                             { printf("TIMES\n"); }
+"/"                             { printf("DIV\n"); }
+"-"                             { printf("MINUS\n"); }
+"+"                             { printf("PLUS\n"); }
+
+"=="                            { printf("EQ\n"); }
+">="                            { printf("GE\n"); }
+">"                             { printf("GT\n"); }
+"<="                            { printf("LE\n"); }
+"<"                             { printf("LT\n"); }
+
+"{"                             { printf("LBRACE\n"); }
+"("                             { printf("LPAR\n"); }
+"["                             { printf("LSQ\n"); }
+"}"                             { printf("RBRACE\n"); }
+")"                             { printf("RPAR\n"); }
+"]"                             { printf("RSQ\n"); }
+
+"%"                             { printf("MOD\n"); }
+"!="                            { printf("NE\n"); }
+"!"                             { printf("NOT\n"); }
+"&&"                            { printf("AND\n"); }
+"||"                            { printf("OR\n"); }
+
+"package"                       { printf("PACKAGE\n"); }
+"return"                        { printf("RETURN\n"); }
 "else"                          { printf("ELSE\n"); }
+"for"                           { printf("FOR\n"); }
+"if"                            { printf("IF\n"); }
 
+"var"                           { printf("VAR\n"); }
+"int"                           { printf("INT\n"); }
+"float32"                       { printf("FLOAT32\n"); }
+"bool"                          { printf("BOOL\n"); }
+"string"                        { printf("STRING\n"); }
+"fmt.Println"                   { printf("PRINT\n"); }
+"strconv.Atoi"                  { printf("PARSEINT\n"); }
+"func"                          { printf("FUNC\n"); }
+"os.Args"                       { printf("CMDARGS\n"); }
 
-{punctuation}                   { printf("%s\n", yytext); }
 
 
 {digit}+                        { printf("NATURAL(%s)\n", yytext); }
