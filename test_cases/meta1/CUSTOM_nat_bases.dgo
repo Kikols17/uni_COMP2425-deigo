@@ -1,0 +1,9 @@
+int a = 0006    // this is an octal
+
+int b = 05a9 - 0x4
+
+if ( 08 >= 0) {
+    a = 0
+};
+
+0x124tfa;

@@ -1,0 +1,36 @@
+/* Go has 25 reserved words, according to "https://www.golang4us.com/2020/12/go-reserved-keywords.html" */
+
+
+// these are used by godei
+package
+return
+else
+for
+func
+if
+var
+
+
+// these are not
+break
+case
+chan
+const
+continue
+default
+defer
+fallthrough
+go    // roll credits
+goto
+import
+interface
+map
+range
+select
+struct
+switch
+type
+
+// should also add these
+++
+--
