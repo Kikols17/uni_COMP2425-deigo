@@ -24,7 +24,7 @@
     int commentblock_begincolumn = 0;
 
 
-    char strlit_buf[1024];
+    char strlit_buf[4096];
     int strlit_buf_len = 0;
     int strlit_error = 0;
 
@@ -32,7 +32,7 @@
     int strlit_begincolumn = 0;
 
     void add_to_strlit_buf(char c) {
-        if (strlit_buf_len < 1024) {
+        if (strlit_buf_len < 4096) {
             strlit_buf[strlit_buf_len++] = c;
         }
     }
@@ -121,12 +121,13 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 
 
 
+{digit}*"."{digit}*e("-"|"+")?{digit}+  { add_semicolon = 1; printf("DECIMAL(%s)\n", yytext); }
+{digit}+e("-"|"+")?{digit}+             { add_semicolon = 1; printf("DECIMAL(%s)\n", yytext); }
 {digit}*"."{digit}+                     { add_semicolon = 1; printf("DECIMAL(%s)\n", yytext); }
 {digit}+"."{digit}*                     { add_semicolon = 1; printf("DECIMAL(%s)\n", yytext); }
 
 
 "0"{hex_base}({hex})+                   { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
-"0"{hex_base}.                          { add_semicolon = 1; printf("Line %d, column %d: invalid hex constant (%s)\n", token_beginline, token_begincolumn, yytext); }
 "0"{octal_base}({octal})+               { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
 "0"{octal_base}.                        { add_semicolon = 1; printf("Line %d, column %d: invalid octal constant (%s)\n", token_beginline, token_begincolumn, yytext); }
 {digit}+                                { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
@@ -155,8 +156,8 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 <STRING>.                               { add_semicolon = 0; add_to_strlit_buf(yytext[0]); }
 
 
-.                                       { printf("Line %d, column %d: illegal character (%s)\n", token_beginline, token_begincolumn, yytext); }
 <<EOF>>                                 { if (add_semicolon) { printf("SEMICOLON\n"); } add_semicolon = 0; return 0; }
+.                                       { printf("Line %d, column %d: illegal character (%s)\n", token_beginline, token_begincolumn, yytext); }
 %%
 
 
