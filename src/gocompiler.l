@@ -69,94 +69,94 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 %X COMMENT_LINE
 %X STRING
 %%
-{whitespace}*                   { ; }
+{whitespace}*                           { ; }
 
-{reserved}                      { add_semicolon = 0; printf("RESERVED(%s)\n", yytext); }
-
-
-";"                             { add_semicolon = 0; printf("SEMICOLON\n"); }
-","                             { add_semicolon = 0; printf("COMMA\n"); }
-"_"                             { add_semicolon = 0; printf("BLANKID\n"); }
-
-"="                             { add_semicolon = 0; printf("ASSIGN\n"); }
-"*"                             { add_semicolon = 0; printf("STAR\n"); }
-"/"                             { add_semicolon = 0; printf("DIV\n"); }
-"-"                             { add_semicolon = 0; printf("MINUS\n"); }
-"+"                             { add_semicolon = 0; printf("PLUS\n"); }
-
-"=="                            { add_semicolon = 0; printf("EQ\n"); }
-">="                            { add_semicolon = 0; printf("GE\n"); }
-">"                             { add_semicolon = 0; printf("GT\n"); }
-"<="                            { add_semicolon = 0; printf("LE\n"); }
-"<"                             { add_semicolon = 0; printf("LT\n"); }
-
-"{"                             { add_semicolon = 0; printf("LBRACE\n"); }
-"("                             { add_semicolon = 0; printf("LPAR\n"); }
-"["                             { add_semicolon = 0; printf("LSQ\n"); }
-"}"                             { add_semicolon = 1; printf("RBRACE\n"); }
-")"                             { add_semicolon = 1; printf("RPAR\n"); }
-"]"                             { add_semicolon = 1; printf("RSQ\n"); }
-
-"%"                             { add_semicolon = 0; printf("MOD\n"); }
-"!="                            { add_semicolon = 0; printf("NE\n"); }
-"!"                             { add_semicolon = 0; printf("NOT\n"); }
-"&&"                            { add_semicolon = 0; printf("AND\n"); }
-"||"                            { add_semicolon = 0; printf("OR\n"); }
-
-"package"                       { add_semicolon = 0; printf("PACKAGE\n"); }
-"return"                        { add_semicolon = 1; printf("RETURN\n"); }
-"else"                          { add_semicolon = 0; printf("ELSE\n"); }
-"for"                           { add_semicolon = 0; printf("FOR\n"); }
-"if"                            { add_semicolon = 0; printf("IF\n"); }
-
-"var"                           { add_semicolon = 0; printf("VAR\n"); }
-"int"                           { add_semicolon = 0; printf("INT\n"); }
-"float32"                       { add_semicolon = 0; printf("FLOAT32\n"); }
-"bool"                          { add_semicolon = 0; printf("BOOL\n"); }
-"string"                        { add_semicolon = 0; printf("STRING\n"); }
-"fmt.Println"                   { add_semicolon = 0; printf("PRINT\n"); }
-"strconv.Atoi"                  { add_semicolon = 0; printf("PARSEINT\n"); }
-"func"                          { add_semicolon = 0; printf("FUNC\n"); }
-"os.Args"                       { add_semicolon = 0; printf("CMDARGS\n"); }
+{reserved}                              { add_semicolon = 0; printf("RESERVED(%s)\n", yytext); }
 
 
+";"                                     { add_semicolon = 0; printf("SEMICOLON\n"); }
+","                                     { add_semicolon = 0; printf("COMMA\n"); }
+"_"                                     { add_semicolon = 0; printf("BLANKID\n"); }
 
-{digit}*"."{digit}+             { add_semicolon = 1; printf("DECIMAL(%s)\n", yytext); }
-{digit}+"."{digit}*             { add_semicolon = 1; printf("DECIMAL(%s)\n", yytext); }
+"="                                     { add_semicolon = 0; printf("ASSIGN\n"); }
+"*"                                     { add_semicolon = 0; printf("STAR\n"); }
+"/"                                     { add_semicolon = 0; printf("DIV\n"); }
+"-"                                     { add_semicolon = 0; printf("MINUS\n"); }
+"+"                                     { add_semicolon = 0; printf("PLUS\n"); }
+
+"=="                                    { add_semicolon = 0; printf("EQ\n"); }
+">="                                    { add_semicolon = 0; printf("GE\n"); }
+">"                                     { add_semicolon = 0; printf("GT\n"); }
+"<="                                    { add_semicolon = 0; printf("LE\n"); }
+"<"                                     { add_semicolon = 0; printf("LT\n"); }
+
+"{"                                     { add_semicolon = 0; printf("LBRACE\n"); }
+"("                                     { add_semicolon = 0; printf("LPAR\n"); }
+"["                                     { add_semicolon = 0; printf("LSQ\n"); }
+"}"                                     { add_semicolon = 1; printf("RBRACE\n"); }
+")"                                     { add_semicolon = 1; printf("RPAR\n"); }
+"]"                                     { add_semicolon = 1; printf("RSQ\n"); }
+
+"%"                                     { add_semicolon = 0; printf("MOD\n"); }
+"!="                                    { add_semicolon = 0; printf("NE\n"); }
+"!"                                     { add_semicolon = 0; printf("NOT\n"); }
+"&&"                                    { add_semicolon = 0; printf("AND\n"); }
+"||"                                    { add_semicolon = 0; printf("OR\n"); }
+
+"package"                               { add_semicolon = 0; printf("PACKAGE\n"); }
+"return"                                { add_semicolon = 1; printf("RETURN\n"); }
+"else"                                  { add_semicolon = 0; printf("ELSE\n"); }
+"for"                                   { add_semicolon = 0; printf("FOR\n"); }
+"if"                                    { add_semicolon = 0; printf("IF\n"); }
+
+"var"                                   { add_semicolon = 0; printf("VAR\n"); }
+"int"                                   { add_semicolon = 0; printf("INT\n"); }
+"float32"                               { add_semicolon = 0; printf("FLOAT32\n"); }
+"bool"                                  { add_semicolon = 0; printf("BOOL\n"); }
+"string"                                { add_semicolon = 0; printf("STRING\n"); }
+"fmt.Println"                           { add_semicolon = 0; printf("PRINT\n"); }
+"strconv.Atoi"                          { add_semicolon = 0; printf("PARSEINT\n"); }
+"func"                                  { add_semicolon = 0; printf("FUNC\n"); }
+"os.Args"                               { add_semicolon = 0; printf("CMDARGS\n"); }
 
 
-"0"{hex_base}({hex})+           { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
-"0"{hex_base}.                  { add_semicolon = 1; printf("Line %d, column %d: invalid hex constant (%s)\n", token_beginline, token_begincolumn, yytext); }
-"0"{octal_base}({octal})+       { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
-"0"{octal_base}.                { add_semicolon = 1; printf("Line %d, column %d: invalid octal constant (%s)\n", token_beginline, token_begincolumn, yytext); }
-{digit}+                        { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
 
-{letter}({letter}|{digit})*     { add_semicolon = 1; printf("IDENTIFIER(%s)\n", yytext); }
-{newline}                       { if (add_semicolon) { printf("SEMICOLON\n"); } add_semicolon = 0; }
+{digit}*"."{digit}+                     { add_semicolon = 1; printf("DECIMAL(%s)\n", yytext); }
+{digit}+"."{digit}*                     { add_semicolon = 1; printf("DECIMAL(%s)\n", yytext); }
 
 
-"/*"                            { BEGIN(COMMENT_BLOCK); commentblock_beginline = token_beginline; commentblock_begincolumn = token_begincolumn; }
-<COMMENT_BLOCK>{newline}        { ; }
-<COMMENT_BLOCK>.                { ; }
-<COMMENT_BLOCK><<EOF>>          { BEGIN(INITIAL); printf("Line %d, column %d: unterminated comment\n", commentblock_beginline, commentblock_begincolumn); return 0; }
-<COMMENT_BLOCK>"*/"             { BEGIN(INITIAL); }
+"0"{hex_base}({hex})+                   { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
+"0"{hex_base}.                          { add_semicolon = 1; printf("Line %d, column %d: invalid hex constant (%s)\n", token_beginline, token_begincolumn, yytext); }
+"0"{octal_base}({octal})+               { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
+"0"{octal_base}.                        { add_semicolon = 1; printf("Line %d, column %d: invalid octal constant (%s)\n", token_beginline, token_begincolumn, yytext); }
+{digit}+                                { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
 
-"//"                            { BEGIN(COMMENT_LINE); if (add_semicolon) { printf("SEMICOLON\n"); add_semicolon = 0; } }
-<COMMENT_LINE>.                 { ; }
-<COMMENT_LINE>{newline}         { BEGIN(INITIAL); }
-
-"\""                            { add_semicolon = 0; BEGIN(STRING); strlit_beginline = token_beginline; strlit_begincolumn = token_begincolumn; strlit_buf_len = 0; strlit_error = 0; }
-<STRING>"\""                    { add_semicolon = 1; BEGIN(INITIAL);if (strlit_error==1) { add_semicolon = 0;} print_strlit_buf(); }
-<STRING>"\\"{escape}            { add_semicolon = 0; add_to_strlit_buf('\\'); add_to_strlit_buf(yytext[1]); }
-<STRING>"\\".                   { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_begincolumn, yytext); }
-<STRING>"\\"                    { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_begincolumn, yytext); }
-<STRING>"\n"                    { add_semicolon = 0; BEGIN(INITIAL); strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn); }
-<STRING><<EOF>>                 { add_semicolon = 0; BEGIN(INITIAL); strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn); return 0; }
-<STRING>.                       { add_semicolon = 0; add_to_strlit_buf(yytext[0]); }
+{letter}({letter}|{digit})*             { add_semicolon = 1; printf("IDENTIFIER(%s)\n", yytext); }
+{newline}                               { if (add_semicolon) { printf("SEMICOLON\n"); } add_semicolon = 0; }
 
 
-.                               { printf("Line %d, column %d: illegal character (%s)\n", token_beginline, token_begincolumn, yytext); }
-<<EOF>>                         { if (add_semicolon) { printf("SEMICOLON\n"); } add_semicolon = 0; return 0; }
+"/*"                                    { BEGIN(COMMENT_BLOCK); commentblock_beginline = token_beginline; commentblock_begincolumn = token_begincolumn; }
+<COMMENT_BLOCK>{newline}                { ; }
+<COMMENT_BLOCK>.                        { ; }
+<COMMENT_BLOCK><<EOF>>                  { BEGIN(INITIAL); printf("Line %d, column %d: unterminated comment\n", commentblock_beginline, commentblock_begincolumn); return 0; }
+<COMMENT_BLOCK>"*/"                     { BEGIN(INITIAL); }
+
+"//"                                    { BEGIN(COMMENT_LINE); if (add_semicolon) { printf("SEMICOLON\n"); add_semicolon = 0; } }
+<COMMENT_LINE>.                         { ; }
+<COMMENT_LINE>{newline}                 { BEGIN(INITIAL); }
+
+"\""                                    { add_semicolon = 0; BEGIN(STRING); strlit_beginline = token_beginline; strlit_begincolumn = token_begincolumn; strlit_buf_len = 0; strlit_error = 0; }
+<STRING>"\""                            { add_semicolon = 1; BEGIN(INITIAL);if (strlit_error==1) { add_semicolon = 0;} print_strlit_buf(); }
+<STRING>"\\"{escape}                    { add_semicolon = 0; add_to_strlit_buf('\\'); add_to_strlit_buf(yytext[1]); }
+<STRING>"\\".                           { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_begincolumn, yytext); }
+<STRING>"\\"                            { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_begincolumn, yytext); }
+<STRING>"\n"                            { add_semicolon = 0; BEGIN(INITIAL); strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn); }
+<STRING><<EOF>>                         { add_semicolon = 0; BEGIN(INITIAL); strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn); return 0; }
+<STRING>.                               { add_semicolon = 0; add_to_strlit_buf(yytext[0]); }
+
+
+.                                       { printf("Line %d, column %d: illegal character (%s)\n", token_beginline, token_begincolumn, yytext); }
+<<EOF>>                                 { if (add_semicolon) { printf("SEMICOLON\n"); } add_semicolon = 0; return 0; }
 %%
 
 
