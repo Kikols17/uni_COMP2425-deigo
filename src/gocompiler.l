@@ -57,12 +57,13 @@
 whitespace  [ \t]
 digit       [0-9]
 hex         [0-9a-fA-F]
-hex_base    [xX]
+hex_base    ("0x"|"0X")
 octal       [0-7]
+nonoctal    [89]
 octal_base  [0]
 letter      [a-zA-Z_]
 escape      [fnrt\\\"]
-newline     "\n"
+newline     ("\n"|"\r\n"|"\r")
 reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthrough"|"goto"|"import"|"interface"|"map"|"range"|"select"|"struct"|"switch"|"type"
 
 %X COMMENT_BLOCK
@@ -127,9 +128,9 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 {digit}+"."{digit}*                     { add_semicolon = 1; printf("DECIMAL(%s)\n", yytext); }
 
 
-"0"{hex_base}({hex})+                   { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
-"0"{octal_base}({octal})+               { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
-"0"{octal_base}.                        { add_semicolon = 1; printf("Line %d, column %d: invalid octal constant (%s)\n", token_beginline, token_begincolumn, yytext); }
+{hex_base}({hex})+                      { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
+{octal_base}({octal})+                  { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
+{octal_base}{octal}*{nonoctal}+({octal}|{nonoctal})*     { add_semicolon = 1; printf("Line %d, column %d: invalid octal constant (%s)\n", token_beginline, token_begincolumn, yytext); }
 {digit}+                                { add_semicolon = 1; printf("NATURAL(%s)\n", yytext); }
 
 {letter}({letter}|{digit})*             { add_semicolon = 1; printf("IDENTIFIER(%s)\n", yytext); }
