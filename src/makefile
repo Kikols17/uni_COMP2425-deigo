@@ -17,7 +17,7 @@ run: ../gocompiler
 	./../gocompiler
 
 #run compiler with -l
-run: ../gocompiler
+runl: ../gocompiler
 	./../gocompiler -l
 
 # run tests at test_cases folder
