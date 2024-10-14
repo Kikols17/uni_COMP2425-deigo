@@ -16,6 +16,10 @@ gocompiler.yy.c: gocompiler.l
 run: ../gocompiler
 	./../gocompiler
 
+#run compiler with -l
+run: ../gocompiler
+	./../gocompiler -l
+
 # run tests at test_cases folder
 test_1: gocompiler
 	../test_cases/test.sh ../src/gocompiler.l -m 1
