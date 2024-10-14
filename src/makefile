@@ -2,7 +2,7 @@
 
 
 # build compiler
-gocompiler: gocompiler.l gocompiler.yy.c
+../gocompiler: gocompiler.l gocompiler.yy.c
 	gcc gocompiler.yy.c -o ../gocompiler
 
 
@@ -21,13 +21,13 @@ runl: ../gocompiler
 	./../gocompiler -l
 
 # run tests at test_cases folder
-test_1: gocompiler
+test_1: ../gocompiler
 	../test_cases/test.sh ../src/gocompiler.l -m 1
 
 
 
 # zip gocompiler.l
-zip:
+zip: gocompiler.l
 	zip ../gocompiler.zip gocompiler.l
 
 
