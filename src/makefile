@@ -24,6 +24,9 @@ runl: ../gocompiler
 test_1: ../gocompiler
 	../test_cases/test.sh ../src/gocompiler.l -m 1
 
+test_2: ../gocompiler
+	../test_cases/test.sh ../src/gocompiler.l -m 2
+
 
 
 # zip gocompiler.l

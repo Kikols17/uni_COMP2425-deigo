@@ -1,9 +1,3 @@
-int a = 0006    // this is an octal
+0006 06 0 008 0123456789 123456789
 
-int b = 05a9 - 0x4
-
-if ( 08 >= 0) {
-    a = 0
-};
-
-0x124tfa;
+0x0 0x12 0x 0xyz 0x123h124 0x123abcdefghijklmnopkrstuvwxyz123 0x123ABCDEFGHIJKLMNOPKRSTUVWXYZ123 0x12aABbcCDdDeEFfgG
