@@ -1,3 +1,8 @@
 gocompiler.zip
 gocompiler.yy.c
 gocompiler
+
+gocompiler.tab.c
+gocompiler.tab.h
+y.gv
+y.output
