@@ -25,12 +25,21 @@ run: ../gocompiler
 runl: ../gocompiler
 	./../gocompiler -l
 
+#run compiler with -t
+runt: ../gocompiler
+	./../gocompiler -t
+
+
+# run all tests
+test_all: test_1 test_2
+	@echo "All tests ran"
+
 # run tests at test_cases folder
 test_1: ../gocompiler
-	../test_cases/test.sh ../src/gocompiler.l -m 1
+	../test_cases/test.sh -b ../gocompiler -m 1
 
 test_2: ../gocompiler
-	../test_cases/test.sh ../src/gocompiler.l -m 2
+	../test_cases/test.sh -b ../gocompiler -m 2
 
 
 
