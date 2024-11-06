@@ -1,18 +1,19 @@
+
+/*
+ * Trabalho realizado por:
+ *      - Francisco Amado Lapa Marques Silva - uc2022213583
+ *      - Miguel Moital Rodrigues Cabral Martins - uc2022213951
+ */
+
 %{
 
-    /*
-     * Trabalho realizado por:
-     *      - Francisco Amado Lapa Marques Silva - uc2022213583
-     *      - Miguel Moital Rodrigues Cabral Martins - uc2022213951
-     */
-
-
     #include "ast.h"
+    #include <stddef.h>   // for NULL (n sei pq)
 
     int yylex(void);
     void yyerror(char *);
 
-    struct node *program;
+    struct node *program = NULL;
 
 %}
 
@@ -29,7 +30,7 @@
 %token <lexeme> RESERVED DECIMAL NATURAL IDENTIFIER STRLIT
 
 // non-terminal symbols
-%type <node> Declarations VarDeclaration FuncDeclaration VarSpec Type Parameters FuncBody VarsAndStatements Statement Expr FuncInvocation ParseArgs
+%type <node> Program Declarations VarDeclaration FuncDeclaration VarSpec Type Parameters FuncBody VarsAndStatements Statement Expr FuncInvocation ParseArgs
 
 %type <node> COMMAIdentifier_s StatementSEMICOLON_s ExprCOMMA_s
 
@@ -52,7 +53,10 @@
 %%
 
 /* PACKAGE IDENTIFIER SEMICOLON Declarations */
-program             : PACKAGE IDENTIFIER SEMICOLON Declarations             { ; }
+Program             : PACKAGE IDENTIFIER SEMICOLON Declarations             { 
+                        $$=program=newnode(Program,NULL);
+                        addchild($$, $4);
+                    };
                     ;
 
 
@@ -60,6 +64,7 @@ program             : PACKAGE IDENTIFIER SEMICOLON Declarations             { ; 
 /* {VarDeclaration SEMICOLON | FuncDeclaration SEMICOLON} */
 Declarations        : Declarations VarDeclaration SEMICOLON                 { ; }
                     | Declarations FuncDeclaration SEMICOLON                { ; }
+                    |                                                       { ; }
                     ;
 
 
@@ -83,7 +88,7 @@ COMMAIdentifier_s   : COMMA IDENTIFIER                                      { ; 
 /* INT | FLOAT32 | BOOL | STRING */
 Type                : INT                                                   { ; }
                     | FLOAT32                                               { ; }
-                    | BOOL                                                  { , }
+                    | BOOL                                                  { ; }
                     | STRING                                                { ; }
                     ;
 
@@ -110,7 +115,7 @@ FuncBody            : LBRACE VarsAndStatements RBRACE                       { ; 
 
 
 
-/* VarsAndStatements −→ VarsAndStatements [VarDeclaration | Statement] SEMICOLON */
+/* VarsAndStatements [VarDeclaration | Statement] SEMICOLON */
 VarsAndStatements   : VarsAndStatements SEMICOLON                           { ; }
                     | VarsAndStatements VarDeclaration SEMICOLON            { ; }
                     | VarsAndStatements Statement SEMICOLON                 { ; }
