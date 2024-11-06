@@ -2,14 +2,19 @@
 
 
 # build compiler
-../gocompiler: gocompiler.l gocompiler.yy.c
-	gcc gocompiler.yy.c -o ../gocompiler
+../gocompiler: gocompiler.yy.c gocompiler.tab.c
+	cc gocompiler.yy.c -o ../gocompiler gocompiler.tab.c ast.c -Wall -Wno-unused-function
 
 
 # build lex.yy.c
 gocompiler.yy.c: gocompiler.l
 	lex gocompiler.l
 	mv lex.yy.c gocompiler.yy.c
+
+gocompiler.tab.c: gocompiler.y
+	yacc -d -v -t -g --report=all gocompiler.y
+	mv y.tab.c gocompiler.tab.c
+	mv y.tab.h gocompiler.tab.h
 
 
 # run compiler
@@ -37,5 +42,7 @@ zip: gocompiler.l
 
 # clean
 clean:
-	rm -f ../gocompiler gocompiler.yy.c
 	rm -f ../gocompiler.zip
+	rm -f ../gocompiler gocompiler.yy.c
+	rm -f gocompiler.tab.c gocompiler.tab.h
+	rm -f y.output y.gv
