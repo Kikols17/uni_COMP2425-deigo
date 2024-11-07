@@ -8,14 +8,18 @@
 %{
 
     #include "ast.h"
-    #include <stddef.h>   // for NULL (n sei pq)
+    #include <stddef.h>   // preciso para o NULL (n sei pq nunca foi preciso)
 
     int yylex(void);
     void yyerror(char *);
 
     struct node *program = NULL;
 
+    //int yydebug = 1;
+
 %}
+
+%debug
 
 // union: a C structure that can hold any of a number of different types of data
 %union{
@@ -29,9 +33,10 @@
 // tokens for lexer's symbols that have associated value
 %token <lexeme> RESERVED DECIMAL NATURAL IDENTIFIER STRLIT
 
-// non-terminal symbols
+// symbols
 %type <node> Program Declarations VarDeclaration FuncDeclaration VarSpec Type Parameters FuncBody VarsAndStatements Statement Expr FuncInvocation ParseArgs
 
+// extra symbols
 %type <node> COMMAIdentifier_s StatementSEMICOLON_s ExprCOMMA_s
 
 
@@ -79,7 +84,7 @@ VarDeclaration      : VAR VarSpec                                           { ; 
 VarSpec             : IDENTIFIER COMMAIdentifier_s Type                     { ; }
                     ;
 
-COMMAIdentifier_s   : COMMA IDENTIFIER                                      { ; }
+COMMAIdentifier_s   : COMMAIdentifier_s COMMA IDENTIFIER                    { ; }
                     |                                                       { ; }
                     ;
 
@@ -94,11 +99,23 @@ Type                : INT                                                   { ; 
 
 
 /* FUNC IDENTIFIER LPAR [Parameters] RPAR [Type] FuncBody */
-FuncDeclaration     : FUNC IDENTIFIER LPAR Parameters RPAR Type FuncBody    { ; }
-                    | FUNC IDENTIFIER LPAR RPAR Type FuncBody               { ; }
+FuncDeclaration     : FUNC IDENTIFIER LPAR RPAR FuncBody                    { ; }
                     | FUNC IDENTIFIER LPAR Parameters RPAR FuncBody         { ; }
-                    | FUNC IDENTIFIER LPAR RPAR FuncBody                    { ; }
+                    | FUNC IDENTIFIER LPAR RPAR Type FuncBody               { ; }
+                    | FUNC IDENTIFIER LPAR Parameters RPAR Type FuncBody    { ; }
                     ;
+/*// não funciona, talves tentar isto:
+FuncDeclaration     : FUNC IDENTIFIER LPAR OptParameters RPAR OptType FuncBody    { ; }
+                    ;
+
+OptParameters       : Parameters                                            { ; }
+                    |                                                       { ; }
+                    ;
+
+OptType             : Type                                                  { ; }
+                    |                                                       { ; }
+                    ;
+*/
 
 
 
@@ -119,6 +136,7 @@ FuncBody            : LBRACE VarsAndStatements RBRACE                       { ; 
 VarsAndStatements   : VarsAndStatements SEMICOLON                           { ; }
                     | VarsAndStatements VarDeclaration SEMICOLON            { ; }
                     | VarsAndStatements Statement SEMICOLON                 { ; }
+                    |                                                       { ; }
                     ;
 
 
@@ -145,6 +163,7 @@ Statement           : IDENTIFIER ASSIGN Expr                                { ; 
                     /* PRINT LPAR (Expr | STRLIT) RPAR */
                     | PRINT LPAR Expr RPAR                                  { ; }
                     | PRINT LPAR STRLIT RPAR                                { ; }
+                    | error                                                 { ; }
                     ;
 
 StatementSEMICOLON_s: StatementSEMICOLON_s Statement SEMICOLON              { ; }
@@ -153,15 +172,20 @@ StatementSEMICOLON_s: StatementSEMICOLON_s Statement SEMICOLON              { ; 
 
 
 
-/* IDENTIFIER COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR */
+                    /* IDENTIFIER COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR */
 ParseArgs           : IDENTIFIER COMMA BLANKID ASSIGN PARSEINT
                       LPAR CMDARGS LSQ Expr RSQ RPAR                        { ; }
+                      /* IDENTIFIER COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR */
+                    | IDENTIFIER COMMA BLANKID ASSIGN PARSEINT
+                    | LPAR error RPAR                                       { ; }
                     ;
 
 
 
-/* IDENTIFIER LPAR [Expr {COMMA Expr}] RPAR */
+                    /* IDENTIFIER LPAR [Expr {COMMA Expr}] RPAR */
 FuncInvocation      : IDENTIFIER LPAR ExprCOMMA_s RPAR                      { ; }
+                    /* IDENTIFIER LPAR error RPAR */
+                    | IDENTIFIER LPAR error RPAR                            { ; }
                     ;
 
 /* [Expr {COMMA Expr}] */
@@ -202,6 +226,9 @@ Expr                : Expr OR Expr                                          { ; 
                     | IDENTIFIER                                            { ; }
                     | FuncInvocation                                        { ; } 
                     | LPAR Expr RPAR                                        { ; }
+
+                    /* LPAR error RPAR */
+                    | LPAR error RPAR                                       { ; }
                     ;
 
 %%
