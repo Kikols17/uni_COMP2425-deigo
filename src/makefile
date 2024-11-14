@@ -3,7 +3,7 @@
 
 # build compiler
 ../gocompiler: gocompiler.yy.c gocompiler.tab.c
-	cc gocompiler.yy.c -o ../gocompiler gocompiler.tab.c ast.c -Wall -Wno-unused-function
+	cc -g gocompiler.yy.c -o ../gocompiler gocompiler.tab.c ast.c -Wall -Wno-unused-function
 
 
 # build lex.yy.c

@@ -13,13 +13,8 @@
     #define YY_USER_ACTION \
         token_begincolumn = token_endcolumn; \
         token_beginline = token_endline; \
-        if (yytext[yyleng-1] == '\n') { \
-            token_endline++; \
-            token_endcolumn = 0; \
-        } else { \
-            token_endcolumn += yyleng; \
-            token_begincolumn += 1; \
-        }
+        token_endcolumn += yyleng; 
+
     #define PASS_TOKEN() yylval.lexeme = strdup(yytext);
 
 
@@ -174,12 +169,12 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 
 
 {letter}({letter}|{digit})*                 { add_semicolon = 1; if (lex_mode) { printf("IDENTIFIER(%s)\n", yytext);}           if (yacc_mode) { PASS_TOKEN();          return IDENTIFIER; } }
-{newline}                                   { if(add_semicolon){ add_semicolon = 0; if (lex_mode) { printf("SEMICOLON\n"); }    if (yacc_mode) {                        return SEMICOLON; } } }
+{newline}                                   {token_endline++; token_endcolumn = 1; if(add_semicolon){ add_semicolon = 0; if (lex_mode) { printf("SEMICOLON\n"); }    if (yacc_mode) {                        return SEMICOLON; } } }
 
 
 
 "/*"                                        { BEGIN(COMMENT_BLOCK); commentblock_beginline = token_beginline; commentblock_begincolumn = token_begincolumn; }
-<COMMENT_BLOCK>{newline}                    { ; }
+<COMMENT_BLOCK>{newline}                    { token_endcolumn = 1; token_endline++; }
 <COMMENT_BLOCK>.                            { ; }
 <COMMENT_BLOCK><<EOF>>                      { BEGIN(INITIAL); printf("Line %d, column %d: unterminated comment\n", commentblock_beginline, commentblock_begincolumn); add_semicolon = 0; }
 <COMMENT_BLOCK>"*/"                         { BEGIN(INITIAL); }
@@ -188,18 +183,18 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 
 "//"                                        { BEGIN(COMMENT_LINE); if (add_semicolon) { add_semicolon = 0; if (lex_mode) { printf("SEMICOLON\n"); } if (yacc_mode) {    return SEMICOLON; } } }
 <COMMENT_LINE>.                             { ; }
-<COMMENT_LINE>{newline}                     { BEGIN(INITIAL); }
+<COMMENT_LINE>{newline}                     { BEGIN(INITIAL); token_endcolumn = 1; token_endline++; }
 
 
 
-"\""                                        { add_semicolon = 0; BEGIN(STRINGLIT); strlit_beginline = token_beginline; strlit_begincolumn = token_begincolumn; strlit_buf_len = 0; strlit_error = 0; }
+"\""                                        { add_semicolon = 0; BEGIN(STRINGLIT); strlit_beginline = token_beginline; strlit_begincolumn = token_endcolumn; strlit_buf_len = 0; strlit_error = 0; }
 <STRINGLIT>"\""                             { add_semicolon = 1; BEGIN(INITIAL); if (strlit_error==1) { add_semicolon = 0; }
                                               else if (lex_mode) { print_strlit_buf(); }                                        if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } }
 <STRINGLIT>"\\"{escape}                     { add_semicolon = 0; add_to_strlit_buf('\\'); add_to_strlit_buf(yytext[1]); }
-<STRINGLIT>"\\".                            { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_begincolumn, yytext); if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } }
-<STRINGLIT>"\\"                             { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_begincolumn, yytext); if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } }
-<STRINGLIT>{newline}                        { add_semicolon = 0; BEGIN(INITIAL); strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn); }
-<STRINGLIT><<EOF>>                          { add_semicolon = 0; BEGIN(INITIAL); strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn); }
+<STRINGLIT>"\\".                            { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_endcolumn - yyleng, yytext); if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } }
+<STRINGLIT>"\\"                             { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_endcolumn - yyleng, yytext); if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } }
+<STRINGLIT>{newline}                        { add_semicolon = 0; BEGIN(INITIAL); token_endline++; token_beginline++; token_begincolumn = 1; token_endcolumn = 1; strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn - yyleng); }
+<STRINGLIT><<EOF>>                          { add_semicolon = 0; BEGIN(INITIAL); strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn - yyleng); }
 <STRINGLIT>.                                { add_semicolon = 0; add_to_strlit_buf(yytext[0]); }
 
 
