@@ -1,7 +1,0 @@
-        // if (yytext[yyleng-1] == '\n') { \
-        //     token_endline++; \
-        //     token_endcolumn = 0; \
-        // } else { \
-        //     token_endcolumn += yyleng; \
-        //     token_begincolumn += 1; \
-        // }

@@ -23,9 +23,9 @@
     int yacc_mode = 0;  // meta2
 
 
-    int token_begincolumn = 0;  // } indicates the beginning of the token
+    int token_begincolumn = 1;  // } indicates the beginning of the token
     int token_beginline = 1;    // }
-    int token_endcolumn = 0;        // } indicates the end of the token
+    int token_endcolumn = 1;        // } indicates the end of the token
     int token_endline = 1;          // }
 
     int add_semicolon = 0;
