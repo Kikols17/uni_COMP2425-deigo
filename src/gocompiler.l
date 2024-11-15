@@ -57,6 +57,7 @@
     void add_to_strlit_buf(char c) {
         if (strlit_buf_len < 4096) {
             strlit_buf[strlit_buf_len++] = c;
+            strlit_buf[strlit_buf_len] = '\0';
         }
     }
     void print_strlit_buf() {
@@ -65,11 +66,11 @@
             strlit_error = 0;
             return;
         }
-        printf("STRLIT(\"");
+        printf("STRLIT(");
         for (int i = 0; i < strlit_buf_len; i++) {
             printf("%c", strlit_buf[i]);
         }
-        printf("\")\n");
+        printf(")\n");
         strlit_buf_len = 0;
     }
 %}
@@ -187,8 +188,8 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 
 
 
-"\""                                        { add_semicolon = 0; BEGIN(STRINGLIT); strlit_beginline = token_beginline; strlit_begincolumn = token_endcolumn; strlit_buf_len = 0; strlit_error = 0; }
-<STRINGLIT>"\""                             { add_semicolon = 1; BEGIN(INITIAL); if (strlit_error==1) { add_semicolon = 0; }
+"\""                                        { add_semicolon = 0; BEGIN(STRINGLIT); strlit_beginline = token_beginline; strlit_begincolumn = token_endcolumn; strlit_buf_len = 0; strlit_error = 0; add_to_strlit_buf(yytext[0]); }
+<STRINGLIT>"\""                             { add_semicolon = 1; BEGIN(INITIAL); add_to_strlit_buf(yytext[0]);  if (strlit_error==1) { add_semicolon = 0;   if (yacc_mode) { yylval.lexeme = NULL; } }
                                               else  { if (lex_mode) { print_strlit_buf(); }                                     if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } } }
 <STRINGLIT>"\\"{escape}                     { add_semicolon = 0; add_to_strlit_buf('\\'); add_to_strlit_buf(yytext[1]); }
 <STRINGLIT>"\\".                            { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_endcolumn - yyleng, yytext); }
@@ -217,7 +218,7 @@ int main(int argc, char **argv) {
             yacc_mode = 1;
             yyparse();
             if (errors==0) {
-                //show(program, 0);
+                show(program, 0);
             }
         }
     }
@@ -228,7 +229,7 @@ void yyerror(char *error) {
     errors++;
     if ((yylval.lexeme != NULL) && (strlit_buf_len!=0)  ) {
         // string errors (need to print string int lexeme)
-        printf("Line %d, column %d: %s: \"%s\"\n", token_beginline, token_begincolumn-strlit_buf_len-1, error, yylval.lexeme);
+        printf("Line %d, column %d: %s: %s\n", token_beginline, token_begincolumn-strlit_buf_len+1, error, yylval.lexeme);
     } else {
         // normal errors
         printf("Line %d, column %d: %s: %s\n", token_beginline, token_begincolumn, error, yytext);

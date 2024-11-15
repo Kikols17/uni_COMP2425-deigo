@@ -35,7 +35,7 @@ void show(struct node *node, int depth) {
     }
 
     for(int i = 0; i < depth; i++){
-        printf("__");
+        printf("..");
     }    
 
     // Don't print auxiliary nodes
@@ -48,6 +48,7 @@ void show(struct node *node, int depth) {
             printf("%s(%s)\n", category_names[node->category], node->token);
         }
     }
+    return;
     
     // Visit all children
     struct node_list *child = node->children;
