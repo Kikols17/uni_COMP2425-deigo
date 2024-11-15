@@ -189,10 +189,10 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 
 "\""                                        { add_semicolon = 0; BEGIN(STRINGLIT); strlit_beginline = token_beginline; strlit_begincolumn = token_endcolumn; strlit_buf_len = 0; strlit_error = 0; }
 <STRINGLIT>"\""                             { add_semicolon = 1; BEGIN(INITIAL); if (strlit_error==1) { add_semicolon = 0; }
-                                              else if (lex_mode) { print_strlit_buf(); }                                        if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } }
+                                              else  { if (lex_mode) { print_strlit_buf(); }                                     if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } } }
 <STRINGLIT>"\\"{escape}                     { add_semicolon = 0; add_to_strlit_buf('\\'); add_to_strlit_buf(yytext[1]); }
-<STRINGLIT>"\\".                            { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_endcolumn - yyleng, yytext); if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } }
-<STRINGLIT>"\\"                             { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_endcolumn - yyleng, yytext); if (yacc_mode) { yylval.lexeme = strdup(strlit_buf); return STRLIT; } }
+<STRINGLIT>"\\".                            { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_endcolumn - yyleng, yytext); }
+<STRINGLIT>"\\"                             { add_semicolon = 0; strlit_error = 1; printf("Line %d, column %d: invalid escape sequence (%s)\n", token_beginline, token_endcolumn - yyleng, yytext); }
 <STRINGLIT>{newline}                        { add_semicolon = 0; BEGIN(INITIAL); token_endline++; token_beginline++; token_begincolumn = 1; token_endcolumn = 1; strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn - yyleng); }
 <STRINGLIT><<EOF>>                          { add_semicolon = 0; BEGIN(INITIAL); strlit_error = 1; printf("Line %d, column %d: unterminated string literal\n", strlit_beginline, strlit_begincolumn - yyleng); }
 <STRINGLIT>.                                { add_semicolon = 0; add_to_strlit_buf(yytext[0]); }
