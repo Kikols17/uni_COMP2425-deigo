@@ -2,7 +2,7 @@
 
 
 # build compiler
-../gocompiler: gocompiler.yy.c gocompiler.tab.c
+../gocompiler: gocompiler.yy.c gocompiler.tab.c ast.c ast.h
 	cc -g gocompiler.yy.c -o ../gocompiler gocompiler.tab.c ast.c -Wall -Wno-unused-function
 
 

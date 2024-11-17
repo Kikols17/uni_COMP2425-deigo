@@ -15,6 +15,12 @@
 
     struct node *program = NULL;
 
+    // global node pointer to organize the VarSpec
+    #ifndef VARSPEC_HEAD
+    #define VARSPEC_HEAD
+    struct node *varspec_head = NULL;
+    #endif
+
     //int yydebug = 1;
 
 %}
@@ -37,7 +43,7 @@
 %type <node> Program Declarations VarDeclaration FuncDeclaration VarSpec Type Parameters FuncBody VarsAndStatements Statement Expr FuncInvocation ParseArgs
 
 // extra symbols
-%type <node> COMMAIdentifier_s StatementSEMICOLON_s ExprCOMMA_s
+%type <node> COMMAIdentifier_s StatementSEMICOLON_s ExprCOMMA_s OptParameters OptType OptElse OptExpr
 
 
 %left       LOW
@@ -52,6 +58,7 @@
 %left       LBRACE RBRACE LPAR RPAR LSQ RSQ
 %right      NOT
 
+%debug
 
 
 
@@ -61,174 +68,479 @@
 Program             : PACKAGE IDENTIFIER SEMICOLON Declarations             { 
                         $$=program=newnode(Program,NULL);
                         addchild($$, $4);
-                    };
+                    }
                     ;
 
 
 
 /* {VarDeclaration SEMICOLON | FuncDeclaration SEMICOLON} */
-Declarations        : Declarations VarDeclaration SEMICOLON                 { ; }
-                    | Declarations FuncDeclaration SEMICOLON                { ; }
-                    |                                                       { ; }
+Declarations        : Declarations VarDeclaration SEMICOLON                 {
+                        $$ = $1;
+
+                        struct node* aux_vardeclaration = newnode(AUX, NULL);
+                        addchild($$, aux_vardeclaration);
+                        addchild(aux_vardeclaration, $2);
+                    }
+                    | Declarations FuncDeclaration SEMICOLON                {
+                        $$ = $1;
+                        addchild($1, $2);
+                    }
+                    |                                                       {
+                        $$ = newnode(AUX, NULL);
+                    }
                     ;
 
 
 
-VarDeclaration      : VAR VarSpec                                           { ; }
-                    | VAR LPAR VarSpec SEMICOLON RPAR                       { ; }
+VarDeclaration      : VAR VarSpec                                           {
+                        $$ = $2;
+                    }
+                    | VAR LPAR VarSpec SEMICOLON RPAR                       {
+                        $$ = $3;
+                    }
                     ;
 
 
 
 /* IDENTIFIER {COMMA IDENTIFIER} Type */
-VarSpec             : IDENTIFIER COMMAIdentifier_s Type                     { ; }
+VarSpec             : IDENTIFIER COMMAIdentifier_s Type                     {
+                        //struct node* vardecl = newnode(VarDecl, NULL);      // this is the VarDecl that HAS to exist (all others are opt)
+                        //addchild($$, vardecl);
+                        //addchild(vardecl, varspec_head);                          // VarDecl abaixo
+                        //addchild(vardecl, newnode(Identifier, $1)); // this Identifier
+
+
+                        // adicionar $3 a todos os filhos VarDecl de $$ (recursivo) (incluindo vardecl)
+                        reversenode(varspec_head);
+
+
+                        if (varspec_head == NULL) {
+                            varspec_head = newnode(AUX, NULL);
+                            struct node* vardecl = newnode(VarDecl, NULL);
+                            addchild(varspec_head, vardecl);
+                            addchild(vardecl, newnode(Identifier, $1));
+                            addchild(vardecl, $3);
+                            $$ = varspec_head;
+                        } else {
+                            struct node* vardecl = newnode(VarDecl, NULL);
+                            addchild(varspec_head, vardecl);
+                            addchild(vardecl, newnode(Identifier, $1));
+                            addchild(vardecl, $3);
+                            $$ = varspec_head;
+                        }
+
+
+                        addchild_allchildren(varspec_head, $3);
+
+
+                        // agora é preciso rodar toda a arvore a partir de varspec_head, por causa da ordem
+                        reversenode(varspec_head);
+
+
+
+
+
+                        varspec_head = NULL;        // reset varspec_head for next time :)))
+                    }
                     ;
 
-COMMAIdentifier_s   : COMMAIdentifier_s COMMA IDENTIFIER                    { ; }
-                    |                                                       { ; }
+COMMAIdentifier_s   : COMMAIdentifier_s COMMA IDENTIFIER                    {
+                        if (varspec_head == NULL) {
+                            varspec_head = newnode(AUX, NULL);
+                            struct node* vardecl = newnode(VarDecl, NULL);
+                            addchild(varspec_head, vardecl);
+                            addchild(vardecl, newnode(Identifier, $3));
+                            $$ = varspec_head;
+                        } else {
+                            struct node* vardecl = newnode(VarDecl, NULL);
+                            addchild(varspec_head, vardecl);
+                            addchild(vardecl, newnode(Identifier, $3));
+                            $$ = varspec_head;
+                        }
+
+                        //$$ = newnode(VarDecl, NULL);
+                        //addchild($$, $1);
+                        //addchild($$, newnode(Identifier, $3));
+
+                        //$$ = $1;
+                        //struct node* vardecl = newnode(VarDecl, NULL);
+                        //addchild(vardecl, newnode(Identifier, $3));
+                        //addchild($$, vardecl);
+                    }
+                    |                                                       {
+                        if (varspec_head == NULL) {
+                            varspec_head = newnode(AUX, NULL);
+                            addchild(varspec_head, newnode(AUX, NULL));
+                            $$ = varspec_head;
+                        } else {
+                            addchild(varspec_head, newnode(AUX, NULL));
+                            $$ = varspec_head;
+                        }
+                    }
                     ;
 
 
 
 /* INT | FLOAT32 | BOOL | STRING */
-Type                : INT                                                   { ; }
-                    | FLOAT32                                               { ; }
-                    | BOOL                                                  { ; }
-                    | STRING                                                { ; }
+Type                : INT                                                   {
+                        $$ = newnode(Int, NULL);
+                    }
+                    | FLOAT32                                               {
+                        $$ = newnode(Float32, NULL);
+                    }
+                    | BOOL                                                  {
+                        $$ = newnode(Bool, NULL);
+                    }
+                    | STRING                                                {
+                        $$ = newnode(String, NULL);
+                    }
                     ;
 
 
-/* FUNC IDENTIFIER LPAR [Parameters] RPAR [Type] FuncBody */
+/* FUNC IDENTIFIER LPAR [Parameters] RPAR [Type] FuncBody 
 FuncDeclaration     : FUNC IDENTIFIER LPAR RPAR FuncBody                    { ; }
                     | FUNC IDENTIFIER LPAR Parameters RPAR FuncBody         { ; }
                     | FUNC IDENTIFIER LPAR RPAR Type FuncBody               { ; }
                     | FUNC IDENTIFIER LPAR Parameters RPAR Type FuncBody    { ; }
                     ;
-/*// não funciona, talves tentar isto:
-FuncDeclaration     : FUNC IDENTIFIER LPAR OptParameters RPAR OptType FuncBody    { ; }
-                    ;
-
-OptParameters       : Parameters                                            { ; }
-                    |                                                       { ; }
-                    ;
-
-OptType             : Type                                                  { ; }
-                    |                                                       { ; }
-                    ;
 */
+// acima não funciona, talves tentar isto:
+FuncDeclaration     : FUNC IDENTIFIER LPAR OptParameters RPAR OptType FuncBody    {
+                        $$ = newnode(FuncDecl, NULL);
+
+                        struct node* header = newnode(FuncHeader, NULL);
+                        addchild($$, header);
+                        addchild(header, newnode(Identifier, $2));
+                        addchild(header, $6);
+                        addchild(header, $4);   // because order
+
+                        addchild($$, $7);
+                    }
+                    ;
+
+OptParameters       : Parameters                                            {
+                        $$ = $1;
+                    }
+                    |                                                       {
+                        $$ = newnode(FuncParams, NULL);
+                    }
+                    ;
+
+OptType             : Type                                                  {
+                        $$ = $1;
+                    }
+                    |                                                       {
+                        $$ = newnode(AUX, NULL);
+                    }
+                    ;
+
 
 
 
 /* IDENTIFIER Type {COMMA IDENTIFIER Type} */
-Parameters          : IDENTIFIER Type                                       { ; }
-                    | Parameters COMMA IDENTIFIER Type                      { ; }
+Parameters          : Parameters COMMA IDENTIFIER Type                      {
+
+                        $$ = $1;
+                        struct node* paramdecl = newnode(ParamDecl, NULL);
+                        addchild($$, paramdecl);
+                        addchild(paramdecl, $4);
+                        addchild(paramdecl, newnode(Identifier, $3));
+                    }
+                    | IDENTIFIER Type                                       {
+                        $$ = newnode(FuncParams, NULL);
+                        struct node* paramdecl = newnode(ParamDecl, NULL);
+                        addchild($$, paramdecl);
+                        addchild(paramdecl, $2);
+                        addchild(paramdecl, newnode(Identifier, $1));
+                    }
                     ;
 
 
 
 /* LBRACE VarsAndStatements RBRACE */
-FuncBody            : LBRACE VarsAndStatements RBRACE                       { ; }
+FuncBody            : LBRACE VarsAndStatements RBRACE                       {
+                        $$ = newnode(FuncBody, NULL);
+                        addchild($$, $2);
+                    }
                     ;
 
 
 
 /* VarsAndStatements [VarDeclaration | Statement] SEMICOLON */
-VarsAndStatements   : VarsAndStatements SEMICOLON                           { ; }
-                    | VarsAndStatements VarDeclaration SEMICOLON            { ; }
-                    | VarsAndStatements Statement SEMICOLON                 { ; }
-                    |                                                       { ; }
+VarsAndStatements   : VarsAndStatements SEMICOLON                           {
+                        $$ = $1;
+                    }
+                    | VarsAndStatements VarDeclaration SEMICOLON            {
+                        $$ = $1;
+                        addchild($$, $2);
+                    }
+                    | VarsAndStatements Statement SEMICOLON                 {
+                        $$ = $1;
+                        addchild($$, $2);
+                    }
+                    |                                                       {
+                        $$ = newnode(AUX, NULL);
+                    }
                     ;
 
 
 
-Statement           : IDENTIFIER ASSIGN Expr                                { ; }
-                    | LBRACE StatementSEMICOLON_s RBRACE                    { ; }
+Statement           : IDENTIFIER ASSIGN Expr                                {
+                        $$ = newnode(Assign, NULL);
+                        addchild($$, newnode(Identifier, $1));
+                        addchild($$, $3);
+                    }
+                    /*
+                    | IDENTIFIER LSQ Expr RSQ ASSIGN Expr                    {
+                        $$ = newnode(AUX, NULL);
+                    }
+                    */
+                    | LBRACE StatementSEMICOLON_s RBRACE                    {
+                        if (countchildren($2) <= 1) {
+                            $$ = $2;
+                        } else {
+                            $$ = newnode(Block, NULL);
+                            addchild($$, $2);
+                        }
+                    }
 
                     /* IF Expr LBRACE {Statement SEMICOLON} RBRACE [ELSE LBRACE {Statement SEMICOLON} RBRACE] */
-                    | IF Expr LBRACE StatementSEMICOLON_s RBRACE
-                      ELSE LBRACE StatementSEMICOLON_s RBRACE %prec LOW     { ; }
-                    | IF Expr LBRACE StatementSEMICOLON_s RBRACE %prec LOW  { ; }
+                    | IF Expr LBRACE StatementSEMICOLON_s
+                      RBRACE OptElse %prec LOW     {
+                        $$ = newnode(If, NULL);
+                        addchild($$, $2);
 
+                        struct node* if_block = newnode(Block, NULL);
+                        addchild(if_block, $4);
+                        addchild($$, if_block);
+
+                        struct node* else_block = newnode(Block, NULL);
+                        addchild(else_block, $6);
+                        addchild($$, else_block);
+                    }
                     /* FOR [Expr] LBRACE {Statement SEMICOLON} RBRACE */
-                    | FOR Expr LBRACE StatementSEMICOLON_s RBRACE           { ; }
-                    | FOR LBRACE StatementSEMICOLON_s RBRACE                { ; }
-                    
+                    | FOR OptExpr LBRACE StatementSEMICOLON_s RBRACE           {
+                        $$ = newnode(For, NULL);
+                        addchild($$, $2);
+                        struct node* for_block = newnode(Block, NULL);
+                        addchild(for_block, $4);
+                        addchild($$, for_block);
+                    }
+                    //| FOR LBRACE StatementSEMICOLON_s RBRACE                {
+                    //    $$ = newnode(For, NULL);
+                    //    addchild($$, $3);
+                    //    $$ = newnode(AUX, NULL);
+                    //}
                     /* RETURN [Expr] */
-                    | RETURN Expr                                           { ; }
-                    | RETURN                                                { ; }
-
-                    | FuncInvocation                                        { ; }
-                    | ParseArgs                                             { ; }
+                    | RETURN OptExpr                                           {
+                        $$ = newnode(Return, NULL);
+                        addchild($$, $2);
+                    }
+                    //| RETURN                                                {
+                    //    $$ = newnode(Return, NULL);
+                    //    addchild($$, newnode(AUX, NULL));
+                    //}
+                    | FuncInvocation                                        {
+                        $$ = $1;
+                    }
+                    | ParseArgs                                             {
+                        $$ = $1;
+                    }
 
                     /* PRINT LPAR (Expr | STRLIT) RPAR */
-                    | PRINT LPAR Expr RPAR                                  { ; }
-                    | PRINT LPAR STRLIT RPAR                                { ; }
-                    | error                                                 { ; }
+                    | PRINT LPAR Expr RPAR                                  {
+                        $$ = newnode(Print, NULL);
+                        addchild($$, $3);
+                    }
+                    | PRINT LPAR STRLIT RPAR                                {
+                        $$ = newnode(Print, NULL);
+                        addchild($$, newnode(StrLit, $3));
+                    }
+                    | error                                                 {
+                        $$ = newnode(AUX, NULL);
+                    }
                     ;
 
-StatementSEMICOLON_s: StatementSEMICOLON_s Statement SEMICOLON              { ; }
-                    |                                                       { ; }
+OptExpr             : Expr                                                  {
+                        $$ = $1;
+                    }
+                    |                                                       {
+                        $$ = newnode(AUX, NULL);
+                    }
+
+OptElse             : ELSE LBRACE StatementSEMICOLON_s RBRACE               {
+                        $$ = $3;
+                    }
+                    |                                                       {
+                        $$ = newnode(AUX, NULL);
+                    }
+
+StatementSEMICOLON_s: StatementSEMICOLON_s Statement SEMICOLON              {
+                        $$ = $1;
+                        addchild($$, $2);
+                    }
+                    |                                                       {
+                        $$ = newnode(AUX, NULL);
+                    }
                     ;
 
 
 
                     /* IDENTIFIER COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR */
 ParseArgs           : IDENTIFIER COMMA BLANKID ASSIGN PARSEINT
-                      LPAR CMDARGS LSQ Expr RSQ RPAR                        { ; }
+                      LPAR CMDARGS LSQ Expr RSQ RPAR                        {
+                        $$ = newnode(ParseArgs, NULL);
+                        addchild($$, newnode(Identifier, $1));
+                        addchild($$, $9);
+                      }
                       /* IDENTIFIER COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR */
                     | IDENTIFIER COMMA BLANKID ASSIGN PARSEINT
-                    | LPAR error RPAR                                       { ; }
+                      LPAR error RPAR                                       {
+                        $$ = newnode(AUX, NULL);
+                    }
                     ;
 
 
 
                     /* IDENTIFIER LPAR [Expr {COMMA Expr}] RPAR */
-FuncInvocation      : IDENTIFIER LPAR ExprCOMMA_s RPAR                      { ; }
+FuncInvocation      : IDENTIFIER LPAR ExprCOMMA_s RPAR                      {
+                        $$ = newnode(Call, NULL);
+                        addchild($$, newnode(Identifier, $1));
+
+                        struct node *aux_params = newnode(AUX, NULL);
+                        addchild($$, aux_params);
+                        addchild($$, $3);
+                    }
                     /* IDENTIFIER LPAR error RPAR */
-                    | IDENTIFIER LPAR error RPAR                            { ; }
+                    | IDENTIFIER LPAR error RPAR                            {
+                        $$ = newnode(AUX, NULL);
+                    }
                     ;
 
 /* [Expr {COMMA Expr}] */
-ExprCOMMA_s         : Expr                                                  { ; }
-                    | Expr COMMA ExprCOMMA_s                                { ; }
-                    |                                                       { ; }
+ExprCOMMA_s         : Expr                                                  {
+                        //$$ = $1;
+                        $$ = newnode(AUX, NULL);
+                        addchild($$, $1);
+                    }
+                    | Expr COMMA ExprCOMMA_s                                {
+                        $$ = newnode(AUX, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    |                                                       {
+                        $$ = newnode(AUX, NULL);
+                    }
                     ;
 
 
 
                     /* Expr (OR | AND) Expr */
-Expr                : Expr OR Expr                                          { ; }
-                    | Expr AND Expr                                         { ; }
+Expr                : Expr OR Expr                                          {
+                        $$ = newnode(Or, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr AND Expr                                         {
+                        $$ = newnode(And, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
 
                     /* Expr (LT | GT | EQ | NE | LE | GE) Expr */
-                    | Expr LT Expr                                          { ; }
-                    | Expr GT Expr                                          { ; }
-                    | Expr EQ Expr                                          { ; }
-                    | Expr NE Expr                                          { ; }
-                    | Expr LE Expr                                          { ; }
-                    | Expr GE Expr                                          { ; }
+                    | Expr LT Expr                                          {
+                        $$ = newnode(Lt, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr GT Expr                                          {
+                        $$ = newnode(Gt, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr EQ Expr                                          {
+                        $$ = newnode(Eq, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr NE Expr                                          {
+                        $$ = newnode(Ne, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr LE Expr                                          {
+                        $$ = newnode(Le, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr GE Expr                                          {
+                        $$ = newnode(Ge, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
 
                     /* Expr (PLUS | MINUS | STAR | DIV | MOD) Expr */
-                    | Expr PLUS Expr                                        { ; }
-                    | Expr MINUS Expr                                       { ; }
-                    | Expr STAR Expr                                        { ; }
-                    | Expr DIV Expr                                         { ; }
-                    | Expr MOD Expr                                         { ; }
+                    | Expr PLUS Expr                                        {
+                        $$ = newnode(Add, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr MINUS Expr                                       {
+                        $$ = newnode(Sub, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr STAR Expr                                        {
+                        $$ = newnode(Mul, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr DIV Expr                                         {
+                        $$ = newnode(Div, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
+                    | Expr MOD Expr                                         {
+                        $$ = newnode(Mod, NULL);
+                        addchild($$, $1);
+                        addchild($$, $3);
+                    }
 
                     /* (NOT | MINUS | PLUS) Expr */
-                    | NOT Expr %prec LOW                                    { ; }
-                    | MINUS Expr %prec LOW                                  { ; }
-                    | PLUS Expr %prec LOW                                   { ; }
+                    | NOT Expr %prec LOW                                    {
+                        $$ = newnode(Not, NULL);
+                        addchild($$, $2);
+                    }
+                    | MINUS Expr %prec LOW                                  {
+                        $$ = newnode(Minus, NULL);
+                        addchild($$, $2);
+                    }
+                    | PLUS Expr %prec LOW                                   {
+                        $$ = newnode(Plus, NULL);
+                        addchild($$, $2);
+                    }
 
                     /* NATURAL | DECIMAL | IDENTIFIER | FuncInvocation | LPAR Expr RPAR */
-                    | NATURAL                                               { ; }
-                    | DECIMAL                                               { ; }
-                    | IDENTIFIER                                            { ; }
-                    | FuncInvocation                                        { ; } 
-                    | LPAR Expr RPAR                                        { ; }
+                    | NATURAL                                               {
+                        $$ = newnode(Natural, $1);
+                    }
+                    | DECIMAL                                               {
+                        $$ = newnode(Decimal, $1);
+                    }
+                    | IDENTIFIER                                            {
+                        $$ = newnode(Identifier, $1);
+                    }
+                    | FuncInvocation                                        {
+                        $$ = $1;
+                    } 
+                    | LPAR Expr RPAR                                        {
+                        $$ = $2;
+                    }
 
                     /* LPAR error RPAR */
-                    | LPAR error RPAR                                       { ; }
+                    | LPAR error RPAR                                       {
+                        $$ = newnode(AUX, NULL);
+                    }
                     ;
 
 %%

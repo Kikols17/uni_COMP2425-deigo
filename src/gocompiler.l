@@ -17,6 +17,8 @@
 
     #define PASS_TOKEN() yylval.lexeme = strdup(yytext);
 
+    extern int yydebug;
+
 
     /* modes */
     int lex_mode = 0;   // meta1
@@ -209,6 +211,7 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 
 extern int yylex();
 int main(int argc, char **argv) {
+    yydebug = 0;
 
     for (int i=1; i<argc; i++) {
         if (strcmp(argv[i], "-l") == 0) {
@@ -218,6 +221,7 @@ int main(int argc, char **argv) {
             yacc_mode = 1;
             yyparse();
             if (errors==0) {
+                //printf("gorwg\n");
                 show(program, 0);
             }
         }
