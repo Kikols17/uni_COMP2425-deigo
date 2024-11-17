@@ -506,16 +506,16 @@ Expr                : Expr OR Expr                                          {
                         addchild($$, $3);
                     }
 
-                    /* (NOT | MINUS | PLUS) Expr */
-                    | NOT Expr %prec LOW                                    {
-                        $$ = newnode(Not, NULL);
-                        addchild($$, $2);
-                    }
-                    | MINUS Expr %prec LOW                                  {
+                    /* (NOT | MINUS | PLUS) Expr (CUIDADO COM ORGEM)*/
+                    | MINUS Expr %prec NOT                                  {
                         $$ = newnode(Minus, NULL);
                         addchild($$, $2);
                     }
-                    | PLUS Expr %prec LOW                                   {
+                    | NOT Expr %prec NOT                                    {
+                        $$ = newnode(Not, NULL);
+                        addchild($$, $2);
+                    }
+                    | PLUS Expr %prec NOT                                   {
                         $$ = newnode(Plus, NULL);
                         addchild($$, $2);
                     }
