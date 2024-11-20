@@ -40,11 +40,7 @@
 %token <lexeme> RESERVED DECIMAL NATURAL IDENTIFIER STRLIT
 
 // symbols
-%type <node> Program Declarations VarDeclaration FuncDeclaration VarSpec Type Parameters FuncBody VarsAndStatements Statement Expr FuncInvocation ParseArgs
-
-// extra symbols
-%type <node> COMMAIdentifier_s StatementSEMICOLON_s ExprCOMMA_s OptParameters OptType OptElse OptExpr
-
+%type <node> Program Declarations VarDeclaration FuncDeclaration VarSpec Type Parameters FuncBody VarsAndStatements Statement Expr FuncInvocation ParseArgs COMMAIdentifier_s StatementSEMICOLON_s ExprCOMMA_s parameters_q type_q else_q expr_q
 
 %left       LOW
 %nonassoc   IF ELSE FOR
@@ -205,7 +201,7 @@ FuncDeclaration     : FUNC IDENTIFIER LPAR RPAR FuncBody                    { ; 
                     ;
 */
 // acima não funciona, talves tentar isto:
-FuncDeclaration     : FUNC IDENTIFIER LPAR OptParameters RPAR OptType FuncBody    {
+FuncDeclaration     : FUNC IDENTIFIER LPAR parameters_q RPAR type_q FuncBody    {
                         $$ = newnode(FuncDecl, NULL);
 
                         struct node* header = newnode(FuncHeader, NULL);
@@ -218,7 +214,7 @@ FuncDeclaration     : FUNC IDENTIFIER LPAR OptParameters RPAR OptType FuncBody  
                     }
                     ;
 
-OptParameters       : Parameters                                            {
+parameters_q       : Parameters                                            {
                         $$ = $1;
                     }
                     |                                                       {
@@ -226,7 +222,7 @@ OptParameters       : Parameters                                            {
                     }
                     ;
 
-OptType             : Type                                                  {
+type_q             : Type                                                  {
                         $$ = $1;
                     }
                     |                                                       {
@@ -306,7 +302,7 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
 
                     /* IF Expr LBRACE {Statement SEMICOLON} RBRACE [ELSE LBRACE {Statement SEMICOLON} RBRACE] */
                     | IF Expr LBRACE StatementSEMICOLON_s
-                      RBRACE OptElse %prec LOW     {
+                      RBRACE else_q %prec LOW     {
                         $$ = newnode(If, NULL);
                         addchild($$, $2);
 
@@ -319,7 +315,7 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
                         addchild($$, else_block);
                     }
                     /* FOR [Expr] LBRACE {Statement SEMICOLON} RBRACE */
-                    | FOR OptExpr LBRACE StatementSEMICOLON_s RBRACE           {
+                    | FOR expr_q LBRACE StatementSEMICOLON_s RBRACE           {
                         $$ = newnode(For, NULL);
                         addchild($$, $2);
                         struct node* for_block = newnode(Block, NULL);
@@ -332,7 +328,7 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
                     //    $$ = newnode(AUX, NULL);
                     //}
                     /* RETURN [Expr] */
-                    | RETURN OptExpr                                           {
+                    | RETURN expr_q                                           {
                         $$ = newnode(Return, NULL);
                         addchild($$, $2);
                     }
@@ -361,14 +357,14 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
                     }
                     ;
 
-OptExpr             : Expr                                                  {
+expr_q             : Expr                                                  {
                         $$ = $1;
                     }
                     |                                                       {
                         $$ = newnode(AUX, NULL);
                     }
 
-OptElse             : ELSE LBRACE StatementSEMICOLON_s RBRACE               {
+else_q             : ELSE LBRACE StatementSEMICOLON_s RBRACE               {
                         $$ = $3;
                     }
                     |                                                       {
