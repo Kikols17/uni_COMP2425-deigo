@@ -3,8 +3,7 @@
 #include <string.h>
 #include "ast.h"
 
-//static char *category_names[] = { "Program", "Function", "Parameters", "Parameter", "Arguments", "Integer", "Double", "Identifier", "Natural", "Decimal", "Call", "If", "Add", "Sub", "Mul", "Div" };
-const char *category_names[] = names;
+const char *category_names[] = { "Program", "VarDecl", "FuncDecl", "FuncHeader", "FuncParams", "FuncBody", "ParamDecl", "Assign", "Int", "Float32", "Bool", "String", "Natural", "Decimal", "Identifier", "StrLit", "For", "If", "Block", "Call", "Return", "Print", "ParseArgs", "Or", "And", "Eq", "Ne", "Lt", "Le", "Gt", "Ge", "Add", "Sub", "Mul", "Div", "Mod", "Not", "Minus", "Plus", "AUX" };
 
 // create a node of a given category with a given lexical symbol
 struct node *newnode(enum category category, char *token) {
