@@ -3,7 +3,7 @@
 
 # build compiler
 ../gocompiler: gocompiler.yy.c gocompiler.tab.c ast.c ast.h
-	cc -g gocompiler.yy.c -o ../gocompiler gocompiler.tab.c ast.c -Wall -Wno-unused-function
+	cc -Wall -Wextra -Wno-unused-function -g gocompiler.yy.c -o ../gocompiler gocompiler.tab.c ast.c
 
 
 # build lex.yy.c
@@ -44,8 +44,11 @@ test_2: ../gocompiler
 
 
 # zip gocompiler.l
-zip: gocompiler.l
+zip_1: gocompiler.l
 	zip ../gocompiler.zip gocompiler.l
+
+zip_2: gocompiler.y
+	zip ../gocompiler.zip gocompiler.l gocompiler.y ast.c ast.h
 
 
 
