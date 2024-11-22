@@ -47,10 +47,12 @@ test_2: gocompiler
 
 # zip gocompiler.l
 zip_1: src/gocompiler.l
-	zip gocompiler.zip src/gocompiler.l
+	cd src && zip gocompiler.zip gocompiler.l
+	mv src/gocompiler.zip gocompiler.zip
 
 zip_2: src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h
-	zip gocompiler.zip src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h
+	cd src && zip gocompiler.zip gocompiler.l gocompiler.y ast.c ast.h
+	mv src/gocompiler.zip gocompiler.zip
 
 
 
