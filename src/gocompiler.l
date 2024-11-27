@@ -9,7 +9,7 @@
 
     /* place here any C variables and definitions */
     #include "ast.h"
-    #include "gocompiler.tab.h"
+    #include "y.tab.h"
     #define YY_USER_ACTION \
         token_begincolumn = token_endcolumn; \
         token_beginline = token_endline; \
