@@ -54,7 +54,7 @@
 %left       LBRACE RBRACE LPAR RPAR LSQ RSQ
 %right      NOT
 
-%debug
+//%debug
 
 
 
