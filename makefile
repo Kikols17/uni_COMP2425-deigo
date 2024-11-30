@@ -1,16 +1,16 @@
 # build compiler
-gocompiler: src/gocompiler.yy.c src/gocompiler.tab.c src/ast.c src/ast.h
-	clang -Wall -Wextra -Wno-unused-function -g src/gocompiler.yy.c -o gocompiler src/gocompiler.tab.c src/ast.c
+gocompiler: src/lex.yy.c src/y.tab.c src/ast.c src/ast.h
+	clang -Wall -Wextra -Wno-unused-function -g src/lex.yy.c -o gocompiler src/y.tab.c src/ast.c
 
 # build lex.yy.c
-src/gocompiler.yy.c: src/gocompiler.l
+src/lex.yy.c: src/gocompiler.l
 	lex src/gocompiler.l
-	mv lex.yy.c src/gocompiler.yy.c
+	mv lex.yy.c src/lex.yy.c
 
-src/gocompiler.tab.c: src/gocompiler.y
+src/y.tab.c: src/gocompiler.y
 	yacc -d -v -t -g --report=all src/gocompiler.y
-	mv y.tab.c src/gocompiler.tab.c
-	mv y.tab.h src/gocompiler.tab.h
+	mv y.tab.c src/y.tab.c
+	mv y.tab.h src/y.tab.h
 	mv y.output src/y.output
 	mv y.gv src/y.gv
 
@@ -49,6 +49,6 @@ zip_2: src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h
 # clean
 clean:
 	rm -f gocompiler.zip
-	rm -f gocompiler src/gocompiler.yy.c
-	rm -f src/gocompiler.tab.c src/gocompiler.tab.h
+	rm -f gocompiler src/lex.yy.c
+	rm -f src/y.tab.c src/y.tab.h
 	rm -f src/y.output src/y.gv
