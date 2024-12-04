@@ -125,7 +125,7 @@ int countchildren(struct node *node) {
     int count = 0;
     struct node_list *child = node->children;
     while ((child = child->next) != NULL) {
-        if (child->node->category != AUX) {
+        if (child->node->category != TEMP) {
             count++;
         } else {
             count += countchildren(child->node);
@@ -135,53 +135,51 @@ int countchildren(struct node *node) {
     return count;
 }
 
-void remove_aux(struct node *parent) {
-    if (parent == NULL || parent->children == NULL) {
+void clean_tree(struct node *program) {
+    /* Run this to clear the tree of TEMP nodes
+     *
+     */
+    if (program == NULL || program->children == NULL) {
         return;
     }
 
-    struct node_list *prev = parent->children;
-    struct node_list *current = prev->next;
+    struct node_list *stack[1000]; // Stack to hold nodes for DFS
+    int stack_size = 0;
 
-    while (current != NULL) {
-        if (current->node->category == AUX) {
-            // The AUX node's children should go into it's parent's child list at the AUX node's position
-            struct node_list *aux_children = current->node->children->next;
+    stack[stack_size++] = program->children;
 
-            if (aux_children != NULL) {
-                // Find the last AUX child
-                struct node_list *last_aux_child = aux_children;
-                while (last_aux_child->next != NULL) {
-                    last_aux_child = last_aux_child->next;
+    while (stack_size > 0) {
+        struct node_list *current_list = stack[--stack_size];
+        struct node_list *prev = current_list;
+        struct node_list *current = prev->next;
+
+        while (current != NULL) {
+            if (current->node->category == TEMP) {
+                struct node_list *aux_children = current->node->children->next;
+
+                if (aux_children != NULL) {
+                    struct node_list *last_aux_child = aux_children;
+                    while (last_aux_child->next != NULL) {
+                        last_aux_child = last_aux_child->next;
+                    }
+
+                    prev->next = aux_children;
+                    last_aux_child->next = current->next;
+                } else {
+                    prev->next = current->next;
                 }
 
-                // Link previous parent node to AUX node's first child
-                prev->next = aux_children;
+                free(current->node->children);
+                free(current->node);
 
-                // Link last AUX child to AUX node's next node in the parent's list
-                last_aux_child->next = current->next;
-            } 
-            else {
-                // The AUX node is a leaf
-                prev->next = current->next;
+                struct node_list *toremove = current;
+                current = prev->next;
+                free(toremove);
+            } else {
+                stack[stack_size++] = current->node->children;
+                prev = current;
+                current = current->next;
             }
-
-            // Free the AUX node and it's children
-            free(current->node->children);
-            free(current->node);
-
-
-            struct node_list *temp = current;
-            current = prev->next; // Changed from current->next to prev->next
-            free(temp);
-
-            // Only update prev if the current node was not removed
-        } 
-        else {
-            // Continue DFS
-            remove_aux(current->node);
-            prev = current;
-            current = current->next;
         }
     }
 }

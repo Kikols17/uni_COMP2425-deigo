@@ -73,7 +73,7 @@ Program             : PACKAGE IDENTIFIER SEMICOLON Declarations             {
 Declarations        : Declarations VarDeclaration SEMICOLON                 {
                         $$ = $1;
 
-                        struct node* aux_vardeclaration = newnode(AUX, NULL);
+                        struct node* aux_vardeclaration = newnode(TEMP, NULL);
                         addchild($$, aux_vardeclaration);
                         addchild(aux_vardeclaration, $2);
                     }
@@ -82,7 +82,7 @@ Declarations        : Declarations VarDeclaration SEMICOLON                 {
                         addchild($1, $2);
                     }
                     |                                                       {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     ;
 
@@ -111,7 +111,7 @@ VarSpec             : IDENTIFIER COMMAIdentifier_s Type                     {
 
 
                         if (varspec_head == NULL) {
-                            varspec_head = newnode(AUX, NULL);
+                            varspec_head = newnode(TEMP, NULL);
                             struct node* vardecl = newnode(VarDecl, NULL);
                             addchild(varspec_head, vardecl);
                             addchild(vardecl, newnode(Identifier, $1));
@@ -142,7 +142,7 @@ VarSpec             : IDENTIFIER COMMAIdentifier_s Type                     {
 
 COMMAIdentifier_s   : COMMAIdentifier_s COMMA IDENTIFIER                    {
                         if (varspec_head == NULL) {
-                            varspec_head = newnode(AUX, NULL);
+                            varspec_head = newnode(TEMP, NULL);
                             struct node* vardecl = newnode(VarDecl, NULL);
                             addchild(varspec_head, vardecl);
                             addchild(vardecl, newnode(Identifier, $3));
@@ -165,11 +165,11 @@ COMMAIdentifier_s   : COMMAIdentifier_s COMMA IDENTIFIER                    {
                     }
                     |                                                       {
                         if (varspec_head == NULL) {
-                            varspec_head = newnode(AUX, NULL);
-                            addchild(varspec_head, newnode(AUX, NULL));
+                            varspec_head = newnode(TEMP, NULL);
+                            addchild(varspec_head, newnode(TEMP, NULL));
                             $$ = varspec_head;
                         } else {
-                            addchild(varspec_head, newnode(AUX, NULL));
+                            addchild(varspec_head, newnode(TEMP, NULL));
                             $$ = varspec_head;
                         }
                     }
@@ -226,7 +226,7 @@ type_q             : Type                                                  {
                         $$ = $1;
                     }
                     |                                                       {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     ;
 
@@ -275,7 +275,7 @@ VarsAndStatements   : VarsAndStatements SEMICOLON                           {
                         addchild($$, $2);
                     }
                     |                                                       {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     ;
 
@@ -288,7 +288,7 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
                     }
                     /*
                     | IDENTIFIER LSQ Expr RSQ ASSIGN Expr                    {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     */
                     | LBRACE StatementSEMICOLON_s RBRACE                    {
@@ -325,7 +325,7 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
                     //| FOR LBRACE StatementSEMICOLON_s RBRACE                {
                     //    $$ = newnode(For, NULL);
                     //    addchild($$, $3);
-                    //    $$ = newnode(AUX, NULL);
+                    //    $$ = newnode(TEMP, NULL);
                     //}
                     /* RETURN [Expr] */
                     | RETURN expr_q                                           {
@@ -334,7 +334,7 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
                     }
                     //| RETURN                                                {
                     //    $$ = newnode(Return, NULL);
-                    //    addchild($$, newnode(AUX, NULL));
+                    //    addchild($$, newnode(TEMP, NULL));
                     //}
                     | FuncInvocation                                        {
                         $$ = $1;
@@ -353,7 +353,7 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
                         addchild($$, newnode(StrLit, $3));
                     }
                     | error                                                 {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     ;
 
@@ -361,14 +361,14 @@ expr_q             : Expr                                                  {
                         $$ = $1;
                     }
                     |                                                       {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
 
 else_q             : ELSE LBRACE StatementSEMICOLON_s RBRACE               {
                         $$ = $3;
                     }
                     |                                                       {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
 
 StatementSEMICOLON_s: StatementSEMICOLON_s Statement SEMICOLON              {
@@ -376,7 +376,7 @@ StatementSEMICOLON_s: StatementSEMICOLON_s Statement SEMICOLON              {
                         addchild($$, $2);
                     }
                     |                                                       {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     ;
 
@@ -392,7 +392,7 @@ ParseArgs           : IDENTIFIER COMMA BLANKID ASSIGN PARSEINT
                       /* IDENTIFIER COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR */
                     | IDENTIFIER COMMA BLANKID ASSIGN PARSEINT
                       LPAR error RPAR                                       {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     ;
 
@@ -403,29 +403,29 @@ FuncInvocation      : IDENTIFIER LPAR ExprCOMMA_s RPAR                      {
                         $$ = newnode(Call, NULL);
                         addchild($$, newnode(Identifier, $1));
 
-                        struct node *aux_params = newnode(AUX, NULL);
+                        struct node *aux_params = newnode(TEMP, NULL);
                         addchild($$, aux_params);
                         addchild($$, $3);
                     }
                     /* IDENTIFIER LPAR error RPAR */
                     | IDENTIFIER LPAR error RPAR                            {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     ;
 
 /* [Expr {COMMA Expr}] */
 ExprCOMMA_s         : Expr                                                  {
                         //$$ = $1;
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                         addchild($$, $1);
                     }
                     | Expr COMMA ExprCOMMA_s                                {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
                     }
                     |                                                       {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     ;
 
@@ -535,7 +535,7 @@ Expr                : Expr OR Expr                                          {
 
                     /* LPAR error RPAR */
                     | LPAR error RPAR                                       {
-                        $$ = newnode(AUX, NULL);
+                        $$ = newnode(TEMP, NULL);
                     }
                     ;
 
