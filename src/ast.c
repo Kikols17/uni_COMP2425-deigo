@@ -37,34 +37,24 @@ void show(struct node *node, int depth) {
         return;
     }
 
-    // Don't print temporary nodes
-    if(node->category != TEMP){
-        // Add indentation according to the current depth
-        for(int i = 0; i < depth; i++){
-            printf("..");
-        }    
-        // Print the category and the token (if it exists)
-        if(node->token == NULL){
-            printf("%s\n", category_names[node->category]);
-        }
-        else{
-            printf("%s(%s)\n", category_names[node->category], node->token);
-        }
+    // Indentation
+    for(int i = 0; i < depth; i++) {
+        printf("..");
+    }    
+    // Category (option)
+    if(node->token == NULL) {
+        printf("%s\n", category_names[node->category]);
+    } else {
+        printf("%s(%s)\n", category_names[node->category], node->token);
     }
     
     // Visit all children
-    if(node->children == NULL){
+    if(node->children == NULL) {
         return;
     }
     struct node_list *child = node->children;
-    while((child = child->next) != NULL){
-        if(child->node->category == TEMP){
-            // Don't increase the depth for temporary nodes
-            show(child->node, depth);
-        }
-        else{
-            show(child->node, depth+1);
-        }
+    while((child = child->next) != NULL) {
+        show(child->node, depth+1);
     }
 }
 
@@ -130,4 +120,54 @@ int countchildren(struct node *node) {
     }
 
     return count;
+}
+
+
+void clean_tree(struct node *program) {
+    /* Run this to clear the tree of TEMP nodes
+     *
+     */
+    if (program == NULL || program->children == NULL) {
+        return;
+    }
+
+    struct node_list *stack[1000]; // Stack to hold nodes for DFS
+    int stack_size = 0;
+
+    stack[stack_size++] = program->children;
+
+    while (stack_size > 0) {
+        struct node_list *current_list = stack[--stack_size];
+        struct node_list *prev = current_list;
+        struct node_list *current = prev->next;
+
+        while (current != NULL) {
+            if (current->node->category == TEMP) {
+                struct node_list *aux_children = current->node->children->next;
+
+                if (aux_children != NULL) {
+                    struct node_list *last_aux_child = aux_children;
+                    while (last_aux_child->next != NULL) {
+                        last_aux_child = last_aux_child->next;
+                    }
+
+                    prev->next = aux_children;
+                    last_aux_child->next = current->next;
+                } else {
+                    prev->next = current->next;
+                }
+
+                free(current->node->children);
+                free(current->node);
+
+                struct node_list *toremove = current;
+                current = prev->next;
+                free(toremove);
+            } else {
+                stack[stack_size++] = current->node->children;
+                prev = current;
+                current = current->next;
+            }
+        }
+    }
 }

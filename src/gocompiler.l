@@ -220,6 +220,7 @@ int main(int argc, char **argv) {
         } else if (strcmp(argv[i], "-t") == 0) {
             yacc_mode = 1;
             yyparse();
+            clean_tree(program);
             if (errors==0) {
                 //printf("gorwg\n");
                 show(program, 0);
