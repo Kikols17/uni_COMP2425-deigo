@@ -4,7 +4,7 @@
 
 #include <stddef.h>   // preciso para o NULL (n sei pq nunca foi preciso)
 
-enum category {Program, VarDecl, FuncDecl, FuncHeader, FuncParams, FuncBody, ParamDecl, Assign, Int, Float32, Bool, String, Natural, Decimal, Identifier, StrLit, For, If, Block, Call, Return, Print, ParseArgs, Or, And, Eq, Ne, Lt, Le, Gt, Ge, Add, Sub, Mul, Div, Mod, Not, Minus, Plus, AUX};
+enum category {Program, VarDecl, FuncDecl, FuncHeader, FuncParams, FuncBody, ParamDecl, Assign, Int, Float32, Bool, String, Natural, Decimal, Identifier, StrLit, For, If, Block, Call, Return, Print, ParseArgs, Or, And, Eq, Ne, Lt, Le, Gt, Ge, Add, Sub, Mul, Div, Mod, Not, Minus, Plus, TEMP};
 
 
 struct node {

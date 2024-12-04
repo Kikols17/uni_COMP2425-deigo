@@ -3,7 +3,7 @@
 #include <string.h>
 #include "ast.h"
 
-const char *category_names[] = { "Program", "VarDecl", "FuncDecl", "FuncHeader", "FuncParams", "FuncBody", "ParamDecl", "Assign", "Int", "Float32", "Bool", "String", "Natural", "Decimal", "Identifier", "StrLit", "For", "If", "Block", "Call", "Return", "Print", "ParseArgs", "Or", "And", "Eq", "Ne", "Lt", "Le", "Gt", "Ge", "Add", "Sub", "Mul", "Div", "Mod", "Not", "Minus", "Plus", "AUX" };
+const char *category_names[] = { "Program", "VarDecl", "FuncDecl", "FuncHeader", "FuncParams", "FuncBody", "ParamDecl", "Assign", "Int", "Float32", "Bool", "String", "Natural", "Decimal", "Identifier", "StrLit", "For", "If", "Block", "Call", "Return", "Print", "ParseArgs", "Or", "And", "Eq", "Ne", "Lt", "Le", "Gt", "Ge", "Add", "Sub", "Mul", "Div", "Mod", "Not", "Minus", "Plus", "TEMP" };
 
 // create a node of a given category with a given lexical symbol
 struct node *newnode(enum category category, char *token) {
@@ -37,8 +37,8 @@ void show(struct node *node, int depth) {
         return;
     }
 
-    // Don't print auxiliary nodes
-    if(node->category != AUX){
+    // Don't print temporary nodes
+    if(node->category != TEMP){
         // Add indentation according to the current depth
         for(int i = 0; i < depth; i++){
             printf("..");
@@ -58,8 +58,8 @@ void show(struct node *node, int depth) {
     }
     struct node_list *child = node->children;
     while((child = child->next) != NULL){
-        if(child->node->category == AUX){
-            // Don't increase the depth for auxiliary nodes
+        if(child->node->category == TEMP){
+            // Don't increase the depth for temporary nodes
             show(child->node, depth);
         }
         else{
@@ -122,7 +122,7 @@ int countchildren(struct node *node) {
     int count = 0;
     struct node_list *child = node->children;
     while ((child = child->next) != NULL) {
-        if (child->node->category != AUX) {
+        if (child->node->category != TEMP) {
             count++;
         } else {
             count += countchildren(child->node);
