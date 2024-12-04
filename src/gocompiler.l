@@ -9,6 +9,7 @@
 
     /* place here any C variables and definitions */
     #include "ast.h"
+    #include "semantics.h"
     #include "y.tab.h"
     #define YY_USER_ACTION \
         token_begincolumn = token_endcolumn; \
@@ -53,6 +54,8 @@
     int errors = 0;
 
     extern struct node *program;
+
+    extern struct symbol_list *symbol_table;
 
 
 
@@ -220,8 +223,20 @@ int main(int argc, char **argv) {
         } else if (strcmp(argv[i], "-t") == 0) {
             yacc_mode = 1;
             yyparse();
+            remove_aux(program);
             if (errors==0) {
                 //printf("gorwg\n");
+                show(program, 0);
+            }
+        } else if (strcmp(argv[i], "-s") == 0) {
+            yacc_mode = 1;
+            yyparse();
+            remove_aux(program);
+
+            check_program(program);
+
+            if (errors==0) {
+                show_symbol_table();
                 show(program, 0);
             }
         }

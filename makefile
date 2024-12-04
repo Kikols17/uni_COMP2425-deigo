@@ -1,6 +1,6 @@
 # build compiler
-gocompiler: src/lex.yy.c src/y.tab.c src/ast.c src/ast.h
-	clang -Wall -Wextra -Wno-unused-function -g src/lex.yy.c -o gocompiler src/y.tab.c src/ast.c
+gocompiler: src/lex.yy.c src/y.tab.c src/ast.c src/ast.h src/semantics.c src/semantics.h
+	clang -Wall -Wextra -Wno-unused-function -g src/lex.yy.c -o gocompiler src/y.tab.c src/ast.c src/semantics.c
 
 # build lex.yy.c
 src/lex.yy.c: src/gocompiler.l
@@ -54,6 +54,10 @@ zip_1: src/gocompiler.l
 
 zip_2: src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h
 	cd src && zip gocompiler.zip gocompiler.l gocompiler.y ast.c ast.h
+	mv src/gocompiler.zip gocompiler.zip
+
+zip_3: src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h src/semantics.c src/semantics.h
+	cd src && zip gocompiler.zip gocompiler.l gocompiler.y ast.c ast.h semantics.c semantics.h
 	mv src/gocompiler.zip gocompiler.zip
 
 

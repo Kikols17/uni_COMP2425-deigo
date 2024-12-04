@@ -3,7 +3,9 @@
 #include <string.h>
 #include "ast.h"
 
-const char *category_names[] = { "Program", "VarDecl", "FuncDecl", "FuncHeader", "FuncParams", "FuncBody", "ParamDecl", "Assign", "Int", "Float32", "Bool", "String", "Natural", "Decimal", "Identifier", "StrLit", "For", "If", "Block", "Call", "Return", "Print", "ParseArgs", "Or", "And", "Eq", "Ne", "Lt", "Le", "Gt", "Ge", "Add", "Sub", "Mul", "Div", "Mod", "Not", "Minus", "Plus", "AUX" };
+const char *category_names[] = CATEGORY_NAMES
+const char *type_names[] = TYPE_NAMES
+
 
 // create a node of a given category with a given lexical symbol
 struct node *newnode(enum category category, char *token) {
@@ -30,41 +32,42 @@ void addchild(struct node *parent, struct node *child) {
     children->next = new;
 }
 
+// get the child (pointer) of given node by index
+struct node *getchild(struct node *parent, int position) {
+    struct node_list *children = parent->children;
+    while((children = children->next) != NULL)
+        if(position-- == 0)
+            return children->node;
+    return NULL;
+}
+
+
+
 // shows the AST
 void show(struct node *node, int depth) {
     // no more nodes
-    if(node == NULL){
+    if(node == NULL) {
         return;
     }
 
-    // Don't print auxiliary nodes
-    if(node->category != AUX){
-        // Add indentation according to the current depth
-        for(int i = 0; i < depth; i++){
-            printf("..");
-        }    
-        // Print the category and the token (if it exists)
-        if(node->token == NULL){
-            printf("%s\n", category_names[node->category]);
-        }
-        else{
-            printf("%s(%s)\n", category_names[node->category], node->token);
-        }
+    // Indentation
+    for(int i = 0; i < depth; i++) {
+        printf("..");
+    }    
+    // Print the category and the token (if it exists)
+    if(node->token == NULL) {
+        printf("%s\n", category_names[node->category]);
+    } else {
+        printf("%s(%s)\n", category_names[node->category], node->token);
     }
     
     // Visit all children
-    if(node->children == NULL){
+    if(node->children == NULL) {
         return;
     }
     struct node_list *child = node->children;
-    while((child = child->next) != NULL){
-        if(child->node->category == AUX){
-            // Don't increase the depth for auxiliary nodes
-            show(child->node, depth);
-        }
-        else{
-            show(child->node, depth+1);
-        }
+    while((child = child->next) != NULL) {
+        show(child->node, depth+1);
     }
 }
 
@@ -130,4 +133,55 @@ int countchildren(struct node *node) {
     }
 
     return count;
+}
+
+void remove_aux(struct node *parent) {
+    if (parent == NULL || parent->children == NULL) {
+        return;
+    }
+
+    struct node_list *prev = parent->children;
+    struct node_list *current = prev->next;
+
+    while (current != NULL) {
+        if (current->node->category == AUX) {
+            // The AUX node's children should go into it's parent's child list at the AUX node's position
+            struct node_list *aux_children = current->node->children->next;
+
+            if (aux_children != NULL) {
+                // Find the last AUX child
+                struct node_list *last_aux_child = aux_children;
+                while (last_aux_child->next != NULL) {
+                    last_aux_child = last_aux_child->next;
+                }
+
+                // Link previous parent node to AUX node's first child
+                prev->next = aux_children;
+
+                // Link last AUX child to AUX node's next node in the parent's list
+                last_aux_child->next = current->next;
+            } 
+            else {
+                // The AUX node is a leaf
+                prev->next = current->next;
+            }
+
+            // Free the AUX node and it's children
+            free(current->node->children);
+            free(current->node);
+
+
+            struct node_list *temp = current;
+            current = prev->next; // Changed from current->next to prev->next
+            free(temp);
+
+            // Only update prev if the current node was not removed
+        } 
+        else {
+            // Continue DFS
+            remove_aux(current->node);
+            prev = current;
+            current = current->next;
+        }
+    }
 }
