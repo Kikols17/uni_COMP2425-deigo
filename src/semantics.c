@@ -111,6 +111,8 @@ void check_FuncDecl(struct node *declaration) {
     // if there is no return node, set it to paramdecl, and return_node=None
     if (return_node->category==FuncParams) {
         paramdecl_node = return_node;
+        struct node dummy_return_node;
+        return_node = &dummy_return_node;
         return_node->category = None;
     } else {
         paramdecl_node = getchild(funcheader_node, 2);
@@ -222,40 +224,38 @@ void show_symbol_table() {
 
 char *show_functionparameters(struct symbol_list *symbol) {
     char *result = (char *)malloc(1024);
-    result[0] = '\0';
+    memset(result, '\0', 1024);
     if (symbol->node->category == VarDecl) {
         // When is Var Decl
         // must be empty
     }
-//    if (symbol->node->category == FuncDecl) {
-//        // When is Function
-//        sprintf(result+strlen(result), "(");
-//        struct node *header = getchild(symbol->node, 0);
-//        //printf("%s\n", category_names2[header->category]);
-//        // cant be sure if the FuncParams is the third or second child, so do this:
-//        struct node *params = getchild(header, 1);
-//        //printf("%s\n", category_names2[params->category]);
-//        if (params->category != FuncParams) {
-//            params = getchild(header, 2);
-//            //printf("%p\n", params);
-//            //printf("%s\n", category_names2[params->category]);
-//        }
-//        //printf("%s\n", category_names2[params->category]);
-//
-//        struct node_list *child = params->children;
-//        while ((child = child->next) != NULL) {
-//            printf("%s\n", child->node->category);
-//            struct node *cur_param_type = getchild(child->node, 0);
-//            sprintf(result[strlen(result)], "%s,", category_to_type2[cur_param_type->category]);
-//        }
-//
-//        if (result[strlen(result)-1]==',') {
-//            // remove extra comma
-//            result[strlen(result)-1] = '\0';
-//        }
-//
-//        sprintf(result+strlen(result), ")");
-//        
-//    }
+    if (symbol->node->category == FuncDecl) {
+        // When is Function
+        sprintf(result+strlen(result), "(");
+        struct node *header = getchild(symbol->node, 0);
+        //printf("%s\n", category_names2[header->category]);
+        // cant be sure if the FuncParams is the third or second child, so do this:
+        struct node *params = getchild(header, 1);
+        //printf("%s\n", category_names2[params->category]);
+        if (params->category != FuncParams) {
+            params = getchild(header, 2);
+            //printf("%s\n", category_names2[params->category]);
+        }
+        //printf("%s\n", category_names2[params->category]);
+
+        struct node_list *child = params->children;
+        while ((child = child->next) != NULL) {
+            struct node *cur_param_type = getchild(child->node, 0);
+            sprintf(result+strlen(result), "%s,", type_names2[category_to_type2[cur_param_type->category]]);
+        }
+
+        if (result[strlen(result)-1]==',') {
+            // remove extra comma
+            result[strlen(result)-1] = '\0';
+        }
+
+        sprintf(result+strlen(result), ")");
+        
+    }
     return result;
 }
