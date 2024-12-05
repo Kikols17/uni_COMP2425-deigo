@@ -13,50 +13,18 @@ const char *type_names2[] = TYPE_NAMES;
 const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 
 
-//void check_expression(struct node *expression, struct symbol_list *scope) {
+//void check_expression(struct node *expression, struct symbol_list *symbol_scope) {
 //    switch(expression->category) {
 //        case Identifier:
-//            if(search_symbol(scope, expression->token) == NULL) {
-//                printf("Variable %s (%d:%d) undeclared\n", expression->token, expression->token_line, expression->token_column);
-//                semantic_errors++;
-//            } else {
-//                expression->type = search_symbol(scope, expression->token)->type;
-//            }
 //            break;
 //        case Natural:
-//            expression->type = int_type;
 //            break;
 //        case Decimal:
-//            expression->type = float32_type;
-//            break;
-//        case Call:
-//            if(search_symbol(symbol_table, getchild(expression, 0)->token) == NULL || search_symbol(symbol_table, getchild(expression, 0)->token)->node->category != Function) {
-//                printf("Function %s (%d:%d) undeclared\n", getchild(expression, 0)->token, getchild(expression, 0)->token_line, getchild(expression, 0)->token_column);
-//                semantic_errors++;
-//            } else {
-//                struct node *arguments = getchild(expression, 1);
-//                struct node *parameters = getchild(search_symbol(symbol_table, getchild(expression, 0)->token)->node, 1);
-//                if(parameters != NULL && countchildren(arguments) != countchildren(parameters)) {
-//                    printf("Calling %s (%d:%d) with incorrect arguments\n", getchild(expression, 0)->token, getchild(expression, 0)->token_line, getchild(expression, 0)->token_column);
-//                    semantic_errors++;
-//                } else {
-//                    struct node_list *argument = arguments->children;
-//                    while((argument = argument->next) != NULL)
-//                        check_expression(argument->node, scope);
-//                }
-//            }
-//            break;
-//        case If:
-//            check_expression(getchild(expression, 0), scope);
-//            check_expression(getchild(expression, 1), scope);
-//            check_expression(getchild(expression, 2), scope);
 //            break;
 //        case Add:
 //        case Sub:
 //        case Mul:
 //        case Div:
-//            check_expression(getchild(expression, 0), scope);
-//            check_expression(getchild(expression, 1), scope);
 //            break;
 //        default:
 //            break;
@@ -93,9 +61,26 @@ const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 //    /* ToDo: scope should be free'd */
 //}
 
-//void check_Print(struct node *print, struct symbol_list *symbol_list) {
-//
-//}
+void check_If(struct node *if_node, struct symbol_list *symbol_scope) {
+
+}
+
+void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
+    struct symbol_list *definition;
+    if (getchild(print_node, 0)->category == Identifier) {
+        // if is identifier, make sure it has been defined
+        definition = search_symbol(symbol_scope, getchild(print_node, 0)->token, 10);
+        if (definition==NULL) {
+            // was not defined
+            getchild(print_node, 0)->type = undef_type;
+            printf("Line %d, column %d: Cannot find symbol %s\n", getchild(print_node, 0)->token_line, getchild(print_node, 0)->token_column, getchild(print_node, 0)->token);
+            return;
+        }
+        getchild(print_node, 0)->type = definition->type;
+    } else {
+        getchild(print_node, 0)->type = category_to_type2[getchild(print_node, 0)->category];
+    }
+}
 
 void check_Return(struct node *return_node, struct symbol_list *symbol_scope) {
     // TODO
@@ -174,8 +159,13 @@ void check_Statement(struct node *statement, struct symbol_list *symbol_list) {
     } else if (statement->category == Return) {
         check_Return(statement, symbol_list);
         // TODO
+
+    } else if (statement->category == Print) {
+        check_Print(statement, symbol_list);
+        
     } else if (statement->category == If) {
         check_If(statement, symbol_list);
+
     }
 }
 

@@ -20,6 +20,7 @@ struct symbol_list {
 //void check_FuncDecl(struct node *decleration);
 //void check_VarDecl(struct node *decleration);
 
+void check_If(struct node *if_node, struct symbol_list *symbol_scope);
 void check_Return(struct node *return_node, struct symbol_list *symbol_scope);
 void check_Assign(struct node *assign, struct symbol_list *symbol_scope);
 void check_Call(struct node *call, struct symbol_list *symbol_list);
