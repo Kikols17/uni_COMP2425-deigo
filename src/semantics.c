@@ -92,6 +92,32 @@ const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 //    check_expression(getchild(function, 2), scope);
 //    /* ToDo: scope should be free'd */
 //}
+
+//void check_Print(struct node *print, struct symbol_list *symbol_list) {
+//
+//}
+
+void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
+    // check variable
+    struct symbol_list *definition = search_symbol(symbol_scope, getchild(assign, 0)->token, 1);
+    if (definition!=NULL) {
+        getchild(assign, 0)->type = definition->type;
+    } else {
+        getchild(assign, 0)->type = undef_type;
+        printf("Line %d, column %d: Cannot find symbol %s\n", getchild(assign, 0)->token_line, getchild(assign, 0)->token_column, getchild(assign, 0)->token);
+    }
+
+    // check statement
+    check_Statement(getchild(assign, 1), symbol_scope);
+    
+    // check if assign is legal
+    if (getchild(assign, 0)->type != getchild(assign, 1)->type) {
+        printf("Line %d, column %d: Operator = cannot be applied to types %s, %s\n", assign->token_line, assign->token_column, type_names2[getchild(assign, 0)->type], type_names2[getchild(assign, 1)->type]);
+    }
+
+
+}
+
 void check_Call(struct node *call, struct symbol_list *symbol_list) {
     struct symbol_list *definition = search_symbol(symbol_list, getchild(call, 0)->token, 10);
     if (definition!=NULL  &&  definition->node->category==FuncDecl) {
@@ -134,6 +160,10 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
 void check_Statement(struct node *statement, struct symbol_list *symbol_list) {
     if (statement->category == Call) {
         check_Call(statement, symbol_list);
+
+    } else if (statement->category == Assign) {
+        check_Assign(statement, symbol_list);
+
     }
 }
 
@@ -182,7 +212,7 @@ void check_FuncBody(struct node *body, struct symbol_list *symbol_func) {
     }
 }
 
-void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_scope) {
+void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_global_scope) {
     if (declaration==NULL) {
         return;
     }
@@ -211,31 +241,31 @@ void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_scope) 
     // check header
     // check if function symbol already exists
     struct symbol_list *global_entry;
-    if (search_symbol(symbol_table, identifier_node->token, 1)) {
+    if (search_symbol(symbol_global_scope, identifier_node->token, 1)) {
         printf("Line %d, column %d: Symbol %s already defined\n", identifier_node->token_line, identifier_node->token_column, identifier_node->token);
         return;
     } else {
         // add function symbol to global table
-        global_entry = insert_symbol(symbol_table, identifier_node->token, category_to_type2[return_node->category], declaration);
+        global_entry = insert_symbol(symbol_global_scope, identifier_node->token, category_to_type2[return_node->category], declaration);
     }
 
     // create scope
-    struct symbol_list *symbol_func = (struct symbol_list *) malloc(sizeof(struct symbol_list));
-    symbol_func->identifier = strdup(global_entry->identifier);
-    symbol_func->parent_scope = symbol_scope;
-    symbol_func->next = NULL;
+    struct symbol_list *symbol_scope = (struct symbol_list *) malloc(sizeof(struct symbol_list));
+    symbol_scope->identifier = strdup(global_entry->identifier);
+    symbol_scope->parent_scope = symbol_global_scope;
+    symbol_scope->next = NULL;
 
-    global_entry->child_scope = symbol_func;
+    global_entry->child_scope = symbol_scope;
 
     // add return symbol
-    insert_symbol(symbol_func, "return", global_entry->type, NULL);    // TODO, node
+    insert_symbol(symbol_scope, "return", global_entry->type, NULL);    // TODO, node
 
     // check the params
-    check_FuncParams(paramdecl_node, symbol_func);
+    check_FuncParams(paramdecl_node, symbol_scope);
 
 
     // check body
-    check_FuncBody(funcbody_node, symbol_func);
+    check_FuncBody(funcbody_node, symbol_scope);
 
     
 }
@@ -333,6 +363,8 @@ struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, i
             return symbol;
         }
     }
+    printf("looking up\n");
+    //printf("");
     return search_symbol(table->parent_scope, identifier, depth-1);
 }
 

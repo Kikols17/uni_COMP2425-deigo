@@ -4,12 +4,6 @@
 #include <stdbool.h>
 #include "ast.h"
 
-//void check_expression(struct node *expression, struct symbol_list *scope);
-//void check_parameters(struct node *parameters, struct symbol_list *scope);
-//void check_FuncDecl(struct node *decleration);
-//void check_VarDecl(struct node *decleration);
-int check_program(struct node *program);
-
 struct symbol_list {
     char *identifier;
     enum type type;
@@ -20,6 +14,16 @@ struct symbol_list {
     struct symbol_list *parent_scope;
     struct symbol_list *next;
 };
+
+//void check_expression(struct node *expression, struct symbol_list *scope);
+//void check_parameters(struct node *parameters, struct symbol_list *scope);
+//void check_FuncDecl(struct node *decleration);
+//void check_VarDecl(struct node *decleration);
+void check_Statement(struct node *statement, struct symbol_list *symbol_list);
+
+int check_program(struct node *program);
+
+
 
 struct symbol_list *insert_symbol(struct symbol_list *symbol_table, char *identifier, enum type type, struct node *node);
 struct symbol_list *search_symbol(struct symbol_list *symbol_table, char *identifier, int depth);
