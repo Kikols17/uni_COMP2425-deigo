@@ -139,10 +139,10 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
     if (call_param!=NULL) {
         printf("%s", type_names2[category_to_type2[call_param->node->category]]);
         call_param->node->type = category_to_type2[call_param->node->category];
-    }
-    while ((call_param=call_param->next)!=NULL) {
-        printf(",%s", type_names2[category_to_type2[call_param->node->category]]);
-        call_param->node->type = category_to_type2[call_param->node->category];
+        while ((call_param=call_param->next)!=NULL) {
+            printf(",%s", type_names2[category_to_type2[call_param->node->category]]);
+            call_param->node->type = category_to_type2[call_param->node->category];
+        }
     }
     printf(")\n");
     call->type = undef_type;
@@ -157,12 +157,11 @@ void check_Statement(struct node *statement, struct symbol_list *symbol_list) {
         check_Assign(statement, symbol_list);
 
     } else if (statement->category == Return) {
-        check_Return(statement, symbol_list);
-        // TODO
+        check_Return(statement, symbol_list);       // TODO
 
     } else if (statement->category == Print) {
         check_Print(statement, symbol_list);
-        
+
     } else if (statement->category == If) {
         check_If(statement, symbol_list);
 
