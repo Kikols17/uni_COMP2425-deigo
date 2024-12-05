@@ -10,7 +10,7 @@ struct symbol_list *symbol_table;
 
 const char *category_names2[] = CATEGORY_NAMES;
 const char *type_names2[] = TYPE_NAMES;
-const char category_to_type2[] = CATEGORY_TO_TYPE;
+const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 
 
 //void check_expression(struct node *expression, struct symbol_list *scope) {
@@ -93,15 +93,42 @@ const char category_to_type2[] = CATEGORY_TO_TYPE;
 //    /* ToDo: scope should be free'd */
 //}
 void check_Call(struct node *call, struct symbol_list *symbol_list) {
-    struct symbol_list *definition = search_symbol(symbol_list, getchild(call, 0)->token, -1);
-    if (definition==NULL) {
-        printf("Line %d, column %d: Cannot find symbol %s\n", getchild(call, 0)->token_line, getchild(call, 0)->token_column, getchild(call, 0)->token);
-        call->type = undef_type;
-        getchild(call, 0)->type = undef_type;
-    } else {
-        call->type = definition->type;
-        getchild(call, 0)->type = definition->type;
+    struct symbol_list *definition = search_symbol(symbol_list, getchild(call, 0)->token, 10);
+    if (definition!=NULL  &&  definition->node->category==FuncDecl) {
+
+        // check if the input params match
+        bool match = true;
+        struct node_list *def_param = definition->node->children->next->next;
+        struct node_list *call_param = call->children->next->next;
+        while (def_param!=NULL && call_param!=NULL) {
+            if (def_param->node->category!=call_param->node->category) {
+                match = false;
+                break;
+            }
+            def_param = def_param->next;
+            call_param = call_param->next;
+        }
+        if (def_param!=NULL || call_param!=NULL) {
+            // different number of nodes
+            match = false;
+        }
+        if (match) {
+            call->type = definition->type;
+            getchild(call, 0)->type = definition->type;
+            return;
+        }
     }
+    printf("Line %d, column %d: Cannot find symbol %s", getchild(call, 0)->token_line, getchild(call, 0)->token_column, getchild(call, 0)->token);
+    struct node_list *call_param = call->children->next->next;
+    printf("(");
+    if (call_param!=NULL)
+        printf("%s", type_names2[category_to_type2[call_param->node->category]]);
+    while ((call_param=call_param->next)!=NULL) {
+        printf(",%s", type_names2[category_to_type2[call_param->node->category]]);
+    }
+    printf(")\n");
+    call->type = undef_type;
+    getchild(call, 0)->type = undef_type;
 }
 
 void check_Statement(struct node *statement, struct symbol_list *symbol_list) {
