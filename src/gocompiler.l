@@ -167,7 +167,7 @@ reserved    "++"|"--"|"break"|"case"|"chan"|"const"|"continue"|"default"|"defer"
 
 {octalsuf}({octal})+                        { add_semicolon = 1; if (lex_mode) { printf("NATURAL(%s)\n", yytext); }             if (yacc_mode) { PASS_TOKEN();          return NATURAL; } }
 {hexsuf}({hex})+                            { add_semicolon = 1; if (lex_mode) { printf("NATURAL(%s)\n", yytext); }             if (yacc_mode) { PASS_TOKEN();          return NATURAL; } }
-{octalsuf}{octal}*{noctal}+({octal}|{noctal})*  { add_semicolon = 1; printf("Line %d, column %d: invalid octal constant (%s)\n", token_beginline, token_begincolumn, yytext); }
+{octalsuf}{octal}*{noctal}+({octal}|{noctal})*  { add_semicolon = 0; printf("Line %d, column %d: invalid octal constant (%s)\n", token_beginline, token_begincolumn, yytext); }
 {digit}+                                    { add_semicolon = 1; if (lex_mode) { printf("NATURAL(%s)\n", yytext); }             if (yacc_mode) { PASS_TOKEN();          return NATURAL; } }
 
 
