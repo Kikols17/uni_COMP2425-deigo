@@ -12,6 +12,7 @@ struct node *newnode(enum category category, char *token) {
     struct node *new = malloc(sizeof(struct node));
     new->category = category;
     new->token = token;
+    new->type = EMPTY;
     new->children = malloc(sizeof(struct node_list));
     new->children->node = NULL;
     new->children->next = NULL;
@@ -56,9 +57,15 @@ void show(struct node *node, int depth) {
     }    
     // Print the category and the token (if it exists)
     if(node->token == NULL) {
-        printf("%s\n", category_names[node->category]);
+        printf("%s", category_names[node->category]);
     } else {
-        printf("%s(%s)\n", category_names[node->category], node->token);
+        printf("%s(%s)", category_names[node->category], node->token);
+    }
+
+    if (node->type != EMPTY) {
+        printf(" - %s\n", type_names[node->type]);
+    } else {
+        printf("\n");
     }
     
     // Visit all children

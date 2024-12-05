@@ -6,8 +6,8 @@
 
 //void check_expression(struct node *expression, struct symbol_list *scope);
 //void check_parameters(struct node *parameters, struct symbol_list *scope);
-void check_FuncDecl(struct node *decleration);
-void check_VarDecl(struct node *decleration);
+//void check_FuncDecl(struct node *decleration);
+//void check_VarDecl(struct node *decleration);
 int check_program(struct node *program);
 
 struct symbol_list {
@@ -22,7 +22,7 @@ struct symbol_list {
 };
 
 struct symbol_list *insert_symbol(struct symbol_list *symbol_table, char *identifier, enum type type, struct node *node);
-struct symbol_list *search_symbol(struct symbol_list *symbol_table, char *identifier);
+struct symbol_list *search_symbol(struct symbol_list *symbol_table, char *identifier, int depth);
 void show_symbol_table();
 
 char *show_functionparameters(struct symbol_list *symbol);

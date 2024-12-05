@@ -92,6 +92,32 @@ const char category_to_type2[] = CATEGORY_TO_TYPE;
 //    check_expression(getchild(function, 2), scope);
 //    /* ToDo: scope should be free'd */
 //}
+void check_Call(struct node *call, struct symbol_list *symbol_list) {
+    struct symbol_list *definition = search_symbol(symbol_list, getchild(call, 0)->token, -1);
+    if (definition==NULL) {
+        printf("Line %d, column %d: Cannot find symbol %s\n", getchild(call, 0)->token_line, getchild(call, 0)->token_column, getchild(call, 0)->token);
+        call->type = undef_type;
+        getchild(call, 0)->type = undef_type;
+    } else {
+        call->type = definition->type;
+        getchild(call, 0)->type = definition->type;
+    }
+}
+
+void check_Statement(struct node *statement, struct symbol_list *symbol_list) {
+    if (statement->category == Call) {
+        check_Call(statement, symbol_list);
+    }
+}
+
+void check_VarDecl(struct node *vardecl, struct symbol_list *symbol_func) {
+    if (search_symbol(symbol_func, getchild(vardecl, 1)->token, 1)!=NULL) {
+        printf("Line %d, column %d: Symbol %s already defined\n", getchild(vardecl, 1)->token_line, getchild(vardecl, 1)->token_column, getchild(vardecl, 1)->token);
+    } else {
+        insert_symbol(symbol_func, getchild(vardecl, 1)->token, category_to_type2[getchild(vardecl, 0)->category], vardecl);
+    }
+}
+
 void check_FuncParams(struct node *params, struct symbol_list *symbol_func) {
     struct node_list *child = params->children;
     struct symbol_list *new_entry;
@@ -100,7 +126,7 @@ void check_FuncParams(struct node *params, struct symbol_list *symbol_func) {
 
     while ((child = child->next) != NULL) {
         // find if symbol already exists
-        already_exists = search_symbol(symbol_func, getchild(child->node, 1)->token);
+        already_exists = search_symbol(symbol_func, getchild(child->node, 1)->token, 1);
         // dont care if it already exists, add it anyway, but mark it as "is_invalid" to not display it
         new_entry = insert_symbol(symbol_func, getchild(child->node, 1)->token, category_to_type2[getchild(child->node, 0)->category], child->node);
         if (new_entry!=NULL) {
@@ -114,19 +140,22 @@ void check_FuncParams(struct node *params, struct symbol_list *symbol_func) {
 }
 
 void check_FuncBody(struct node *body, struct symbol_list *symbol_func) {
+    /* Body only has VarDecl or Statements */
     struct node_list *child = body->children;
     while ((child=child->next) != NULL) {
         if (child->node->category == VarDecl) {
-            if (search_symbol(symbol_func, getchild(child->node, 1)->token)!=NULL) {
-                printf("Line %d, column %d: Symbol %s already defined\n", getchild(child->node, 1)->token_line, getchild(child->node, 1)->token_column, getchild(child->node, 1)->token);
-            } else {
-                insert_symbol(symbol_func, getchild(child->node, 1)->token, category_to_type2[getchild(child->node, 0)->category], child->node);
-            }
+            // var decl
+            check_VarDecl(child->node, symbol_func);
+
+        } else {
+            // statement
+            check_Statement(child->node, symbol_func);
+
         }
     }
 }
 
-void check_FuncDecl(struct node *declaration) {
+void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_scope) {
     if (declaration==NULL) {
         return;
     }
@@ -155,7 +184,7 @@ void check_FuncDecl(struct node *declaration) {
     // check header
     // check if function symbol already exists
     struct symbol_list *global_entry;
-    if (search_symbol(symbol_table, identifier_node->token)) {
+    if (search_symbol(symbol_table, identifier_node->token, 1)) {
         printf("Line %d, column %d: Symbol %s already defined\n", identifier_node->token_line, identifier_node->token_column, identifier_node->token);
         return;
     } else {
@@ -166,7 +195,7 @@ void check_FuncDecl(struct node *declaration) {
     // create scope
     struct symbol_list *symbol_func = (struct symbol_list *) malloc(sizeof(struct symbol_list));
     symbol_func->identifier = strdup(global_entry->identifier);
-    symbol_func->parent_scope = global_entry;
+    symbol_func->parent_scope = symbol_scope;
     symbol_func->next = NULL;
 
     global_entry->child_scope = symbol_func;
@@ -184,26 +213,26 @@ void check_FuncDecl(struct node *declaration) {
     
 }
 
-void check_VarDecl(struct node *declaration) {
-    if (declaration==NULL) {
-        return;
-    }
-
-    // get the info needed
-    struct node *type_node, *identifier_node;
-    type_node = getchild(declaration, 0);
-    identifier_node = getchild(declaration, 1);
-
-    // check if var symbol already exists
-    if (search_symbol(symbol_table, identifier_node->token)) {
-        printf("Line %d, column %d: Symbol %s already defined\n", identifier_node->token_line, identifier_node->token_column, identifier_node->token);
-        return;
-    } else {
-        // add global variable symbol to global table
-        insert_symbol(symbol_table, identifier_node->token, category_to_type2[type_node->category], declaration);
-    }
-
-}
+//void check_VarDecl(struct node *declaration) {
+//    if (declaration==NULL) {
+//        return;
+//    }
+//
+//    // get the info needed
+//    struct node *type_node, *identifier_node;
+//    type_node = getchild(declaration, 0);
+//    identifier_node = getchild(declaration, 1);
+//
+//    // check if var symbol already exists
+//    if (search_symbol(symbol_table, identifier_node->token)) {
+//        printf("Line %d, column %d: Symbol %s already defined\n", identifier_node->token_line, identifier_node->token_column, identifier_node->token);
+//        return;
+//    } else {
+//        // add global variable symbol to global table
+//        insert_symbol(symbol_table, identifier_node->token, category_to_type2[type_node->category], declaration);
+//    }
+//
+//}
 
 
 
@@ -225,9 +254,9 @@ int check_program(struct node *program) {
 
     while((child = child->next) != NULL) {
         if (child->node->category == FuncDecl) {
-            check_FuncDecl(child->node);
+            check_FuncDecl(child->node, symbol_table);
         } else if (child->node->category == VarDecl) {
-            check_VarDecl(child->node);
+            check_VarDecl(child->node, symbol_table);
         }
         //printf("category: %s\n", category_names2[child->node->category]);
     }
@@ -264,8 +293,11 @@ struct symbol_list *insert_symbol(struct symbol_list *table, char *identifier, e
 }
 
 // look up a symbol by its identifier (not only in current table, but also all parent tables)
-struct symbol_list *search_symbol(struct symbol_list *table, char *identifier) {
+struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, int depth) {
     if (table==NULL) {
+        return NULL;
+    }
+    if (depth==0) {
         return NULL;
     }
     struct symbol_list *symbol;
@@ -274,7 +306,7 @@ struct symbol_list *search_symbol(struct symbol_list *table, char *identifier) {
             return symbol;
         }
     }
-    return search_symbol(table->parent_scope, identifier);
+    return search_symbol(table->parent_scope, identifier, depth-1);
 }
 
 
