@@ -5,6 +5,7 @@ IDENTIFIER(id3)
 SEMICOLON
 STRLIT("string\n")
 SEMICOLON
+Line 6, column 2: invalid escape sequence (\a)
 STRLIT("string2\n")
 SEMICOLON
 Line 7, column 8: invalid escape sequence (\N)
