@@ -97,6 +97,10 @@ const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 //
 //}
 
+void check_Return(struct node *return_node, struct symbol_list *symbol_scope) {
+    // TODO
+}
+
 void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
     // check variable
     struct symbol_list *definition = search_symbol(symbol_scope, getchild(assign, 0)->token, 1);
@@ -147,10 +151,13 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
     printf("Line %d, column %d: Cannot find symbol %s", getchild(call, 0)->token_line, getchild(call, 0)->token_column, getchild(call, 0)->token);
     struct node_list *call_param = call->children->next->next;
     printf("(");
-    if (call_param!=NULL)
+    if (call_param!=NULL) {
         printf("%s", type_names2[category_to_type2[call_param->node->category]]);
+        call_param->node->type = category_to_type2[call_param->node->category];
+    }
     while ((call_param=call_param->next)!=NULL) {
         printf(",%s", type_names2[category_to_type2[call_param->node->category]]);
+        call_param->node->type = category_to_type2[call_param->node->category];
     }
     printf(")\n");
     call->type = undef_type;
@@ -164,6 +171,11 @@ void check_Statement(struct node *statement, struct symbol_list *symbol_list) {
     } else if (statement->category == Assign) {
         check_Assign(statement, symbol_list);
 
+    } else if (statement->category == Return) {
+        check_Return(statement, symbol_list);
+        // TODO
+    } else if (statement->category == If) {
+        check_If(statement, symbol_list);
     }
 }
 
@@ -363,8 +375,6 @@ struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, i
             return symbol;
         }
     }
-    printf("looking up\n");
-    //printf("");
     return search_symbol(table->parent_scope, identifier, depth-1);
 }
 

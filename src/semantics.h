@@ -19,6 +19,19 @@ struct symbol_list {
 //void check_parameters(struct node *parameters, struct symbol_list *scope);
 //void check_FuncDecl(struct node *decleration);
 //void check_VarDecl(struct node *decleration);
+
+void check_Return(struct node *return_node, struct symbol_list *symbol_scope);
+void check_Assign(struct node *assign, struct symbol_list *symbol_scope);
+void check_Call(struct node *call, struct symbol_list *symbol_list);
+
+void check_Statement(struct node *statement, struct symbol_list *symbol_list);
+
+void check_VarDecl(struct node *vardecl, struct symbol_list *symbol_func);
+
+void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_global_scope);
+void check_FuncParams(struct node *params, struct symbol_list *symbol_func);
+void check_FuncBody(struct node *body, struct symbol_list *symbol_func);
+
 void check_Statement(struct node *statement, struct symbol_list *symbol_list);
 
 int check_program(struct node *program);
