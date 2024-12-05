@@ -113,6 +113,19 @@ void check_FuncParams(struct node *params, struct symbol_list *symbol_func) {
     }
 }
 
+void check_FuncBody(struct node *body, struct symbol_list *symbol_func) {
+    struct node_list *child = body->children;
+    while ((child=child->next) != NULL) {
+        if (child->node->category == VarDecl) {
+            if (search_symbol(symbol_func, getchild(child->node, 1)->token)!=NULL) {
+                printf("Line %d, column %d: Symbol %s already defined\n", getchild(child->node, 1)->token_line, getchild(child->node, 1)->token_column, getchild(child->node, 1)->token);
+            } else {
+                insert_symbol(symbol_func, getchild(child->node, 1)->token, category_to_type2[getchild(child->node, 0)->category], child->node);
+            }
+        }
+    }
+}
+
 void check_FuncDecl(struct node *declaration) {
     if (declaration==NULL) {
         return;
@@ -123,9 +136,10 @@ void check_FuncDecl(struct node *declaration) {
     //      if it has 2, they are: id, funcparams
 
     // get the info needed
-    struct node *funcheader_node;
+    struct node *funcheader_node, *funcbody_node;
     struct node *identifier_node, *return_node, *paramdecl_node;
     funcheader_node = getchild(declaration, 0);
+    funcbody_node = getchild(declaration, 1);
     identifier_node = getchild(funcheader_node, 0);
     return_node = getchild(funcheader_node, 1);
     // if there is no return node, set it to paramdecl, and return_node=None
@@ -162,6 +176,10 @@ void check_FuncDecl(struct node *declaration) {
 
     // check the params
     check_FuncParams(paramdecl_node, symbol_func);
+
+
+    // check body
+    check_FuncBody(funcbody_node, symbol_func);
 
     
 }
