@@ -18,3 +18,12 @@ STRLIT("o melhor numero e")
 Line 12, column 21: illegal character (:)
 NATURAL(42)
 SEMICOLON
+IDENTIFIER(o)
+MINUS
+RBRACE
+PLUS
+NATURAL(0)
+ELSE
+RPAR
+AND
+NOT

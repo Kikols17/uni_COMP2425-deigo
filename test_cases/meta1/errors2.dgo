@@ -1,8 +1,10 @@
-"string 1 \f" // comentario1
-id1	/* // comentario2 */
+"string 1 \f" // ATENÇÃO: o gocompiler deve receber e processar a flag -l
+id1	AA\\VV	/* // comentario2 */
 id2 " unterminated string
-"string"
+"string" .
 id3  /*
 comentario */
-id4 /*  unterminated 
+08 0288 0287820
+id4
+     /*  unterminated 
 comment

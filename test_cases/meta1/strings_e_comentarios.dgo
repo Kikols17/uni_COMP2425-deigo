@@ -3,7 +3,7 @@
 id /*comentario       */ id2;
 id3 //comentario linha
 "string\n";
-"string2\n"
+"\a\\^" "string2\n"
 "string\N"
 "string\z"
 """"
