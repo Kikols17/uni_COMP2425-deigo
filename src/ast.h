@@ -25,6 +25,7 @@ void show(struct node *node, int depth);
 void reversenode(struct node* node);
 void addchild_allchildren(struct node *parent, struct node *child);
 int countchildren(struct node *node);
+void clean_tree(struct node *program);
 
 
 #endif
