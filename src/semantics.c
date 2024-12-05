@@ -92,6 +92,26 @@ const char category_to_type2[] = CATEGORY_TO_TYPE;
 //    check_expression(getchild(function, 2), scope);
 //    /* ToDo: scope should be free'd */
 //}
+void check_FuncParams(struct node *params, struct symbol_list *symbol_func) {
+    struct node_list *child = params->children;
+    struct symbol_list *new_entry;
+
+    bool already_exists = false;
+
+    while ((child = child->next) != NULL) {
+        // find if symbol already exists
+        already_exists = search_symbol(symbol_func, getchild(child->node, 1)->token);
+        // dont care if it already exists, add it anyway, but mark it as "is_invalid" to not display it
+        new_entry = insert_symbol(symbol_func, getchild(child->node, 1)->token, category_to_type2[getchild(child->node, 0)->category], child->node);
+        if (new_entry!=NULL) {
+            new_entry->is_param = true;
+            if (already_exists) {
+                printf("Line %d, column %d: Symbol %s already defined\n", getchild(child->node, 1)->token_line, getchild(child->node, 1)->token_column, getchild(child->node, 1)->token);
+                new_entry->is_invalid = true;
+            }
+        }
+    }
+}
 
 void check_FuncDecl(struct node *declaration) {
     if (declaration==NULL) {
@@ -120,13 +140,28 @@ void check_FuncDecl(struct node *declaration) {
 
     // check header
     // check if function symbol already exists
+    struct symbol_list *global_entry;
     if (search_symbol(symbol_table, identifier_node->token)) {
         printf("Line %d, column %d: Symbol %s already defined\n", identifier_node->token_line, identifier_node->token_column, identifier_node->token);
         return;
     } else {
         // add function symbol to global table
-        insert_symbol(symbol_table, identifier_node->token, category_to_type2[return_node->category], declaration);
+        global_entry = insert_symbol(symbol_table, identifier_node->token, category_to_type2[return_node->category], declaration);
     }
+
+    // create scope
+    struct symbol_list *symbol_func = (struct symbol_list *) malloc(sizeof(struct symbol_list));
+    symbol_func->identifier = strdup(global_entry->identifier);
+    symbol_func->parent_scope = global_entry;
+    symbol_func->next = NULL;
+
+    global_entry->child_scope = symbol_func;
+
+    // add return symbol
+    insert_symbol(symbol_func, "return", global_entry->type, NULL);    // TODO, node
+
+    // check the params
+    check_FuncParams(paramdecl_node, symbol_func);
 
     
 }
@@ -188,9 +223,8 @@ struct symbol_list *insert_symbol(struct symbol_list *table, char *identifier, e
     new->identifier = strdup(identifier);
     new->type = type;
     new->node = node;
-    for (int i=0; i<16; i++) {
-        new->scopes[i] = NULL;
-    }
+    new->is_param = false;
+    new->child_scope = NULL;
     new->parent_scope = NULL;
     new->next = NULL;
     struct symbol_list *symbol = table;
@@ -199,8 +233,12 @@ struct symbol_list *insert_symbol(struct symbol_list *table, char *identifier, e
             symbol->next = new;    /* insert new symbol at the tail of the list */
             break;
         } else if(strcmp(symbol->next->identifier, identifier) == 0) {
-            free(new);
-            return NULL;           /* return NULL if symbol is already inserted */
+            // if i want to double insert, i do
+            #ifdef VERBOSE
+                printf("[VERBOSE] CUIDADO, DOUBLE INSERT NA TABELA \"%s\" DE NODE \"%s\"\n", table->identifier, symbol->identifier);
+            #endif
+            //free(new);
+            //return NULL;           /* return NULL if symbol is already inserted */
         }
         symbol = symbol->next;
     }
@@ -223,6 +261,7 @@ struct symbol_list *search_symbol(struct symbol_list *table, char *identifier) {
 
 
 void show_symbol_table() {
+    // global scope
     struct symbol_list *symbol;
     printf("===== Global Symbol Table =====\n");
     for(symbol = symbol_table->next; symbol != NULL; symbol = symbol->next) {
@@ -233,12 +272,31 @@ void show_symbol_table() {
     }
     printf("\n");
 
+    // now for every scope
+    struct symbol_list *scope;
     for(symbol = symbol_table->next; symbol != NULL; symbol = symbol->next) {
         if (symbol->node->category != FuncDecl) {
             continue;
         }
 
-        printf("===== Function %s%s Symbol Table =====\n", symbol->identifier, show_functionparameters(symbol));
+        scope = symbol->child_scope;
+        char *paramtypes = show_functionparameters(symbol);
+        printf("===== Function %s%s Symbol Table =====\n", scope->identifier, paramtypes);
+        free(paramtypes);
+
+        struct symbol_list *symbol2;
+        for(symbol2 = scope->next; symbol2 != NULL; symbol2 = symbol2->next) {
+            if (symbol2->is_invalid) {
+                continue;
+            }
+            printf("%s\t\t%s", symbol2->identifier, type_names2[symbol2->type]);
+            if (symbol2->is_param) {
+                printf("\tparam\n");
+            } else {
+                printf("\n");
+            }
+        }
+
         printf("\n");
     }
 }
@@ -253,21 +311,12 @@ char *show_functionparameters(struct symbol_list *symbol) {
     if (symbol->node->category == FuncDecl) {
         // When is Function
         sprintf(result+strlen(result), "(");
-        struct node *header = getchild(symbol->node, 0);
-        //printf("%s\n", category_names2[header->category]);
-        // cant be sure if the FuncParams is the third or second child, so do this:
-        struct node *params = getchild(header, 1);
-        //printf("%s\n", category_names2[params->category]);
-        if (params->category != FuncParams) {
-            params = getchild(header, 2);
-            //printf("%s\n", category_names2[params->category]);
-        }
-        //printf("%s\n", category_names2[params->category]);
 
-        struct node_list *child = params->children;
-        while ((child = child->next) != NULL) {
-            struct node *cur_param_type = getchild(child->node, 0);
-            sprintf(result+strlen(result), "%s,", type_names2[category_to_type2[cur_param_type->category]]);
+        struct symbol_list *scope = symbol->child_scope;
+        for(struct symbol_list *symbol2 = scope->next; symbol2 != NULL; symbol2 = symbol2->next) {
+            if (symbol2->is_param) {
+                sprintf(result+strlen(result), "%s,", type_names2[symbol2->type]);
+            }
         }
 
         if (result[strlen(result)-1]==',') {

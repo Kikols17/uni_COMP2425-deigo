@@ -1,6 +1,7 @@
 #ifndef _SEMANTICS_H
 #define _SEMANTICS_H
 
+#include <stdbool.h>
 #include "ast.h"
 
 //void check_expression(struct node *expression, struct symbol_list *scope);
@@ -13,7 +14,9 @@ struct symbol_list {
     char *identifier;
     enum type type;
     struct node *node;
-    struct symbol_list *scopes[16];     // pointers to the scopes inside this symbol entry
+    bool is_param;
+    bool is_invalid;
+    struct symbol_list *child_scope;
     struct symbol_list *parent_scope;
     struct symbol_list *next;
 };
