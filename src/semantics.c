@@ -13,23 +13,55 @@ const char *type_names2[] = TYPE_NAMES;
 const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 
 
-//void check_expression(struct node *expression, struct symbol_list *symbol_scope) {
-//    switch(expression->category) {
-//        case Identifier:
-//            break;
-//        case Natural:
-//            break;
-//        case Decimal:
-//            break;
-//        case Add:
-//        case Sub:
-//        case Mul:
-//        case Div:
-//            break;
-//        default:
-//            break;
-//    }
-//}
+void check_expression(struct node *expression, struct symbol_list *symbol_scope) {
+    switch(expression->category) {
+        case Identifier:
+            // check if has been declared
+            ;   // ?? WHY
+            struct symbol_list *declaration = search_symbol(symbol_scope, expression->token, -1, false);
+            if (declaration==NULL) {
+                printf("Line %d, column %d: Cannot find symbol %s\n", expression->token_line, expression->token_column, expression->token);
+                expression->type = undef_type;
+            } else {
+                expression->type = declaration->type;
+            }
+            
+            break;
+
+        case Int:
+        case Natural:
+        case Float32:
+        case Decimal:
+        case Bool:
+        case String:
+        case StrLit:
+            expression->type = category_to_type2[expression->category];
+            break;
+        
+        case Add:
+        case Sub:
+        case Mul:
+        case Div:
+            ;       // ????
+            struct node *left_expr = getchild(expression, 0);
+            struct node *right_expr = getchild(expression, 1);
+
+            check_expression(left_expr, symbol_scope);
+            check_expression(right_expr, symbol_scope);
+
+            if (left_expr->type == right_expr->type) {
+                expression->type = left_expr->type;
+            } else {
+                printf("Line %d, column %d: Operator %s cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, expression->token, type_names2[left_expr->type], type_names2[right_expr->type]);
+                expression->type = undef_type;
+            }
+            break;
+
+        default:
+            check_Statement(expression, symbol_scope);
+            break;
+    }
+}
 
 //void check_parameters(struct node *parameters, struct symbol_list *scope) {
 //    struct node_list *parameter = parameters->children;
@@ -69,7 +101,7 @@ void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
     struct symbol_list *definition;
     if (getchild(print_node, 0)->category == Identifier) {
         // if is identifier, make sure it has been defined
-        definition = search_symbol(symbol_scope, getchild(print_node, 0)->token, 10);
+        definition = search_symbol(symbol_scope, getchild(print_node, 0)->token, -1, false);
         if (definition==NULL) {
             // was not defined
             getchild(print_node, 0)->type = undef_type;
@@ -78,7 +110,8 @@ void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
         }
         getchild(print_node, 0)->type = definition->type;
     } else {
-        getchild(print_node, 0)->type = category_to_type2[getchild(print_node, 0)->category];
+        //getchild(print_node, 0)->type = category_to_type2[getchild(print_node, 0)->category];
+        check_expression(getchild(print_node, 0), symbol_scope);
     }
 }
 
@@ -88,7 +121,7 @@ void check_Return(struct node *return_node, struct symbol_list *symbol_scope) {
 
 void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
     // check variable
-    struct symbol_list *definition = search_symbol(symbol_scope, getchild(assign, 0)->token, 1);
+    struct symbol_list *definition = search_symbol(symbol_scope, getchild(assign, 0)->token, -1, false);
     if (definition!=NULL) {
         getchild(assign, 0)->type = definition->type;
     } else {
@@ -97,19 +130,22 @@ void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
     }
 
     // check statement
-    check_Statement(getchild(assign, 1), symbol_scope);
+    check_expression(getchild(assign, 1), symbol_scope);
     
     // check if assign is legal
     if (getchild(assign, 0)->type != getchild(assign, 1)->type) {
         printf("Line %d, column %d: Operator = cannot be applied to types %s, %s\n", assign->token_line, assign->token_column, type_names2[getchild(assign, 0)->type], type_names2[getchild(assign, 1)->type]);
-    }
+        assign->type = undef_type;
 
+    } else {
+        assign->type = getchild(assign, 0)->type;
+    }
 
 }
 
 void check_Call(struct node *call, struct symbol_list *symbol_list) {
-    struct symbol_list *definition = search_symbol(symbol_list, getchild(call, 0)->token, 10);
-    if (definition!=NULL  &&  definition->node->category==FuncDecl) {
+    struct symbol_list *definition = search_symbol(symbol_list, getchild(call, 0)->token, -1, true);
+    if (definition!=NULL) {
 
         // check if the input params match
         bool match = true;
@@ -138,10 +174,12 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
     printf("(");
     if (call_param!=NULL) {
         printf("%s", type_names2[category_to_type2[call_param->node->category]]);
-        call_param->node->type = category_to_type2[call_param->node->category];
+        //call_param->node->type = category_to_type2[call_param->node->category];
+        check_expression(call_param->node, symbol_list);
         while ((call_param=call_param->next)!=NULL) {
             printf(",%s", type_names2[category_to_type2[call_param->node->category]]);
-            call_param->node->type = category_to_type2[call_param->node->category];
+            //call_param->node->type = category_to_type2[call_param->node->category];
+            check_expression(call_param->node, symbol_list);
         }
     }
     printf(")\n");
@@ -169,7 +207,7 @@ void check_Statement(struct node *statement, struct symbol_list *symbol_list) {
 }
 
 void check_VarDecl(struct node *vardecl, struct symbol_list *symbol_func) {
-    if (search_symbol(symbol_func, getchild(vardecl, 1)->token, 1)!=NULL) {
+    if (search_symbol(symbol_func, getchild(vardecl, 1)->token, 1, false)!=NULL) {
         printf("Line %d, column %d: Symbol %s already defined\n", getchild(vardecl, 1)->token_line, getchild(vardecl, 1)->token_column, getchild(vardecl, 1)->token);
     } else {
         insert_symbol(symbol_func, getchild(vardecl, 1)->token, category_to_type2[getchild(vardecl, 0)->category], vardecl);
@@ -184,7 +222,7 @@ void check_FuncParams(struct node *params, struct symbol_list *symbol_func) {
 
     while ((child = child->next) != NULL) {
         // find if symbol already exists
-        already_exists = search_symbol(symbol_func, getchild(child->node, 1)->token, 1);
+        already_exists = search_symbol(symbol_func, getchild(child->node, 1)->token, 1, false);
         // dont care if it already exists, add it anyway, but mark it as "is_invalid" to not display it
         new_entry = insert_symbol(symbol_func, getchild(child->node, 1)->token, category_to_type2[getchild(child->node, 0)->category], child->node);
         if (new_entry!=NULL) {
@@ -242,12 +280,13 @@ void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_global_
     // check header
     // check if function symbol already exists
     struct symbol_list *global_entry;
-    if (search_symbol(symbol_global_scope, identifier_node->token, 1)) {
+    if (search_symbol(symbol_global_scope, identifier_node->token, 1, true)) {
         printf("Line %d, column %d: Symbol %s already defined\n", identifier_node->token_line, identifier_node->token_column, identifier_node->token);
         return;
     } else {
         // add function symbol to global table
         global_entry = insert_symbol(symbol_global_scope, identifier_node->token, category_to_type2[return_node->category], declaration);
+        global_entry->is_function = true;
     }
 
     // create scope
@@ -328,6 +367,8 @@ struct symbol_list *insert_symbol(struct symbol_list *table, char *identifier, e
     new->identifier = strdup(identifier);
     new->type = type;
     new->node = node;
+    new->is_function = false;
+    new->is_invalid = false;
     new->is_param = false;
     new->child_scope = NULL;
     new->parent_scope = NULL;
@@ -351,7 +392,7 @@ struct symbol_list *insert_symbol(struct symbol_list *table, char *identifier, e
 }
 
 // look up a symbol by its identifier (not only in current table, but also all parent tables)
-struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, int depth) {
+struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, int depth, bool is_function) {
     if (table==NULL) {
         return NULL;
     }
@@ -361,10 +402,12 @@ struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, i
     struct symbol_list *symbol;
     for(symbol = table->next; symbol != NULL; symbol = symbol->next) {
         if(strcmp(symbol->identifier, identifier) == 0) {
-            return symbol;
+            if (is_function==symbol->is_function) {
+                return symbol;
+            }
         }
     }
-    return search_symbol(table->parent_scope, identifier, depth-1);
+    return search_symbol(table->parent_scope, identifier, depth-1, is_function);
 }
 
 

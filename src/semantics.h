@@ -8,6 +8,7 @@ struct symbol_list {
     char *identifier;
     enum type type;
     struct node *node;
+    bool is_function;
     bool is_param;
     bool is_invalid;
     struct symbol_list *child_scope;
@@ -40,7 +41,7 @@ int check_program(struct node *program);
 
 
 struct symbol_list *insert_symbol(struct symbol_list *symbol_table, char *identifier, enum type type, struct node *node);
-struct symbol_list *search_symbol(struct symbol_list *symbol_table, char *identifier, int depth);
+struct symbol_list *search_symbol(struct symbol_list *symbol_table, char *identifier, int depth, bool is_function);
 void show_symbol_table();
 
 char *show_functionparameters(struct symbol_list *symbol);
