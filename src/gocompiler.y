@@ -258,6 +258,9 @@ FuncBody            : LBRACE VarsAndStatements RBRACE                       {
                         $$ = newnode(FuncBody, NULL);
                         addchild($$, $2);
                     }
+                    | LBRACE error RBRACE                                   {
+                        $$ = newnode(TEMP, NULL);
+                    }
                     ;
 
 
