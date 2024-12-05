@@ -116,7 +116,20 @@ void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
 }
 
 void check_Return(struct node *return_node, struct symbol_list *symbol_scope) {
-    // TODO
+    struct symbol_list *symbol_return = search_symbol(symbol_scope, "return", 1, false);
+    symbol_return->node = return_node;
+    // assume there is always a return symbol (already goofed up if not)
+
+    if (getchild(return_node, 0)==NULL) {
+        if (symbol_return->type != none_type) {
+            printf("Line %d, column %d: Incompatible type void in return statement\n", return_node->token_line, return_node->token_column);
+        }
+    } else {
+        check_expression(getchild(return_node, 0), symbol_scope);
+        if (symbol_return->type != getchild(return_node, 0)->type) {
+            printf("Line %d, column %d: Incompatible type %s in return statement\n", getchild(return_node, 0)->token_line, getchild(return_node, 0)->token_column, type_names2[getchild(return_node, 0)->type]);
+        }
+    }
 }
 
 void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
@@ -195,7 +208,7 @@ void check_Statement(struct node *statement, struct symbol_list *symbol_list) {
         check_Assign(statement, symbol_list);
 
     } else if (statement->category == Return) {
-        check_Return(statement, symbol_list);       // TODO
+        check_Return(statement, symbol_list);
 
     } else if (statement->category == Print) {
         check_Print(statement, symbol_list);
@@ -298,7 +311,7 @@ void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_global_
     global_entry->child_scope = symbol_scope;
 
     // add return symbol
-    insert_symbol(symbol_scope, "return", global_entry->type, NULL);    // TODO, node
+    insert_symbol(symbol_scope, "return", global_entry->type, NULL);    // node is added when we find Return node, no need to look for it now
 
     // check the params
     check_FuncParams(paramdecl_node, symbol_scope);

@@ -12,7 +12,7 @@ struct node *newnode(enum category category, char *token) {
     struct node *new = malloc(sizeof(struct node));
     new->category = category;
     new->token = token;
-    new->type = EMPTY;
+    new->type = none_type;
     new->children = malloc(sizeof(struct node_list));
     new->children->node = NULL;
     new->children->next = NULL;
@@ -62,7 +62,7 @@ void show(struct node *node, int depth) {
         printf("%s(%s)", category_names[node->category], node->token);
     }
 
-    if (node->type != EMPTY) {
+    if (node->type != none_type) {
         printf(" - %s\n", type_names[node->type]);
     } else {
         printf("\n");
