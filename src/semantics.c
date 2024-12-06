@@ -14,6 +14,7 @@ const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 
 
 void check_expression(struct node *expression, struct symbol_list *symbol_scope) {
+    char token_buff = '\0';
     switch(expression->category) {
         case Identifier:
             // check if has been declared
@@ -39,10 +40,15 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             break;
         
         case Add:
+            if (token_buff=='\0') { token_buff = '+'; }
         case Sub:
+            if (token_buff=='\0') { token_buff = '-'; }
         case Mul:
+            if (token_buff=='\0') { token_buff = '*'; }
         case Div:
+            if (token_buff=='\0') { token_buff = '/'; }
         case Mod:
+            if (token_buff=='\0') { token_buff = '%'; }
             ;       // ????
             struct node *left_expr = getchild(expression, 0);
             struct node *right_expr = getchild(expression, 1);
@@ -53,7 +59,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             if (left_expr->type == right_expr->type) {
                 expression->type = left_expr->type;
             } else {
-                printf("Line %d, column %d: Operator %s cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, expression->token, type_names2[left_expr->type], type_names2[right_expr->type]);
+                printf("Line %d, column %d: Operator %c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, token_buff, type_names2[left_expr->type], type_names2[right_expr->type]);
                 expression->type = undef_type;
             }
             break;
