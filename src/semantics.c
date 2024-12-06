@@ -180,6 +180,13 @@ void check_Block(struct node *block_node, struct symbol_list *symbol_scope) {
     }
 }
 
+void check_For(struct node *for_node, struct symbol_list *symbol_scope) {
+    /* getchild(if_node, 0)   -----> condition (check_expression) must be boolean
+     * getchild(if_node, 1)   -----> for body (check_block)
+     */
+
+}
+
 void check_If(struct node *if_node, struct symbol_list *symbol_scope) {
     /* getchild(if_node, 0)   -----> condition (check_expression) must be boolean
      * getchild(if_node, 1)   -----> if body (check_block)
@@ -190,6 +197,9 @@ void check_If(struct node *if_node, struct symbol_list *symbol_scope) {
      **/
 
     check_expression(getchild(if_node, 0), symbol_scope);
+    if (getchild(if_node, 0)->type != bool_type) {
+        printf("Line %d, column %d: Incompatible type %s in if statement\n", getchild(if_node, 0)->token_line, getchild(if_node, 0)->token_column, type_names2[getchild(if_node, 0)->type]);
+    }
 
 
     if (getchild(if_node, 1)!=NULL) {
@@ -366,6 +376,9 @@ void check_Statement(struct node *statement, struct symbol_list *symbol_scope) {
 
     } else if (statement->category == If) {
         check_If(statement, symbol_scope);
+
+    } else if (statement->category == For) {
+        check_For(statement, symbol_scope);
 
     } else if (statement->category == ParseArgs) {
         check_ParseArgs(statement, symbol_scope);
