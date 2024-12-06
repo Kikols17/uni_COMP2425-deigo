@@ -30,6 +30,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             struct symbol_list *declaration = search_symbol(symbol_scope, expression->token, -1, false);
             if (declaration==NULL) {
                 printf("Line %d, column %d: Cannot find symbol %s\n", expression->token_line, expression->token_column, expression->token);
+                semantic_errors++;
                 expression->type = undef_type;
             } else {
                 expression->type = declaration->type;
@@ -81,6 +82,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
             if (!legal) {
                 printf("Line %d, column %d: Operator %c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], type_names2[left_expr->type], type_names2[right_expr->type]);
+                semantic_errors++;
                 expression->type = undef_type;
             } else {
                 expression->type = left_expr->type;
@@ -110,6 +112,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             }
             if (!legal) {
                 printf("Line %d, column %d: Operator %c cannot be applied to type %s\n", expression->token_line, expression->token_column, char_op[0], type_names2[getchild(expression, 0)->type]);
+                semantic_errors++;
                 expression->type = undef_type;
             } else {
                 expression->type = getchild(expression, 0)->type;
@@ -130,6 +133,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             check_expression(right_expr, symbol_scope);
             if (left_expr->type!=bool_type || right_expr->type!=bool_type) {
                 printf("Line %d, column %d: Operator %c%c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], char_op[0], type_names2[left_expr->type], type_names2[right_expr->type]);
+                semantic_errors++;
             }
             expression->type = bool_type;
             break;
@@ -149,6 +153,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
             if (left_expr->type!=right_expr->type || (left_expr->type==undef_type) || (left_expr->type==none_type)) {
                 printf("Line %d, column %d: Operator %c%c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], char_op[0], type_names2[left_expr->type], type_names2[right_expr->type]);
+                semantic_errors++;
             }
             expression->type = bool_type;
             break;
@@ -173,6 +178,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
             if (left_expr->type!=right_expr->type || !(left_expr->type==int_type || left_expr->type==float32_type)) {
                 printf("Line %d, column %d: Operator %c%c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], char_op[1], type_names2[left_expr->type], type_names2[right_expr->type]);
+                semantic_errors++;
             }
             expression->type = bool_type;
             break;
@@ -237,6 +243,7 @@ void check_For(struct node *for_node, struct symbol_list *symbol_scope) {
         check_Block(getchild(for_node, 1), symbol_scope);
         if ((getchild(for_node, 0)->type!=bool_type || getchild(for_node, 0)->type==none_type) || getchild(for_node, 0)->type==undef_type) {
             printf("Line %d, column %d: Incompatible type %s in for statement\n", getchild(for_node, 0)->token_line, getchild(for_node, 0)->token_column, type_names2[getchild(for_node, 0)->type]);
+            semantic_errors++;
         }
 
     } else {
@@ -262,6 +269,7 @@ void check_If(struct node *if_node, struct symbol_list *symbol_scope) {
     check_expression(getchild(if_node, 0), symbol_scope);
     if (getchild(if_node, 0)->type != bool_type) {
         printf("Line %d, column %d: Incompatible type %s in if statement\n", getchild(if_node, 0)->token_line, getchild(if_node, 0)->token_column, type_names2[getchild(if_node, 0)->type]);
+        semantic_errors++;
     }
 
 
@@ -282,6 +290,7 @@ void check_ParseArgs(struct node *parse_args, struct symbol_list *symbol_scope) 
 
     if ((getchild(parse_args, 0)->type!=int_type && getchild(parse_args, 0)->type!=string_type) || getchild(parse_args, 1)->type!=int_type) {
         printf("Line %d, column %d: Operator strconv.Atoi cannot be applied to types %s, %s\n", parse_args->token_line, parse_args->token_column, type_names2[getchild(parse_args, 0)->type], type_names2[getchild(parse_args, 1)->type]);
+        semantic_errors++;
     }
 }
 
@@ -294,6 +303,7 @@ void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
             // was not defined
             getchild(print_node, 0)->type = undef_type;
             printf("Line %d, column %d: Cannot find symbol %s\n", getchild(print_node, 0)->token_line, getchild(print_node, 0)->token_column, getchild(print_node, 0)->token);
+            semantic_errors++;
             return;
         }
         getchild(print_node, 0)->type = definition->type;
@@ -309,13 +319,16 @@ void check_Return(struct node *return_node, struct symbol_list *symbol_scope) {
     // assume there is always a return symbol (already goofed up if not)
 
     if (getchild(return_node, 0)==NULL) {
+        // no params
         if (symbol_return->type != none_type) {
             printf("Line %d, column %d: Incompatible type void in return statement\n", return_node->token_line, return_node->token_column);
+            semantic_errors++;
         }
     } else {
         check_expression(getchild(return_node, 0), symbol_scope);
         if (symbol_return->type != getchild(return_node, 0)->type) {
             printf("Line %d, column %d: Incompatible type %s in return statement\n", getchild(return_node, 0)->token_line, getchild(return_node, 0)->token_column, type_names2[getchild(return_node, 0)->type]);
+            semantic_errors++;
         }
     }
 }
@@ -328,6 +341,7 @@ void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
     } else {
         getchild(assign, 0)->type = undef_type;
         printf("Line %d, column %d: Cannot find symbol %s\n", getchild(assign, 0)->token_line, getchild(assign, 0)->token_column, getchild(assign, 0)->token);
+        semantic_errors++;
     }
 
     // check statement
@@ -336,6 +350,7 @@ void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
     // check if assign is legal
     if (getchild(assign, 0)->type == undef_type || getchild(assign, 0)->type!=getchild(assign, 1)->type) {
         printf("Line %d, column %d: Operator = cannot be applied to types %s, %s\n", assign->token_line, assign->token_column, type_names2[getchild(assign, 0)->type], type_names2[getchild(assign, 1)->type]);
+        semantic_errors++;
     }
     assign->type = getchild(assign, 0)->type;
 
@@ -407,6 +422,7 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
     }
     #endif
     printf("Line %d, column %d: Cannot find symbol %s", getchild(call, 0)->token_line, getchild(call, 0)->token_column, getchild(call, 0)->token);
+    semantic_errors++;
     call_param = call->children->next;
     printf("(");
     if ((call_param=call_param->next)!=NULL) {
@@ -451,6 +467,7 @@ void check_Statement(struct node *statement, struct symbol_list *symbol_scope) {
 void check_VarDecl(struct node *vardecl, struct symbol_list *symbol_func) {
     if (search_symbol(symbol_func, getchild(vardecl, 1)->token, 1, false)!=NULL) {
         printf("Line %d, column %d: Symbol %s already defined\n", getchild(vardecl, 1)->token_line, getchild(vardecl, 1)->token_column, getchild(vardecl, 1)->token);
+        semantic_errors++;
     } else {
         insert_symbol(symbol_func, getchild(vardecl, 1)->token, category_to_type2[getchild(vardecl, 0)->category], vardecl);
     }
@@ -471,6 +488,7 @@ void check_FuncParams(struct node *params, struct symbol_list *symbol_func) {
             new_entry->is_param = true;
             if (already_exists) {
                 printf("Line %d, column %d: Symbol %s already defined\n", getchild(child->node, 1)->token_line, getchild(child->node, 1)->token_column, getchild(child->node, 1)->token);
+                semantic_errors++;
                 new_entry->is_invalid = true;
             }
         }
@@ -522,8 +540,9 @@ void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_global_
     // check header
     // check if function symbol already exists
     struct symbol_list *global_entry;
-    if (search_symbol(symbol_global_scope, identifier_node->token, 1, true)) {
+    if (search_symbol(symbol_global_scope, identifier_node->token, 1, true)!=NULL  ||  search_symbol(symbol_global_scope, identifier_node->token, 1, false)!=NULL) {
         printf("Line %d, column %d: Symbol %s already defined\n", identifier_node->token_line, identifier_node->token_column, identifier_node->token);
+        semantic_errors++;
         return;
     } else {
         // add function symbol to global table

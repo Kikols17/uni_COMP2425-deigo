@@ -216,11 +216,11 @@ extern int yylex();
 int main(int argc, char **argv) {
     yydebug = 0;
 
-    for (int i=1; i<argc; i++) {
-        if (strcmp(argv[i], "-l") == 0) {
+    if (argc > 1) {
+        if (strcmp(argv[1], "-l") == 0) {
             lex_mode = 1;
             yylex();
-        } else if (strcmp(argv[i], "-t") == 0) {
+        } else if (strcmp(argv[1], "-t") == 0) {
             yacc_mode = 1;
             yyparse();
             clean_tree(program);
@@ -228,17 +228,23 @@ int main(int argc, char **argv) {
                 //printf("gorwg\n");
                 show(program, 0);
             }
-        } else if (strcmp(argv[i], "-s") == 0) {
+        } else if (strcmp(argv[1], "-s") == 0) {
             yacc_mode = 1;
             yyparse();
             clean_tree(program);
 
-            check_program(program);
-
             if (errors==0) {
+                errors += check_program(program);
                 show_symbol_table();
                 show(program, 0);
             }
+        }
+    } else {
+        yacc_mode = 1;
+        yyparse();
+        clean_tree(program);
+        if (errors==0) {
+            errors += check_program(program);
         }
     }
     return 0;
