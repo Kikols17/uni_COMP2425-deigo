@@ -1,0 +1,1130 @@
+Line 100, column 17: Operator = cannot be applied to types string, undef
+Line 100, column 29: Operator - cannot be applied to types bool, string
+Line 101, column 17: Operator = cannot be applied to types string, undef
+Line 101, column 28: Operator - cannot be applied to types int, string
+Line 102, column 17: Operator = cannot be applied to types string, undef
+Line 102, column 30: Operator - cannot be applied to types float32, string
+Line 103, column 17: Operator = cannot be applied to types string, undef
+Line 103, column 31: Operator - cannot be applied to types string, string
+Line 113, column 15: Operator = cannot be applied to types bool, undef
+Line 113, column 27: Operator * cannot be applied to types bool, bool
+Line 114, column 15: Operator = cannot be applied to types bool, undef
+Line 114, column 27: Operator * cannot be applied to types bool, int
+Line 115, column 15: Operator = cannot be applied to types bool, undef
+Line 115, column 27: Operator * cannot be applied to types bool, float32
+Line 116, column 15: Operator = cannot be applied to types bool, undef
+Line 116, column 27: Operator * cannot be applied to types bool, string
+Line 117, column 15: Operator = cannot be applied to types bool, undef
+Line 117, column 27: Operator * cannot be applied to types bool, bool
+Line 118, column 15: Operator = cannot be applied to types bool, undef
+Line 118, column 26: Operator * cannot be applied to types int, bool
+Line 119, column 15: Operator = cannot be applied to types bool, undef
+Line 119, column 28: Operator * cannot be applied to types float32, bool
+Line 120, column 15: Operator = cannot be applied to types bool, undef
+Line 120, column 29: Operator * cannot be applied to types string, bool
+Line 126, column 14: Operator = cannot be applied to types int, undef
+Line 126, column 25: Operator * cannot be applied to types int, float32
+Line 127, column 14: Operator = cannot be applied to types int, undef
+Line 127, column 25: Operator * cannot be applied to types int, string
+Line 128, column 14: Operator = cannot be applied to types int, undef
+Line 128, column 26: Operator * cannot be applied to types bool, int
+Line 130, column 14: Operator = cannot be applied to types int, undef
+Line 130, column 27: Operator * cannot be applied to types float32, int
+Line 131, column 14: Operator = cannot be applied to types int, undef
+Line 131, column 28: Operator * cannot be applied to types string, int
+Line 135, column 16: Operator = cannot be applied to types float32, undef
+Line 135, column 29: Operator * cannot be applied to types float32, bool
+Line 136, column 16: Operator = cannot be applied to types float32, undef
+Line 136, column 29: Operator * cannot be applied to types float32, int
+Line 138, column 16: Operator = cannot be applied to types float32, undef
+Line 138, column 29: Operator * cannot be applied to types float32, string
+Line 139, column 16: Operator = cannot be applied to types float32, undef
+Line 139, column 28: Operator * cannot be applied to types bool, float32
+Line 14, column 15: Operator = cannot be applied to types bool, undef
+Line 14, column 27: Operator + cannot be applied to types bool, bool
+Line 140, column 16: Operator = cannot be applied to types float32, undef
+Line 140, column 27: Operator * cannot be applied to types int, float32
+Line 142, column 16: Operator = cannot be applied to types float32, undef
+Line 142, column 30: Operator * cannot be applied to types string, float32
+Line 146, column 17: Operator = cannot be applied to types string, undef
+Line 146, column 31: Operator * cannot be applied to types string, bool
+Line 147, column 17: Operator = cannot be applied to types string, undef
+Line 147, column 31: Operator * cannot be applied to types string, int
+Line 148, column 17: Operator = cannot be applied to types string, undef
+Line 148, column 31: Operator * cannot be applied to types string, float32
+Line 149, column 17: Operator = cannot be applied to types string, undef
+Line 149, column 31: Operator * cannot be applied to types string, string
+Line 15, column 15: Operator = cannot be applied to types bool, undef
+Line 15, column 27: Operator + cannot be applied to types bool, int
+Line 150, column 17: Operator = cannot be applied to types string, undef
+Line 150, column 29: Operator * cannot be applied to types bool, string
+Line 151, column 17: Operator = cannot be applied to types string, undef
+Line 151, column 28: Operator * cannot be applied to types int, string
+Line 152, column 17: Operator = cannot be applied to types string, undef
+Line 152, column 30: Operator * cannot be applied to types float32, string
+Line 153, column 17: Operator = cannot be applied to types string, undef
+Line 153, column 31: Operator * cannot be applied to types string, string
+Line 16, column 15: Operator = cannot be applied to types bool, undef
+Line 16, column 27: Operator + cannot be applied to types bool, float32
+Line 162, column 15: Operator = cannot be applied to types bool, undef
+Line 162, column 27: Operator / cannot be applied to types bool, bool
+Line 163, column 15: Operator = cannot be applied to types bool, undef
+Line 163, column 27: Operator / cannot be applied to types bool, int
+Line 164, column 15: Operator = cannot be applied to types bool, undef
+Line 164, column 27: Operator / cannot be applied to types bool, float32
+Line 165, column 15: Operator = cannot be applied to types bool, undef
+Line 165, column 27: Operator / cannot be applied to types bool, string
+Line 166, column 15: Operator = cannot be applied to types bool, undef
+Line 166, column 27: Operator / cannot be applied to types bool, bool
+Line 167, column 15: Operator = cannot be applied to types bool, undef
+Line 167, column 26: Operator / cannot be applied to types int, bool
+Line 168, column 15: Operator = cannot be applied to types bool, undef
+Line 168, column 28: Operator / cannot be applied to types float32, bool
+Line 169, column 15: Operator = cannot be applied to types bool, undef
+Line 169, column 29: Operator / cannot be applied to types string, bool
+Line 17, column 15: Operator = cannot be applied to types bool, undef
+Line 17, column 27: Operator + cannot be applied to types bool, string
+Line 175, column 14: Operator = cannot be applied to types int, undef
+Line 175, column 25: Operator / cannot be applied to types int, float32
+Line 176, column 14: Operator = cannot be applied to types int, undef
+Line 176, column 25: Operator / cannot be applied to types int, string
+Line 177, column 14: Operator = cannot be applied to types int, undef
+Line 177, column 26: Operator / cannot be applied to types bool, int
+Line 179, column 14: Operator = cannot be applied to types int, undef
+Line 179, column 27: Operator / cannot be applied to types float32, int
+Line 18, column 15: Operator = cannot be applied to types bool, undef
+Line 18, column 27: Operator + cannot be applied to types bool, bool
+Line 180, column 14: Operator = cannot be applied to types int, undef
+Line 180, column 28: Operator / cannot be applied to types string, int
+Line 184, column 16: Operator = cannot be applied to types float32, undef
+Line 184, column 29: Operator / cannot be applied to types float32, bool
+Line 185, column 16: Operator = cannot be applied to types float32, undef
+Line 185, column 29: Operator / cannot be applied to types float32, int
+Line 187, column 16: Operator = cannot be applied to types float32, undef
+Line 187, column 29: Operator / cannot be applied to types float32, string
+Line 188, column 16: Operator = cannot be applied to types float32, undef
+Line 188, column 28: Operator / cannot be applied to types bool, float32
+Line 189, column 16: Operator = cannot be applied to types float32, undef
+Line 189, column 27: Operator / cannot be applied to types int, float32
+Line 19, column 15: Operator = cannot be applied to types bool, undef
+Line 19, column 26: Operator + cannot be applied to types int, bool
+Line 191, column 16: Operator = cannot be applied to types float32, undef
+Line 191, column 30: Operator / cannot be applied to types string, float32
+Line 195, column 17: Operator = cannot be applied to types string, undef
+Line 195, column 31: Operator / cannot be applied to types string, bool
+Line 196, column 17: Operator = cannot be applied to types string, undef
+Line 196, column 31: Operator / cannot be applied to types string, int
+Line 197, column 17: Operator = cannot be applied to types string, undef
+Line 197, column 31: Operator / cannot be applied to types string, float32
+Line 198, column 17: Operator = cannot be applied to types string, undef
+Line 198, column 31: Operator / cannot be applied to types string, string
+Line 199, column 17: Operator = cannot be applied to types string, undef
+Line 199, column 29: Operator / cannot be applied to types bool, string
+Line 20, column 15: Operator = cannot be applied to types bool, undef
+Line 20, column 28: Operator + cannot be applied to types float32, bool
+Line 200, column 17: Operator = cannot be applied to types string, undef
+Line 200, column 28: Operator / cannot be applied to types int, string
+Line 201, column 17: Operator = cannot be applied to types string, undef
+Line 201, column 30: Operator / cannot be applied to types float32, string
+Line 202, column 17: Operator = cannot be applied to types string, undef
+Line 202, column 31: Operator / cannot be applied to types string, string
+Line 21, column 15: Operator = cannot be applied to types bool, undef
+Line 21, column 29: Operator + cannot be applied to types string, bool
+Line 211, column 15: Operator = cannot be applied to types bool, undef
+Line 211, column 27: Operator % cannot be applied to types bool, bool
+Line 212, column 15: Operator = cannot be applied to types bool, undef
+Line 212, column 27: Operator % cannot be applied to types bool, int
+Line 213, column 15: Operator = cannot be applied to types bool, undef
+Line 213, column 27: Operator % cannot be applied to types bool, float32
+Line 214, column 15: Operator = cannot be applied to types bool, undef
+Line 214, column 27: Operator % cannot be applied to types bool, string
+Line 215, column 15: Operator = cannot be applied to types bool, undef
+Line 215, column 27: Operator % cannot be applied to types bool, bool
+Line 216, column 15: Operator = cannot be applied to types bool, undef
+Line 216, column 26: Operator % cannot be applied to types int, bool
+Line 217, column 15: Operator = cannot be applied to types bool, undef
+Line 217, column 28: Operator % cannot be applied to types float32, bool
+Line 218, column 15: Operator = cannot be applied to types bool, undef
+Line 218, column 29: Operator % cannot be applied to types string, bool
+Line 224, column 14: Operator = cannot be applied to types int, undef
+Line 224, column 25: Operator % cannot be applied to types int, float32
+Line 225, column 14: Operator = cannot be applied to types int, undef
+Line 225, column 25: Operator % cannot be applied to types int, string
+Line 226, column 14: Operator = cannot be applied to types int, undef
+Line 226, column 26: Operator % cannot be applied to types bool, int
+Line 228, column 14: Operator = cannot be applied to types int, undef
+Line 228, column 27: Operator % cannot be applied to types float32, int
+Line 229, column 14: Operator = cannot be applied to types int, undef
+Line 229, column 28: Operator % cannot be applied to types string, int
+Line 233, column 16: Operator = cannot be applied to types float32, undef
+Line 233, column 29: Operator % cannot be applied to types float32, bool
+Line 234, column 16: Operator = cannot be applied to types float32, undef
+Line 234, column 29: Operator % cannot be applied to types float32, int
+Line 236, column 16: Operator = cannot be applied to types float32, undef
+Line 236, column 29: Operator % cannot be applied to types float32, string
+Line 237, column 16: Operator = cannot be applied to types float32, undef
+Line 237, column 28: Operator % cannot be applied to types bool, float32
+Line 238, column 16: Operator = cannot be applied to types float32, undef
+Line 238, column 27: Operator % cannot be applied to types int, float32
+Line 240, column 16: Operator = cannot be applied to types float32, undef
+Line 240, column 30: Operator % cannot be applied to types string, float32
+Line 244, column 17: Operator = cannot be applied to types string, undef
+Line 244, column 31: Operator % cannot be applied to types string, bool
+Line 245, column 17: Operator = cannot be applied to types string, undef
+Line 245, column 31: Operator % cannot be applied to types string, int
+Line 246, column 17: Operator = cannot be applied to types string, undef
+Line 246, column 31: Operator % cannot be applied to types string, float32
+Line 247, column 17: Operator = cannot be applied to types string, undef
+Line 247, column 31: Operator % cannot be applied to types string, string
+Line 248, column 17: Operator = cannot be applied to types string, undef
+Line 248, column 29: Operator % cannot be applied to types bool, string
+Line 249, column 17: Operator = cannot be applied to types string, undef
+Line 249, column 28: Operator % cannot be applied to types int, string
+Line 250, column 17: Operator = cannot be applied to types string, undef
+Line 250, column 30: Operator % cannot be applied to types float32, string
+Line 251, column 17: Operator = cannot be applied to types string, undef
+Line 251, column 31: Operator % cannot be applied to types string, string
+Line 27, column 14: Operator = cannot be applied to types int, undef
+Line 27, column 25: Operator + cannot be applied to types int, float32
+Line 28, column 14: Operator = cannot be applied to types int, undef
+Line 28, column 25: Operator + cannot be applied to types int, string
+Line 29, column 14: Operator = cannot be applied to types int, undef
+Line 29, column 26: Operator + cannot be applied to types bool, int
+Line 31, column 14: Operator = cannot be applied to types int, undef
+Line 31, column 27: Operator + cannot be applied to types float32, int
+Line 32, column 14: Operator = cannot be applied to types int, undef
+Line 32, column 28: Operator + cannot be applied to types string, int
+Line 36, column 16: Operator = cannot be applied to types float32, undef
+Line 36, column 29: Operator + cannot be applied to types float32, bool
+Line 37, column 16: Operator = cannot be applied to types float32, undef
+Line 37, column 29: Operator + cannot be applied to types float32, int
+Line 39, column 16: Operator = cannot be applied to types float32, undef
+Line 39, column 29: Operator + cannot be applied to types float32, string
+Line 40, column 16: Operator = cannot be applied to types float32, undef
+Line 40, column 28: Operator + cannot be applied to types bool, float32
+Line 41, column 16: Operator = cannot be applied to types float32, undef
+Line 41, column 27: Operator + cannot be applied to types int, float32
+Line 43, column 16: Operator = cannot be applied to types float32, undef
+Line 43, column 30: Operator + cannot be applied to types string, float32
+Line 47, column 17: Operator = cannot be applied to types string, undef
+Line 47, column 31: Operator + cannot be applied to types string, bool
+Line 48, column 17: Operator = cannot be applied to types string, undef
+Line 48, column 31: Operator + cannot be applied to types string, int
+Line 49, column 17: Operator = cannot be applied to types string, undef
+Line 49, column 31: Operator + cannot be applied to types string, float32
+Line 50, column 17: Operator = cannot be applied to types string, undef
+Line 50, column 31: Operator + cannot be applied to types string, string
+Line 51, column 17: Operator = cannot be applied to types string, undef
+Line 51, column 29: Operator + cannot be applied to types bool, string
+Line 52, column 17: Operator = cannot be applied to types string, undef
+Line 52, column 28: Operator + cannot be applied to types int, string
+Line 53, column 17: Operator = cannot be applied to types string, undef
+Line 53, column 30: Operator + cannot be applied to types float32, string
+Line 54, column 17: Operator = cannot be applied to types string, undef
+Line 54, column 31: Operator + cannot be applied to types string, string
+Line 63, column 15: Operator = cannot be applied to types bool, undef
+Line 63, column 27: Operator - cannot be applied to types bool, bool
+Line 64, column 15: Operator = cannot be applied to types bool, undef
+Line 64, column 27: Operator - cannot be applied to types bool, int
+Line 65, column 15: Operator = cannot be applied to types bool, undef
+Line 65, column 27: Operator - cannot be applied to types bool, float32
+Line 66, column 15: Operator = cannot be applied to types bool, undef
+Line 66, column 27: Operator - cannot be applied to types bool, string
+Line 67, column 15: Operator = cannot be applied to types bool, undef
+Line 67, column 27: Operator - cannot be applied to types bool, bool
+Line 68, column 15: Operator = cannot be applied to types bool, undef
+Line 68, column 26: Operator - cannot be applied to types int, bool
+Line 69, column 15: Operator = cannot be applied to types bool, undef
+Line 69, column 28: Operator - cannot be applied to types float32, bool
+Line 70, column 15: Operator = cannot be applied to types bool, undef
+Line 70, column 29: Operator - cannot be applied to types string, bool
+Line 76, column 14: Operator = cannot be applied to types int, undef
+Line 76, column 25: Operator - cannot be applied to types int, float32
+Line 77, column 14: Operator = cannot be applied to types int, undef
+Line 77, column 25: Operator - cannot be applied to types int, string
+Line 78, column 14: Operator = cannot be applied to types int, undef
+Line 78, column 26: Operator - cannot be applied to types bool, int
+Line 80, column 14: Operator = cannot be applied to types int, undef
+Line 80, column 27: Operator - cannot be applied to types float32, int
+Line 81, column 14: Operator = cannot be applied to types int, undef
+Line 81, column 28: Operator - cannot be applied to types string, int
+Line 85, column 16: Operator = cannot be applied to types float32, undef
+Line 85, column 29: Operator - cannot be applied to types float32, bool
+Line 86, column 16: Operator = cannot be applied to types float32, undef
+Line 86, column 29: Operator - cannot be applied to types float32, int
+Line 88, column 16: Operator = cannot be applied to types float32, undef
+Line 88, column 29: Operator - cannot be applied to types float32, string
+Line 89, column 16: Operator = cannot be applied to types float32, undef
+Line 89, column 28: Operator - cannot be applied to types bool, float32
+Line 90, column 16: Operator = cannot be applied to types float32, undef
+Line 90, column 27: Operator - cannot be applied to types int, float32
+Line 92, column 16: Operator = cannot be applied to types float32, undef
+Line 92, column 30: Operator - cannot be applied to types string, float32
+Line 96, column 17: Operator = cannot be applied to types string, undef
+Line 96, column 31: Operator - cannot be applied to types string, bool
+Line 97, column 17: Operator = cannot be applied to types string, undef
+Line 97, column 31: Operator - cannot be applied to types string, int
+Line 98, column 17: Operator = cannot be applied to types string, undef
+Line 98, column 31: Operator - cannot be applied to types string, float32
+Line 99, column 17: Operator = cannot be applied to types string, undef
+Line 99, column 31: Operator - cannot be applied to types string, string
+===== Global Symbol Table =====
+main	()	none
+
+===== Function main() Symbol Table =====
+return		none
+var_bool0		bool
+var_bool1		bool
+var_bool2		bool
+var_int0		int
+var_int1		int
+var_int2		int
+var_float0		float32
+var_float1		float32
+var_float2		float32
+var_string0		string
+var_string1		string
+var_string2		string
+
+Program
+..FuncDecl
+....FuncHeader
+......Identifier(main)
+......FuncParams
+....FuncBody
+......VarDecl
+........Bool
+........Identifier(var_bool0)
+......VarDecl
+........Bool
+........Identifier(var_bool1)
+......VarDecl
+........Bool
+........Identifier(var_bool2)
+......VarDecl
+........Int
+........Identifier(var_int0)
+......VarDecl
+........Int
+........Identifier(var_int1)
+......VarDecl
+........Int
+........Identifier(var_int2)
+......VarDecl
+........Float32
+........Identifier(var_float0)
+......VarDecl
+........Float32
+........Identifier(var_float1)
+......VarDecl
+........Float32
+........Identifier(var_float2)
+......VarDecl
+........String
+........Identifier(var_string0)
+......VarDecl
+........String
+........Identifier(var_string1)
+......VarDecl
+........String
+........Identifier(var_string2)
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Add - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Add - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Add - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Add - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Add - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Add - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Add - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Add - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - int
+........Identifier(var_int0) - int
+........Add - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Add - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Add - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - int
+........Identifier(var_int0) - int
+........Add - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - int
+........Identifier(var_int0) - int
+........Add - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Add - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Add - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Add - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Add - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - float32
+........Identifier(var_float0) - float32
+........Add - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Add - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Add - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - float32
+........Identifier(var_float0) - float32
+........Add - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Add - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Add - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Add - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Add - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - string
+........Identifier(var_string0) - string
+........Add - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - string
+........Identifier(var_string0) - string
+........Add - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Add - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Add - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Add - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Add - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Add - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Sub - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Sub - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Sub - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Sub - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Sub - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Sub - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Sub - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Sub - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - int
+........Identifier(var_int0) - int
+........Sub - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Sub - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Sub - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - int
+........Identifier(var_int0) - int
+........Sub - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - int
+........Identifier(var_int0) - int
+........Sub - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Sub - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Sub - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Sub - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Sub - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - float32
+........Identifier(var_float0) - float32
+........Sub - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Sub - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Sub - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - float32
+........Identifier(var_float0) - float32
+........Sub - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Sub - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Sub - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Sub - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Sub - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - string
+........Identifier(var_string0) - string
+........Sub - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - string
+........Identifier(var_string0) - string
+........Sub - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Sub - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Sub - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Sub - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Sub - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Sub - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mul - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mul - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mul - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mul - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mul - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mul - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mul - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mul - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - int
+........Identifier(var_int0) - int
+........Mul - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mul - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mul - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - int
+........Identifier(var_int0) - int
+........Mul - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - int
+........Identifier(var_int0) - int
+........Mul - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mul - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mul - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mul - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mul - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mul - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mul - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mul - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mul - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mul - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mul - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mul - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Mul - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - string
+........Identifier(var_string0) - string
+........Mul - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - string
+........Identifier(var_string0) - string
+........Mul - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Mul - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Mul - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Mul - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Mul - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Mul - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Div - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Div - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Div - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Div - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Div - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Div - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Div - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Div - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - int
+........Identifier(var_int0) - int
+........Div - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Div - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Div - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - int
+........Identifier(var_int0) - int
+........Div - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - int
+........Identifier(var_int0) - int
+........Div - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Div - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Div - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Div - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Div - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - float32
+........Identifier(var_float0) - float32
+........Div - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Div - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Div - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - float32
+........Identifier(var_float0) - float32
+........Div - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Div - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Div - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Div - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Div - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - string
+........Identifier(var_string0) - string
+........Div - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - string
+........Identifier(var_string0) - string
+........Div - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Div - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Div - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Div - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Div - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Div - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mod - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mod - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mod - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mod - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mod - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mod - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mod - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - bool
+........Identifier(var_bool0) - bool
+........Mod - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - int
+........Identifier(var_int0) - int
+........Mod - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mod - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mod - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - int
+........Identifier(var_int0) - int
+........Mod - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - int
+........Identifier(var_int0) - int
+........Mod - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mod - int
+..........Identifier(var_int1) - int
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mod - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - int
+........Identifier(var_int0) - int
+........Mod - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mod - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_bool2) - bool
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mod - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_int2) - int
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mod - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mod - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mod - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mod - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mod - float32
+..........Identifier(var_float1) - float32
+..........Identifier(var_float2) - float32
+......Assign - float32
+........Identifier(var_float0) - float32
+........Mod - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Mod - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_bool2) - bool
+......Assign - string
+........Identifier(var_string0) - string
+........Mod - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_int2) - int
+......Assign - string
+........Identifier(var_string0) - string
+........Mod - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_float2) - float32
+......Assign - string
+........Identifier(var_string0) - string
+........Mod - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Mod - undef
+..........Identifier(var_bool1) - bool
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Mod - undef
+..........Identifier(var_int1) - int
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Mod - undef
+..........Identifier(var_float1) - float32
+..........Identifier(var_string2) - string
+......Assign - string
+........Identifier(var_string0) - string
+........Mod - undef
+..........Identifier(var_string1) - string
+..........Identifier(var_string2) - string
