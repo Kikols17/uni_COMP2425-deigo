@@ -173,8 +173,33 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 //    /* ToDo: scope should be free'd */
 //}
 
-void check_If(struct node *if_node, struct symbol_list *symbol_scope) {
+void check_Block(struct node *block_node, struct symbol_list *symbol_scope) {
+    struct node_list *child = block_node->children;
+    while ((child=child->next)!=NULL) {
+        check_Statement(child->node, symbol_scope);
+    }
+}
 
+void check_If(struct node *if_node, struct symbol_list *symbol_scope) {
+    /* getchild(if_node, 0)   -----> condition (check_expression) must be boolean
+     * getchild(if_node, 1)   -----> if body (check_block)
+     * getchild(if_node, 2)   -----> else body (check_block)
+     *
+     * Como dgo n tem scope dentro de scopes afinal n é preciso criar aqui novo scope,
+     * só perdi tempo a planear para isto :(
+     **/
+
+    check_expression(getchild(if_node, 0), symbol_scope);
+
+
+    if (getchild(if_node, 1)!=NULL) {
+        check_Block(getchild(if_node, 1), symbol_scope);
+    }
+
+    // Not always there is else block, (meta2 "no unnecessary blocks")
+    if (getchild(if_node, 2)!=NULL) {
+        check_Block(getchild(if_node, 2), symbol_scope);
+    }
 }
 
 void check_ParseArgs(struct node *parse_args, struct symbol_list *symbol_scope) {
