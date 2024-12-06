@@ -33,6 +33,11 @@
     struct node *node;
 }
 
+%locations
+%{
+    #define LOCATE(node, line, column) { node->token_line = line; node->token_column = column; }
+%}
+
 // tokens for lexer's symbols that have no associated value
 %token SEMICOLON COMMA BLANKID ASSIGN STAR DIV MINUS PLUS EQ GE GT LE LT LBRACE LPAR LSQ RBRACE RPAR RSQ MOD NE NOT AND OR PACKAGE RETURN ELSE FOR IF VAR INT FLOAT32 BOOL STRING PRINT PARSEINT FUNC CMDARGS
 
@@ -109,16 +114,16 @@ VarSpec             : IDENTIFIER COMMAIdentifier_s Type                     {
                         // adicionar $3 a todos os filhos VarDecl de $$ (recursivo) (incluindo vardecl)
                         reversenode(varspec_head);
 
-
+                        struct node* vardecl;
                         if (varspec_head == NULL) {
                             varspec_head = newnode(TEMP, NULL);
-                            struct node* vardecl = newnode(VarDecl, NULL);
+                            vardecl = newnode(VarDecl, NULL);
                             addchild(varspec_head, vardecl);
                             addchild(vardecl, newnode(Identifier, $1));
                             addchild(vardecl, $3);
                             $$ = varspec_head;
                         } else {
-                            struct node* vardecl = newnode(VarDecl, NULL);
+                            vardecl = newnode(VarDecl, NULL);
                             addchild(varspec_head, vardecl);
                             addchild(vardecl, newnode(Identifier, $1));
                             addchild(vardecl, $3);
@@ -128,31 +133,32 @@ VarSpec             : IDENTIFIER COMMAIdentifier_s Type                     {
 
                         addchild_allchildren(varspec_head, $3);
 
+                        LOCATE(getchild(vardecl, 0), @1.first_line, @1.first_column);
+
 
                         // agora é preciso rodar toda a arvore a partir de varspec_head, por causa da ordem
                         reversenode(varspec_head);
-
-
-
-
 
                         varspec_head = NULL;        // reset varspec_head for next time :)))
                     }
                     ;
 
 COMMAIdentifier_s   : COMMAIdentifier_s COMMA IDENTIFIER                    {
+                        struct node* vardecl;
                         if (varspec_head == NULL) {
                             varspec_head = newnode(TEMP, NULL);
-                            struct node* vardecl = newnode(VarDecl, NULL);
+                            vardecl = newnode(VarDecl, NULL);
                             addchild(varspec_head, vardecl);
                             addchild(vardecl, newnode(Identifier, $3));
                             $$ = varspec_head;
                         } else {
-                            struct node* vardecl = newnode(VarDecl, NULL);
+                            vardecl = newnode(VarDecl, NULL);
                             addchild(varspec_head, vardecl);
                             addchild(vardecl, newnode(Identifier, $3));
                             $$ = varspec_head;
                         }
+
+                        LOCATE(getchild(vardecl, 0), @3.first_line, @3.first_column);
 
                         //$$ = newnode(VarDecl, NULL);
                         //addchild($$, $1);
@@ -210,6 +216,8 @@ FuncDeclaration     : FUNC IDENTIFIER LPAR parameters_q RPAR type_q FuncBody    
                         addchild(header, $6);
                         addchild(header, $4);   // because order
 
+                        LOCATE(getchild(header, 0), @2.first_line, @2.first_column);
+
                         addchild($$, $7);
                     }
                     ;
@@ -241,6 +249,8 @@ Parameters          : Parameters COMMA IDENTIFIER Type                      {
                         addchild($$, paramdecl);
                         addchild(paramdecl, $4);
                         addchild(paramdecl, newnode(Identifier, $3));
+
+                        LOCATE(getchild(paramdecl, 1), @3.first_line, @3.first_column);
                     }
                     | IDENTIFIER Type                                       {
                         $$ = newnode(FuncParams, NULL);
@@ -248,6 +258,8 @@ Parameters          : Parameters COMMA IDENTIFIER Type                      {
                         addchild($$, paramdecl);
                         addchild(paramdecl, $2);
                         addchild(paramdecl, newnode(Identifier, $1));
+
+                        LOCATE(getchild(paramdecl, 1), @1.first_line, @1.first_column);
                     }
                     ;
 
@@ -285,6 +297,10 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
                         $$ = newnode(Assign, NULL);
                         addchild($$, newnode(Identifier, $1));
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
+                        LOCATE(getchild($$, 0), @1.first_line, @1.first_column);
+
                     }
                     /*
                     | IDENTIFIER LSQ Expr RSQ ASSIGN Expr                    {
@@ -331,6 +347,8 @@ Statement           : IDENTIFIER ASSIGN Expr                                {
                     | RETURN expr_q                                           {
                         $$ = newnode(Return, NULL);
                         addchild($$, $2);
+
+                        LOCATE($$, @1.first_line, @1.first_column);
                     }
                     //| RETURN                                                {
                     //    $$ = newnode(Return, NULL);
@@ -388,6 +406,7 @@ ParseArgs           : IDENTIFIER COMMA BLANKID ASSIGN PARSEINT
                         $$ = newnode(ParseArgs, NULL);
                         addchild($$, newnode(Identifier, $1));
                         addchild($$, $9);
+                        LOCATE($$, @5.first_line, @5.first_column);
                       }
                       /* IDENTIFIER COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR */
                     | IDENTIFIER COMMA BLANKID ASSIGN PARSEINT
@@ -406,6 +425,8 @@ FuncInvocation      : IDENTIFIER LPAR ExprCOMMA_s RPAR                      {
                         struct node *aux_params = newnode(TEMP, NULL);
                         addchild($$, aux_params);
                         addchild($$, $3);
+
+                        LOCATE(getchild($$, 0), @1.first_line, @1.first_column);
                     }
                     /* IDENTIFIER LPAR error RPAR */
                     | IDENTIFIER LPAR error RPAR                            {
@@ -436,11 +457,15 @@ Expr                : Expr OR Expr                                          {
                         $$ = newnode(Or, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr AND Expr                                         {
                         $$ = newnode(And, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
 
                     /* Expr (LT | GT | EQ | NE | LE | GE) Expr */
@@ -448,31 +473,43 @@ Expr                : Expr OR Expr                                          {
                         $$ = newnode(Lt, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr GT Expr                                          {
                         $$ = newnode(Gt, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr EQ Expr                                          {
                         $$ = newnode(Eq, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr NE Expr                                          {
                         $$ = newnode(Ne, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr LE Expr                                          {
                         $$ = newnode(Le, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr GE Expr                                          {
                         $$ = newnode(Ge, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
 
                     /* Expr (PLUS | MINUS | STAR | DIV | MOD) Expr */
@@ -480,54 +517,74 @@ Expr                : Expr OR Expr                                          {
                         $$ = newnode(Add, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr MINUS Expr                                       {
                         $$ = newnode(Sub, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr STAR Expr                                        {
                         $$ = newnode(Mul, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr DIV Expr                                         {
                         $$ = newnode(Div, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
                     | Expr MOD Expr                                         {
                         $$ = newnode(Mod, NULL);
                         addchild($$, $1);
                         addchild($$, $3);
+
+                        LOCATE($$, @2.first_line, @2.first_column);
                     }
 
                     /* (NOT | MINUS | PLUS) Expr (CUIDADO COM ORGEM)*/
                     | MINUS Expr %prec NOT                                  {
                         $$ = newnode(Minus, NULL);
                         addchild($$, $2);
+
+                        LOCATE($$, @1.first_line, @1.first_column);
                     }
                     | NOT Expr %prec NOT                                    {
                         $$ = newnode(Not, NULL);
                         addchild($$, $2);
+
+                        LOCATE($$, @1.first_line, @1.first_column);
                     }
                     | PLUS Expr %prec NOT                                   {
                         $$ = newnode(Plus, NULL);
                         addchild($$, $2);
+
+                        LOCATE($$, @1.first_line, @1.first_column);
                     }
 
                     /* NATURAL | DECIMAL | IDENTIFIER | FuncInvocation | LPAR Expr RPAR */
                     | NATURAL                                               {
                         $$ = newnode(Natural, $1);
+                        LOCATE($$, @1.first_line, @1.first_column);
                     }
                     | DECIMAL                                               {
                         $$ = newnode(Decimal, $1);
+                        LOCATE($$, @1.first_line, @1.first_column);
                     }
                     | IDENTIFIER                                            {
                         $$ = newnode(Identifier, $1);
+                        LOCATE($$, @1.first_line, @1.first_column);
                     }
                     | FuncInvocation                                        {
                         $$ = $1;
+                        LOCATE($$, @1.first_line, @1.first_column);
                     } 
                     | LPAR Expr RPAR                                        {
                         $$ = $2;

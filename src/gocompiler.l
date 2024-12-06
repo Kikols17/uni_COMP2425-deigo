@@ -12,8 +12,8 @@
     #include "semantics.h"
     #include "y.tab.h"
     #define YY_USER_ACTION \
-        token_begincolumn = token_endcolumn; \
-        token_beginline = token_endline; \
+        token_begincolumn = yylloc.first_column = token_endcolumn; \
+        token_beginline = yylloc.first_line = token_endline; \
         token_endcolumn += yyleng; 
 
     #define PASS_TOKEN() yylval.lexeme = strdup(yytext);
