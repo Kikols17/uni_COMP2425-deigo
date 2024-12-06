@@ -19,7 +19,8 @@ const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 
 
 void check_expression(struct node *expression, struct symbol_list *symbol_scope) {
-    char token_buff = '\0';
+    char char_op = '\0';
+
     switch(expression->category) {
         case Identifier:
             // check if has been declared
@@ -34,6 +35,8 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             
             break;
 
+
+
         case Int:
         case Natural:
         case Float32:
@@ -44,30 +47,52 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             expression->type = category_to_type2[expression->category];
             break;
         
+
+
         case Add:
-            if (token_buff=='\0') { token_buff = '+'; }
+            if (char_op=='\0') { char_op='+'; }
         case Sub:
-            if (token_buff=='\0') { token_buff = '-'; }
+            if (char_op=='\0') { char_op='-'; }
         case Mul:
-            if (token_buff=='\0') { token_buff = '*'; }
+            if (char_op=='\0') { char_op='*'; }
         case Div:
-            if (token_buff=='\0') { token_buff = '/'; }
+            if (char_op=='\0') { char_op='/'; }
         case Mod:
-            if (token_buff=='\0') { token_buff = '%'; }
-            ;       // ????
+            if (char_op=='\0') { char_op='%'; }
+
             struct node *left_expr = getchild(expression, 0);
             struct node *right_expr = getchild(expression, 1);
+            bool legal = false;
 
             check_expression(left_expr, symbol_scope);
             check_expression(right_expr, symbol_scope);
 
-            if (left_expr->type == right_expr->type) {
-                expression->type = left_expr->type;
+            if (left_expr->type==right_expr->type) {
+                if (left_expr->type==int_type || left_expr->type==float32_type) {
+                    legal = true;
+                } else {
+                    legal = false;
+                }
             } else {
-                printf("Line %d, column %d: Operator %c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, token_buff, type_names2[left_expr->type], type_names2[right_expr->type]);
+                legal = false;
+            }
+
+            if (!legal) {
+                printf("Line %d, column %d: Operator %c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op, type_names2[left_expr->type], type_names2[right_expr->type]);
                 expression->type = undef_type;
+            } else {
+                expression->type = left_expr->type;
             }
             break;
+        
+
+
+        case Minus:
+        case Plus:
+            check_expression(getchild(expression, 1), symbol_scope);
+            expression->type = getchild(expression, 1)->type;
+
+
 
         default:
             check_Statement(expression, symbol_scope);
@@ -158,13 +183,10 @@ void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
     check_expression(getchild(assign, 1), symbol_scope);
     
     // check if assign is legal
-    if (getchild(assign, 0)->type != getchild(assign, 1)->type) {
+    if (getchild(assign, 0)->type == undef_type || getchild(assign, 0)->type!=getchild(assign, 1)->type) {
         printf("Line %d, column %d: Operator = cannot be applied to types %s, %s\n", assign->token_line, assign->token_column, type_names2[getchild(assign, 0)->type], type_names2[getchild(assign, 1)->type]);
-        assign->type = undef_type;
-
-    } else {
-        assign->type = getchild(assign, 0)->type;
     }
+    assign->type = getchild(assign, 0)->type;
 
 }
 
