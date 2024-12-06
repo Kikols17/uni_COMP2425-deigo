@@ -42,6 +42,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
         case Sub:
         case Mul:
         case Div:
+        case Mod:
             ;       // ????
             struct node *left_expr = getchild(expression, 0);
             struct node *right_expr = getchild(expression, 1);
@@ -158,58 +159,51 @@ void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
 
 void check_Call(struct node *call, struct symbol_list *symbol_list) {
     struct symbol_list *definition = search_symbol(symbol_list, getchild(call, 0)->token, -1, true);
+    struct node_list *call_param = call->children->next;
+    while ((call_param = call_param->next) != NULL) {
+        check_expression(call_param->node, symbol_list);
+    }
+
+    bool match = true;
     if (definition!=NULL) {
+        // check function call
 
-        // check if the input params match
-        bool match = true;
-        struct node_list *def_param = definition->node->children->next->next;
-        struct node_list *call_param = call->children->next->next;
-        //while (def_param!=NULL && call_param!=NULL) {
-        //    check_expression(call_param->node, symbol_list);
-        //    if (category_to_type2[def_param->node->category]!=call_param->node->type) {
-        //        printf("types %s and %s are different\n", type_names2[def_param->node->type], type_names2[call_param->node->type]);
-        //        match = false;
-        //        break;
-        //    }
-        //    def_param = def_param->next;
-        //    call_param = call_param->next;
-        //}
-        struct symbol_list *scope = definition->child_scope;
-        struct symbol_list *symbol2;
-        for(symbol2=scope->next; symbol2 != NULL; symbol2 = symbol2->next) {
-            check_expression(call_param->node, symbol_list);
-            if (symbol2->is_param) {
-                printf("analysing types %s and %s\n", type_names2[symbol2->type], type_names2[call_param->node->type]);
-                if (symbol2->type != call_param->node->type) {
-                    printf("types %s and %s are different\n", type_names2[symbol2->type], type_names2[call_param->node->type]);
-                    match = false;
-                    break;
+        // check if parameters are right in number and type
+        // we will be comparing the call_param node's type with the entries on the defenition's symbol table
+        call_param = call->children->next->next;
+        struct symbol_list *table_entry = definition->child_scope->next;
+        for(table_entry; table_entry!=NULL; table_entry=table_entry->next) {
+            if (!table_entry->is_param) {
+                if (call_param==NULL) {
+                    //printf("too few arguments for %s\n", definition->identifier);
                 }
-            } else {
-                break;
+                if (table_entry->type!=call_param->node->type) {
+                    match = false;
+                    //printf("wrong type of argument for %s (%s)\n", definition->identifier, type_names2[call_param->node->type]);
+                    
+                }
+                call_param = call_param->next;
             }
-            call_param = call_param->next;
         }
-
-        if (symbol2!=NULL || call_param!=NULL) {
-            // different number of nodes
+        if (call_param!=NULL) {
+            // too many argumants!
+            //printf("too many arguments for %s!\n", definition->identifier);
             match = false;
         }
         if (match) {
-            call->type = definition->type;
             getchild(call, 0)->type = definition->type;
             return;
         }
     }
     printf("Line %d, column %d: Cannot find symbol %s", getchild(call, 0)->token_line, getchild(call, 0)->token_column, getchild(call, 0)->token);
-    struct node_list *call_param = call->children->next->next;
+    call_param = call->children->next;
     printf("(");
-    if (call_param!=NULL) {
-        printf("%s", type_names2[category_to_type2[call_param->node->type]]);
+    if ((call_param=call_param->next)!=NULL) {
+        printf("%s", type_names2[call_param->node->type]);
         //call_param->node->type = category_to_type2[call_param->node->category];
         //check_expression(call_param->node, symbol_list);
         while ((call_param=call_param->next)!=NULL) {
-            printf(",%s", type_names2[category_to_type2[call_param->node->type]]);
+            printf(",%s", type_names2[call_param->node->type]);
             //call_param->node->type = category_to_type2[call_param->node->category];
             //check_expression(call_param->node, symbol_list);
         }
