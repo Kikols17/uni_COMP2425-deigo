@@ -136,6 +136,49 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
 
 
+        case Eq:
+            if (char_op[0]=='\0') { char_op[0]='='; char_op[1]='='; }
+        case Ne:
+            if (char_op[0]=='\0') { char_op[0]='!'; char_op[1]='='; }
+
+            left_expr = getchild(expression, 0);
+            right_expr = getchild(expression, 1);
+
+            check_expression(left_expr, symbol_scope);
+            check_expression(right_expr, symbol_scope);
+
+            if (left_expr->type!=right_expr->type || (left_expr->type==undef_type) || (left_expr->type==none_type)) {
+                printf("Line %d, column %d: Operator %c%c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], char_op[0], type_names2[left_expr->type], type_names2[right_expr->type]);
+            }
+            expression->type = bool_type;
+            break;
+
+
+
+        case Lt:
+            if (char_op[0]=='\0') { char_op[0]='<'; }
+        case Le:
+            if (char_op[0]=='\0') { char_op[0]='<'; char_op[1]='='; }
+        case Gt:
+            if (char_op[0]=='\0') { char_op[0]='>'; }
+        case Ge:
+            if (char_op[0]=='\0') { char_op[0]='>'; char_op[1]='='; }
+
+
+            left_expr = getchild(expression, 0);
+            right_expr = getchild(expression, 1);
+
+            check_expression(left_expr, symbol_scope);
+            check_expression(right_expr, symbol_scope);
+
+            if (left_expr->type!=right_expr->type || !(left_expr->type==int_type || left_expr->type==float32_type)) {
+                printf("Line %d, column %d: Operator %c%c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], char_op[1], type_names2[left_expr->type], type_names2[right_expr->type]);
+            }
+            expression->type = bool_type;
+            break;
+
+
+
 
         default:
             check_Statement(expression, symbol_scope);
@@ -192,7 +235,7 @@ void check_For(struct node *for_node, struct symbol_list *symbol_scope) {
          */
         check_expression(getchild(for_node, 0), symbol_scope);
         check_Block(getchild(for_node, 1), symbol_scope);
-        if ((getchild(for_node, 0)!=bool_type && getchild(for_node, 0)!=none_type) || getchild(for_node, 0)==undef_type) {
+        if ((getchild(for_node, 0)->type!=bool_type || getchild(for_node, 0)->type==none_type) || getchild(for_node, 0)->type==undef_type) {
             printf("Line %d, column %d: Incompatible type %s in for statement\n", getchild(for_node, 0)->token_line, getchild(for_node, 0)->token_column, type_names2[getchild(for_node, 0)->type]);
         }
 
