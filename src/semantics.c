@@ -181,9 +181,29 @@ void check_Block(struct node *block_node, struct symbol_list *symbol_scope) {
 }
 
 void check_For(struct node *for_node, struct symbol_list *symbol_scope) {
-    /* getchild(if_node, 0)   -----> condition (check_expression) must be boolean
-     * getchild(if_node, 1)   -----> for body (check_block)
+    /* getchild(if_node, 0)  ----->  condition [case1] (check_expression) must be boolean OR for body (check_block) [case2]
+     * getchild(if_node, 1)  ----->  for body [case1] (check_block) if getchild(if_node, 0) is not already body [case2]
      */
+
+    if (getchild(for_node, 1)!=NULL) {
+        /* [case1]
+         * getchild(if_node, 0)  ----->  condition (check_expression) must be boolean
+         * getchild(if_node, 1)  ----->  for body (check_block)
+         */
+        check_expression(getchild(for_node, 0), symbol_scope);
+        check_Block(getchild(for_node, 1), symbol_scope);
+        if ((getchild(for_node, 0)!=bool_type && getchild(for_node, 0)!=none_type) || getchild(for_node, 0)==undef_type) {
+            printf("Line %d, column %d: Incompatible type %s in for statement\n", getchild(for_node, 0)->token_line, getchild(for_node, 0)->token_column, type_names2[getchild(for_node, 0)->type]);
+        }
+
+    } else {
+        /* [case2]
+         * getchild(if_node, 0)  ----->  for body (check_block)
+         * getchild(if_node, 1)  ----->  NULL
+         */
+        check_Block(getchild(for_node, 0), symbol_scope);
+
+    }
 
 }
 
