@@ -22,7 +22,7 @@ func main() {
 
 
     // int
-    var_int0 = var_int1 + var_int2;
+    var_int0 = var_int1 + var_bool2;
     var_int0 = var_int1 + var_int2;
     var_int0 = var_int1 + var_float2;
     var_int0 = var_int1 + var_string2;
@@ -71,7 +71,7 @@ func main() {
 
 
     // int
-    var_int0 = var_int1 - var_int2;
+    var_int0 = var_int1 - var_bool2;
     var_int0 = var_int1 - var_int2;
     var_int0 = var_int1 - var_float2;
     var_int0 = var_int1 - var_string2;
@@ -121,7 +121,7 @@ func main() {
 
 
     // int
-    var_int0 = var_int1 * var_int2;
+    var_int0 = var_int1 * var_bool2;
     var_int0 = var_int1 * var_int2;
     var_int0 = var_int1 * var_float2;
     var_int0 = var_int1 * var_string2;
@@ -170,7 +170,7 @@ func main() {
 
 
     // int
-    var_int0 = var_int1 / var_int2;
+    var_int0 = var_int1 / var_bool2;
     var_int0 = var_int1 / var_int2;
     var_int0 = var_int1 / var_float2;
     var_int0 = var_int1 / var_string2;
@@ -219,7 +219,7 @@ func main() {
 
 
     // int
-    var_int0 = var_int1 % var_int2;
+    var_int0 = var_int1 % var_bool2;
     var_int0 = var_int1 % var_int2;
     var_int0 = var_int1 % var_float2;
     var_int0 = var_int1 % var_string2;

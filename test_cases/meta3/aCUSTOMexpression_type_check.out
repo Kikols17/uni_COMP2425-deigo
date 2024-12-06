@@ -22,6 +22,8 @@ Line 119, column 15: Operator = cannot be applied to types bool, undef
 Line 119, column 28: Operator * cannot be applied to types float32, bool
 Line 120, column 15: Operator = cannot be applied to types bool, undef
 Line 120, column 29: Operator * cannot be applied to types string, bool
+Line 124, column 14: Operator = cannot be applied to types int, undef
+Line 124, column 25: Operator * cannot be applied to types int, bool
 Line 126, column 14: Operator = cannot be applied to types int, undef
 Line 126, column 25: Operator * cannot be applied to types int, float32
 Line 127, column 14: Operator = cannot be applied to types int, undef
@@ -84,6 +86,8 @@ Line 169, column 15: Operator = cannot be applied to types bool, undef
 Line 169, column 29: Operator / cannot be applied to types string, bool
 Line 17, column 15: Operator = cannot be applied to types bool, undef
 Line 17, column 27: Operator + cannot be applied to types bool, string
+Line 173, column 14: Operator = cannot be applied to types int, undef
+Line 173, column 25: Operator / cannot be applied to types int, bool
 Line 175, column 14: Operator = cannot be applied to types int, undef
 Line 175, column 25: Operator / cannot be applied to types int, float32
 Line 176, column 14: Operator = cannot be applied to types int, undef
@@ -146,6 +150,8 @@ Line 217, column 15: Operator = cannot be applied to types bool, undef
 Line 217, column 28: Operator % cannot be applied to types float32, bool
 Line 218, column 15: Operator = cannot be applied to types bool, undef
 Line 218, column 29: Operator % cannot be applied to types string, bool
+Line 222, column 14: Operator = cannot be applied to types int, undef
+Line 222, column 25: Operator % cannot be applied to types int, bool
 Line 224, column 14: Operator = cannot be applied to types int, undef
 Line 224, column 25: Operator % cannot be applied to types int, float32
 Line 225, column 14: Operator = cannot be applied to types int, undef
@@ -180,6 +186,8 @@ Line 248, column 17: Operator = cannot be applied to types string, undef
 Line 248, column 29: Operator % cannot be applied to types bool, string
 Line 249, column 17: Operator = cannot be applied to types string, undef
 Line 249, column 28: Operator % cannot be applied to types int, string
+Line 25, column 14: Operator = cannot be applied to types int, undef
+Line 25, column 25: Operator + cannot be applied to types int, bool
 Line 250, column 17: Operator = cannot be applied to types string, undef
 Line 250, column 30: Operator % cannot be applied to types float32, string
 Line 251, column 17: Operator = cannot be applied to types string, undef
@@ -238,6 +246,8 @@ Line 69, column 15: Operator = cannot be applied to types bool, undef
 Line 69, column 28: Operator - cannot be applied to types float32, bool
 Line 70, column 15: Operator = cannot be applied to types bool, undef
 Line 70, column 29: Operator - cannot be applied to types string, bool
+Line 74, column 14: Operator = cannot be applied to types int, undef
+Line 74, column 25: Operator - cannot be applied to types int, bool
 Line 76, column 14: Operator = cannot be applied to types int, undef
 Line 76, column 25: Operator - cannot be applied to types int, float32
 Line 77, column 14: Operator = cannot be applied to types int, undef
@@ -370,9 +380,9 @@ Program
 ..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
-........Add - int
+........Add - undef
 ..........Identifier(var_int1) - int
-..........Identifier(var_int2) - int
+..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
 ........Add - int
@@ -530,9 +540,9 @@ Program
 ..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
-........Sub - int
+........Sub - undef
 ..........Identifier(var_int1) - int
-..........Identifier(var_int2) - int
+..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
 ........Sub - int
@@ -690,9 +700,9 @@ Program
 ..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
-........Mul - int
+........Mul - undef
 ..........Identifier(var_int1) - int
-..........Identifier(var_int2) - int
+..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
 ........Mul - int
@@ -850,9 +860,9 @@ Program
 ..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
-........Div - int
+........Div - undef
 ..........Identifier(var_int1) - int
-..........Identifier(var_int2) - int
+..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
 ........Div - int
@@ -1010,9 +1020,9 @@ Program
 ..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
-........Mod - int
+........Mod - undef
 ..........Identifier(var_int1) - int
-..........Identifier(var_int2) - int
+..........Identifier(var_bool2) - bool
 ......Assign - int
 ........Identifier(var_int0) - int
 ........Mod - int
