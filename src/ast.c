@@ -6,6 +6,8 @@
 const char *category_names[] = CATEGORY_NAMES
 const char *type_names[] = TYPE_NAMES
 
+extern struct symbol_list *symbol_table;
+
 
 // create a node of a given category with a given lexical symbol
 struct node *newnode(enum category category, char *token) {
@@ -63,7 +65,14 @@ void show(struct node *node, int depth) {
     }
 
     if (node->type != none_type) {
-        printf(" - %s\n", type_names[node->type]);
+        struct symbol_list *symbol;
+        if (symbol_table!=NULL && node->token!=NULL && node->type!=undef_type && (symbol=search_symbol(symbol_table, node->token, 1, true))!=NULL) {
+            char *params_string = show_functionparameters(symbol);
+            printf(" - %s\n", params_string);
+            free(params_string);
+        } else {
+            printf(" - %s\n", type_names[node->type]);
+        }
     } else {
         printf("\n");
     }

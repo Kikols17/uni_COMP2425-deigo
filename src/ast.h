@@ -26,6 +26,8 @@ struct node_list {
     struct node_list *next;
 };
 
+#include "semantics.h"
+
 struct node *newnode(enum category category, char *token);
 void addchild(struct node *parent, struct node *child);
 struct node *getchild(struct node *parent, int position);

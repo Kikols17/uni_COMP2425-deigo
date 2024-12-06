@@ -8,6 +8,11 @@ int semantic_errors = 0;
 
 struct symbol_list *symbol_table;
 
+// Stack with FuncBody's to be checked
+int                 FuncBodyStack_count = 0;
+struct symbol_list *FuncBodyStack_symbol_scope[2048];
+struct node        *FuncBodyStack_node[2048];
+
 const char *category_names2[] = CATEGORY_NAMES;
 const char *type_names2[] = TYPE_NAMES;
 const enum type category_to_type2[] = CATEGORY_TO_TYPE;
@@ -164,7 +169,7 @@ void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
 }
 
 void check_Call(struct node *call, struct symbol_list *symbol_list) {
-    struct symbol_list *definition = search_symbol(symbol_list, getchild(call, 0)->token, -1, true);
+    struct symbol_list *definition = search_symbol(symbol_table, getchild(call, 0)->token, -1, true);
     struct node_list *call_param = call->children->next;
     while ((call_param = call_param->next) != NULL) {
         check_expression(call_param->node, symbol_list);
@@ -172,20 +177,34 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
 
     bool match = true;
     if (definition!=NULL) {
+        #ifdef VERBOSE
+        printf("[VERBOSE] Função %s pelo menos existe\n", getchild(call, 0)->token);
+        #endif
         // check function call
 
         // check if parameters are right in number and type
         // we will be comparing the call_param node's type with the entries on the defenition's symbol table
         call_param = call->children->next->next;
         struct symbol_list *table_entry = definition->child_scope->next;
-        for(table_entry; table_entry!=NULL; table_entry=table_entry->next) {
-            if (!table_entry->is_param) {
+        enum type definition_return_type;
+        for(; table_entry!=NULL; table_entry=table_entry->next) {
+            if (strcmp(table_entry->identifier, "return")==0) {
+                definition_return_type = table_entry->type;
+                //printf("type: %s\n", type_names2[definition_return_type]);
+            }
+            if (table_entry->is_param) {
                 if (call_param==NULL) {
-                    //printf("too few arguments for %s\n", definition->identifier);
+                    #ifdef VERBOSE
+                    printf("[VERBOSE] too few arguments for %s\n", definition->identifier);
+                    #endif
+                    match = false;
+                    break;
                 }
                 if (table_entry->type!=call_param->node->type) {
+                    #ifdef VERBOSE
+                    printf("[VERBOSE] wrong type of argument for %s (%s)\n", definition->identifier, type_names2[call_param->node->type]);
+                    #endif
                     match = false;
-                    //printf("wrong type of argument for %s (%s)\n", definition->identifier, type_names2[call_param->node->type]);
                     
                 }
                 call_param = call_param->next;
@@ -193,14 +212,27 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
         }
         if (call_param!=NULL) {
             // too many argumants!
-            //printf("too many arguments for %s!\n", definition->identifier);
+            #ifdef VERBOSE
+            printf("[VERBOSE] too many arguments for %s!\n", definition->identifier);
+            #endif
             match = false;
         }
         if (match) {
-            getchild(call, 0)->type = definition->type;
+            call->type = definition_return_type;
+            getchild(call, 0)->type = definition_return_type;
             return;
         }
+        #ifdef VERBOSE
+        else {
+            printf("[VERBOSE] unmatched params for %s!\n", getchild(call, 0)->token);
+        }
+        #endif
     }
+    #ifdef VERBOSE
+    else {
+        printf("[VERBOSE] Função %s straight up nao existe\n", getchild(call, 0)->token);
+    }
+    #endif
     printf("Line %d, column %d: Cannot find symbol %s", getchild(call, 0)->token_line, getchild(call, 0)->token_column, getchild(call, 0)->token);
     call_param = call->children->next;
     printf("(");
@@ -219,21 +251,21 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
     getchild(call, 0)->type = undef_type;
 }
 
-void check_Statement(struct node *statement, struct symbol_list *symbol_list) {
+void check_Statement(struct node *statement, struct symbol_list *symbol_scope) {
     if (statement->category == Call) {
-        check_Call(statement, symbol_list);
+        check_Call(statement, symbol_scope);
 
     } else if (statement->category == Assign) {
-        check_Assign(statement, symbol_list);
+        check_Assign(statement, symbol_scope);
 
     } else if (statement->category == Return) {
-        check_Return(statement, symbol_list);
+        check_Return(statement, symbol_scope);
 
     } else if (statement->category == Print) {
-        check_Print(statement, symbol_list);
+        check_Print(statement, symbol_scope);
 
     } else if (statement->category == If) {
-        check_If(statement, symbol_list);
+        check_If(statement, symbol_scope);
 
     }
 }
@@ -267,17 +299,17 @@ void check_FuncParams(struct node *params, struct symbol_list *symbol_func) {
     }
 }
 
-void check_FuncBody(struct node *body, struct symbol_list *symbol_func) {
+void check_FuncBody(struct node *body, struct symbol_list *symbol_scope) {
     /* Body only has VarDecl or Statements */
     struct node_list *child = body->children;
     while ((child=child->next) != NULL) {
         if (child->node->category == VarDecl) {
             // var decl
-            check_VarDecl(child->node, symbol_func);
+            check_VarDecl(child->node, symbol_scope);
 
         } else {
             // statement
-            check_Statement(child->node, symbol_func);
+            check_Statement(child->node, symbol_scope);
 
         }
     }
@@ -335,10 +367,11 @@ void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_global_
     // check the params
     check_FuncParams(paramdecl_node, symbol_scope);
 
-
-    // check body
-    check_FuncBody(funcbody_node, symbol_scope);
-
+    // CHECK THE BODY LATER
+    // if not, other symbols like functions may not be defined but should be accessed
+    FuncBodyStack_node[FuncBodyStack_count] = funcbody_node;
+    FuncBodyStack_symbol_scope[FuncBodyStack_count] = symbol_scope;
+    FuncBodyStack_count++;
     
 }
 
@@ -389,6 +422,11 @@ int check_program(struct node *program) {
         }
         //printf("category: %s\n", category_names2[child->node->category]);
     }
+    // now check all FuncBody's
+    for (int i=0; i<FuncBodyStack_count; i++) {
+        check_FuncBody(FuncBodyStack_node[i], FuncBodyStack_symbol_scope[i]);
+    }
+    
     return semantic_errors;
 }
 
@@ -426,6 +464,9 @@ struct symbol_list *insert_symbol(struct symbol_list *table, char *identifier, e
 // look up a symbol by its identifier (not only in current table, but also all parent tables)
 struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, int depth, bool is_function) {
     if (table==NULL) {
+        #ifdef VERBOSE
+        printf("[VERBOSE] Calhou identifier=%s, depth=%d, is_function=%d\n", identifier, depth, is_function);
+        #endif
         return NULL;
     }
     if (depth==0) {
@@ -437,6 +478,11 @@ struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, i
             if (is_function==symbol->is_function) {
                 return symbol;
             }
+            #ifdef VERBOSE
+            else {
+                //printf("[VERBOSE] Symbol %s found but not match is_function (%d!=%d)\n", symbol->identifier, symbol->is_function, is_function);
+            }
+            #endif
         }
     }
     return search_symbol(table->parent_scope, identifier, depth-1, is_function);
