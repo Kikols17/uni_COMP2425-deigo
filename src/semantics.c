@@ -177,6 +177,16 @@ void check_If(struct node *if_node, struct symbol_list *symbol_scope) {
 
 }
 
+void check_ParseArgs(struct node *parse_args, struct symbol_list *symbol_scope) {
+    check_expression(getchild(parse_args, 0), symbol_scope);
+    check_expression(getchild(parse_args, 1), symbol_scope);
+    parse_args->type = getchild(parse_args, 0)->type;
+
+    if ((getchild(parse_args, 0)->type!=int_type && getchild(parse_args, 0)->type!=string_type) || getchild(parse_args, 1)->type!=int_type) {
+        printf("Line %d, column %d: Operator strconv.Atoi cannot be applied to types %s, %s\n", parse_args->token_line, parse_args->token_column, type_names2[getchild(parse_args, 0)->type], type_names2[getchild(parse_args, 1)->type]);
+    }
+}
+
 void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
     struct symbol_list *definition;
     if (getchild(print_node, 0)->category == Identifier) {
@@ -332,6 +342,8 @@ void check_Statement(struct node *statement, struct symbol_list *symbol_scope) {
     } else if (statement->category == If) {
         check_If(statement, symbol_scope);
 
+    } else if (statement->category == ParseArgs) {
+        check_ParseArgs(statement, symbol_scope);
     }
 }
 
