@@ -88,9 +88,36 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
 
         case Minus:
+            if (char_op=='\0') { char_op='-'; }
         case Plus:
-            check_expression(getchild(expression, 1), symbol_scope);
-            expression->type = getchild(expression, 1)->type;
+            if (char_op=='\0') { char_op='+'; }
+
+            check_expression(getchild(expression, 0), symbol_scope);
+            if (getchild(expression, 0)->type == int_type || getchild(expression, 0)->type == float32_type) {
+                legal = true;
+            } else {
+                false;
+            }
+
+        case Not:
+            if (char_op=='\0') { char_op='!';
+                check_expression(getchild(expression, 0), symbol_scope);
+                if (getchild(expression, 0)->type == bool_type) {
+                    legal = true;
+                } else {
+                    false;
+                }
+            }
+
+
+            if (!legal) {
+                printf("Line %d, column %d: Operator %c cannot be applied to type %s\n", expression->token_line, expression->token_column, char_op, type_names2[getchild(expression, 0)->type]);
+                expression->type = undef_type;
+            } else {
+                expression->type = getchild(expression, 0)->type;
+            }
+
+            break;
 
 
 
