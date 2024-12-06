@@ -19,7 +19,9 @@ const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 
 
 void check_expression(struct node *expression, struct symbol_list *symbol_scope) {
-    char char_op = '\0';
+    char char_op[] = "\0\0";  // minimum characters
+    struct node *left_expr;
+    struct node *right_expr;
 
     switch(expression->category) {
         case Identifier:
@@ -50,18 +52,18 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
 
         case Add:
-            if (char_op=='\0') { char_op='+'; }
+            if (char_op[0]=='\0') { char_op[0]='+'; }
         case Sub:
-            if (char_op=='\0') { char_op='-'; }
+            if (char_op[0]=='\0') { char_op[0]='-'; }
         case Mul:
-            if (char_op=='\0') { char_op='*'; }
+            if (char_op[0]=='\0') { char_op[0]='*'; }
         case Div:
-            if (char_op=='\0') { char_op='/'; }
+            if (char_op[0]=='\0') { char_op[0]='/'; }
         case Mod:
-            if (char_op=='\0') { char_op='%'; }
+            if (char_op[0]=='\0') { char_op[0]='%'; }
 
-            struct node *left_expr = getchild(expression, 0);
-            struct node *right_expr = getchild(expression, 1);
+            left_expr = getchild(expression, 0);
+            right_expr = getchild(expression, 1);
             bool legal = false;
 
             check_expression(left_expr, symbol_scope);
@@ -78,7 +80,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             }
 
             if (!legal) {
-                printf("Line %d, column %d: Operator %c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op, type_names2[left_expr->type], type_names2[right_expr->type]);
+                printf("Line %d, column %d: Operator %c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], type_names2[left_expr->type], type_names2[right_expr->type]);
                 expression->type = undef_type;
             } else {
                 expression->type = left_expr->type;
@@ -88,19 +90,17 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
 
         case Minus:
-            if (char_op=='\0') { char_op='-'; }
+            if (char_op[0]=='\0') { char_op[0]='-'; }
         case Plus:
-            if (char_op=='\0') { char_op='+'; }
-
+            if (char_op[0]=='\0') { char_op[0]='+'; }
             check_expression(getchild(expression, 0), symbol_scope);
             if (getchild(expression, 0)->type == int_type || getchild(expression, 0)->type == float32_type) {
                 legal = true;
             } else {
                 false;
             }
-
         case Not:
-            if (char_op=='\0') { char_op='!';
+            if (char_op[0]=='\0') { char_op[0]='!';
                 check_expression(getchild(expression, 0), symbol_scope);
                 if (getchild(expression, 0)->type == bool_type) {
                     legal = true;
@@ -108,16 +108,32 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
                     false;
                 }
             }
-
-
             if (!legal) {
-                printf("Line %d, column %d: Operator %c cannot be applied to type %s\n", expression->token_line, expression->token_column, char_op, type_names2[getchild(expression, 0)->type]);
+                printf("Line %d, column %d: Operator %c cannot be applied to type %s\n", expression->token_line, expression->token_column, char_op[0], type_names2[getchild(expression, 0)->type]);
                 expression->type = undef_type;
             } else {
                 expression->type = getchild(expression, 0)->type;
             }
-
             break;
+
+
+
+        case Or:
+            if (char_op[0]=='\0') { char_op[0]='|'; }
+        case And:
+            if (char_op[0]=='\0') { char_op[0]='&'; }
+
+            left_expr = getchild(expression, 0);
+            right_expr = getchild(expression, 1);
+
+            check_expression(left_expr, symbol_scope);
+            check_expression(right_expr, symbol_scope);
+            if (left_expr->type!=bool_type || right_expr->type!=bool_type) {
+                printf("Line %d, column %d: Operator %c%c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], char_op[0], type_names2[left_expr->type], type_names2[right_expr->type]);
+            }
+            expression->type = bool_type;
+            break;
+
 
 
 
