@@ -19,7 +19,7 @@ const enum type category_to_type2[] = CATEGORY_TO_TYPE;
 
 
 void check_expression(struct node *expression, struct symbol_list *symbol_scope) {
-    char char_op[] = "\0\0";  // minimum characters
+    char string_op[] = "\0\0";  // minimum characters
     struct node *left_expr;
     struct node *right_expr;
 
@@ -53,15 +53,15 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
 
         case Add:
-            if (char_op[0]=='\0') { char_op[0]='+'; }
+            if (string_op[0]=='\0') { string_op[0]='+'; }
         case Sub:
-            if (char_op[0]=='\0') { char_op[0]='-'; }
+            if (string_op[0]=='\0') { string_op[0]='-'; }
         case Mul:
-            if (char_op[0]=='\0') { char_op[0]='*'; }
+            if (string_op[0]=='\0') { string_op[0]='*'; }
         case Div:
-            if (char_op[0]=='\0') { char_op[0]='/'; }
+            if (string_op[0]=='\0') { string_op[0]='/'; }
         case Mod:
-            if (char_op[0]=='\0') { char_op[0]='%'; }
+            if (string_op[0]=='\0') { string_op[0]='%'; }
 
             left_expr = getchild(expression, 0);
             right_expr = getchild(expression, 1);
@@ -81,7 +81,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             }
 
             if (!legal) {
-                printf("Line %d, column %d: Operator %c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], type_names2[left_expr->type], type_names2[right_expr->type]);
+                printf("Line %d, column %d: Operator %s cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, string_op, type_names2[left_expr->type], type_names2[right_expr->type]);
                 semantic_errors++;
                 expression->type = undef_type;
             } else {
@@ -92,9 +92,9 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
 
         case Minus:
-            if (char_op[0]=='\0') { char_op[0]='-'; }
+            if (string_op[0]=='\0') { string_op[0]='-'; }
         case Plus:
-            if (char_op[0]=='\0') { char_op[0]='+'; }
+            if (string_op[0]=='\0') { string_op[0]='+'; }
             check_expression(getchild(expression, 0), symbol_scope);
             if (getchild(expression, 0)->type == int_type || getchild(expression, 0)->type == float32_type) {
                 legal = true;
@@ -102,7 +102,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
                 false;
             }
         case Not:
-            if (char_op[0]=='\0') { char_op[0]='!';
+            if (string_op[0]=='\0') { string_op[0]='!';
                 check_expression(getchild(expression, 0), symbol_scope);
                 if (getchild(expression, 0)->type == bool_type) {
                     legal = true;
@@ -111,7 +111,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
                 }
             }
             if (!legal) {
-                printf("Line %d, column %d: Operator %c cannot be applied to type %s\n", expression->token_line, expression->token_column, char_op[0], type_names2[getchild(expression, 0)->type]);
+                printf("Line %d, column %d: Operator %s cannot be applied to type %s\n", expression->token_line, expression->token_column, string_op, type_names2[getchild(expression, 0)->type]);
                 semantic_errors++;
                 expression->type = undef_type;
             } else {
@@ -122,9 +122,9 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
 
         case Or:
-            if (char_op[0]=='\0') { char_op[0]='|'; }
+            if (string_op[0]=='\0') { string_op[0]='|'; string_op[1]='|'; }
         case And:
-            if (char_op[0]=='\0') { char_op[0]='&'; }
+            if (string_op[0]=='\0') { string_op[0]='&'; string_op[1]='&'; }
 
             left_expr = getchild(expression, 0);
             right_expr = getchild(expression, 1);
@@ -132,7 +132,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             check_expression(left_expr, symbol_scope);
             check_expression(right_expr, symbol_scope);
             if (left_expr->type!=bool_type || right_expr->type!=bool_type) {
-                printf("Line %d, column %d: Operator %c%c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], char_op[0], type_names2[left_expr->type], type_names2[right_expr->type]);
+                printf("Line %d, column %d: Operator %s cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, string_op, type_names2[left_expr->type], type_names2[right_expr->type]);
                 semantic_errors++;
             }
             expression->type = bool_type;
@@ -141,9 +141,9 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
 
         case Eq:
-            if (char_op[0]=='\0') { char_op[0]='='; char_op[1]='='; }
+            if (string_op[0]=='\0') { string_op[0]='='; string_op[1]='='; }
         case Ne:
-            if (char_op[0]=='\0') { char_op[0]='!'; char_op[1]='='; }
+            if (string_op[0]=='\0') { string_op[0]='!'; string_op[1]='='; }
 
             left_expr = getchild(expression, 0);
             right_expr = getchild(expression, 1);
@@ -152,7 +152,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             check_expression(right_expr, symbol_scope);
 
             if (left_expr->type!=right_expr->type || (left_expr->type==undef_type) || (left_expr->type==none_type)) {
-                printf("Line %d, column %d: Operator %c%c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], char_op[0], type_names2[left_expr->type], type_names2[right_expr->type]);
+                printf("Line %d, column %d: Operator %s cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, string_op, type_names2[left_expr->type], type_names2[right_expr->type]);
                 semantic_errors++;
             }
             expression->type = bool_type;
@@ -161,13 +161,13 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 
 
         case Lt:
-            if (char_op[0]=='\0') { char_op[0]='<'; }
+            if (string_op[0]=='\0') { string_op[0]='<'; }
         case Le:
-            if (char_op[0]=='\0') { char_op[0]='<'; char_op[1]='='; }
+            if (string_op[0]=='\0') { string_op[0]='<'; string_op[1]='='; }
         case Gt:
-            if (char_op[0]=='\0') { char_op[0]='>'; }
+            if (string_op[0]=='\0') { string_op[0]='>'; }
         case Ge:
-            if (char_op[0]=='\0') { char_op[0]='>'; char_op[1]='='; }
+            if (string_op[0]=='\0') { string_op[0]='>'; string_op[1]='='; }
 
 
             left_expr = getchild(expression, 0);
@@ -177,7 +177,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             check_expression(right_expr, symbol_scope);
 
             if (left_expr->type!=right_expr->type || !(left_expr->type==int_type || left_expr->type==float32_type)) {
-                printf("Line %d, column %d: Operator %c%c cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, char_op[0], char_op[1], type_names2[left_expr->type], type_names2[right_expr->type]);
+                printf("Line %d, column %d: Operator %s cannot be applied to types %s, %s\n", expression->token_line, expression->token_column, string_op, type_names2[left_expr->type], type_names2[right_expr->type]);
                 semantic_errors++;
             }
             expression->type = bool_type;
