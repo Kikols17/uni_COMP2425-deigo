@@ -15,6 +15,9 @@ struct node *newnode(enum category category, char *token) {
     new->category = category;
     new->token = token;
     new->type = none_type;
+    new->is_callid = false;
+    new->token_line = 0;
+    new->token_column = 0;
     new->children = malloc(sizeof(struct node_list));
     new->children->node = NULL;
     new->children->next = NULL;
@@ -64,18 +67,33 @@ void show(struct node *node, int depth) {
         printf("%s(%s)", category_names[node->category], node->token);
     }
 
-    if (node->type != none_type) {
-        struct symbol_list *symbol;
-        if (symbol_table!=NULL && node->token!=NULL && node->type!=undef_type && (symbol=search_symbol(symbol_table, node->token, 1, true))!=NULL) {
-            char *params_string = show_functionparameters(symbol);
-            printf(" - %s\n", params_string);
-            free(params_string);
-        } else {
-            printf(" - %s\n", type_names[node->type]);
-        }
+
+    struct symbol_list *symbol;
+    // aviso, nao tentar perceber esta condição
+    if (symbol_table!=NULL && node->token!=NULL && node->type!=undef_type && node->is_callid && (symbol=search_symbol(symbol_table, node->token, 1, true))!=NULL) {
+        char *params_string = show_functionparameters(symbol);
+        printf(" - %s\n", params_string);
+        free(params_string);
     } else {
-        printf("\n");
+        if (node->type != none_type) {
+            printf(" - %s\n", type_names[node->type]);
+        } else {
+            printf("\n");
+        }
     }
+
+    //if (node->type != none_type) {
+    //    struct symbol_list *symbol;
+    //    if (symbol_table!=NULL && node->token!=NULL && node->type!=undef_type && (symbol=search_symbol(symbol_table, node->token, 1, true))!=NULL) {
+    //        char *params_string = show_functionparameters(symbol);
+    //        printf(" - %s\n", params_string);
+    //        free(params_string);
+    //    } else {
+    //        printf(" - %s\n", type_names[node->type]);
+    //    }
+    //} else {
+    //    printf("\n");
+    //}
     
     // Visit all children
     if(node->children == NULL) {

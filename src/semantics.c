@@ -226,7 +226,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
 void check_Block(struct node *block_node, struct symbol_list *symbol_scope) {
     struct node_list *child = block_node->children;
     while ((child=child->next)!=NULL) {
-        check_Statement(child->node, symbol_scope);
+        check_expression(child->node, symbol_scope);
     }
 }
 
@@ -412,8 +412,11 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
             match = false;
         }
         if (match) {
-            call->type = definition_return_type;
+            if (definition_return_type!=none_type) {
+                call->type = definition_return_type;
+            }
             getchild(call, 0)->type = definition_return_type;
+            getchild(call, 0)->is_callid = true;
             return;
         }
         #ifdef VERBOSE

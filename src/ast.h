@@ -3,6 +3,7 @@
 
 
 #include <stddef.h>   // preciso para o NULL (n sei pq nunca foi preciso)
+#include <stdbool.h>
 
 enum category               {  Program,      VarDecl,      FuncDecl,     FuncHeader,   FuncParams,   FuncBody,     ParamDecl,    Assign,       Int,        Natural,   Decimal,        Float32,        Bool,        String,        StrLit,      Identifier,   For,          If,           Block,        Call,         Return,       Print,        ParseArgs,    Or,           And,          Eq,           Ne,           Lt,           Le,           Gt,           Ge,           Add,          Sub,          Mul,          Div,          Mod,          Not,          Minus,        Plus,         TEMP,          None};
 #define CATEGORY_NAMES      { "Program",    "VarDecl",    "FuncDecl",   "FuncHeader", "FuncParams", "FuncBody",   "ParamDecl",  "Assign",     "Int",      "Natural", "Decimal",      "Float32",      "Bool",      "String",      "StrLit",    "Identifier", "For",        "If",         "Block",      "Call",       "Return",     "Print",      "ParseArgs",  "Or",         "And",        "Eq",         "Ne",         "Lt",         "Le",         "Gt",         "Ge",         "Add",        "Sub",        "Mul",        "Div",        "Mod",        "Not",        "Minus",      "Plus",       "TEMP"         "None"};
@@ -16,6 +17,7 @@ struct node {
     enum category category;
     char *token;
     enum type type;
+    bool is_callid;
     int token_line;
     int token_column;
     struct node_list *children;

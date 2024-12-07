@@ -69,6 +69,7 @@ bin="$(readlink -f "$bin")"
 
 # command to compare two files ignoring trailing white space
 compare="diff -qaZ --strip-trailing-cr"
+#compare="diff -qaZ --strip-trailing-cr | grep -v '^Line '"
 # opcoes a passar ao comando de diff
 options="-yaZ -W $(tput cols) --strip-trailing-cr"
 # comando que verifica se o colordiff existe
