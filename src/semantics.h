@@ -11,6 +11,7 @@ struct symbol_list {
     bool is_function;
     bool is_param;
     bool is_invalid;
+    bool is_used;
     struct symbol_list *child_scope;
     struct symbol_list *parent_scope;
     struct symbol_list *next;
@@ -37,6 +38,9 @@ void check_FuncBody(struct node *body, struct symbol_list *symbol_func);
 void check_Statement(struct node *statement, struct symbol_list *symbol_list);
 
 int check_program(struct node *program);
+
+
+void check_UnusedSymbols(struct symbol_list *symbol_scope);
 
 
 

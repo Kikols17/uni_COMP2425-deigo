@@ -34,6 +34,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
                 expression->type = undef_type;
             } else {
                 expression->type = declaration->type;
+                declaration->is_used = true;
             }
             
             break;
@@ -295,22 +296,23 @@ void check_ParseArgs(struct node *parse_args, struct symbol_list *symbol_scope) 
 }
 
 void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
-    struct symbol_list *definition;
-    if (getchild(print_node, 0)->category == Identifier) {
-        // if is identifier, make sure it has been defined
-        definition = search_symbol(symbol_scope, getchild(print_node, 0)->token, -1, false);
-        if (definition==NULL) {
-            // was not defined
-            getchild(print_node, 0)->type = undef_type;
-            printf("Line %d, column %d: Cannot find symbol %s\n", getchild(print_node, 0)->token_line, getchild(print_node, 0)->token_column, getchild(print_node, 0)->token);
-            semantic_errors++;
-            return;
-        }
-        getchild(print_node, 0)->type = definition->type;
-    } else {
-        //getchild(print_node, 0)->type = category_to_type2[getchild(print_node, 0)->category];
-        check_expression(getchild(print_node, 0), symbol_scope);
-    }
+    //struct symbol_list *definition;
+    //if (getchild(print_node, 0)->category == Identifier) {
+    //    // if is identifier, make sure it has been defined
+    //    definition = search_symbol(symbol_scope, getchild(print_node, 0)->token, -1, false);
+    //    if (definition==NULL) {
+    //        // was not defined
+    //        getchild(print_node, 0)->type = undef_type;
+    //        printf("Line %d, column %d: Cannot find symbol %s\n", getchild(print_node, 0)->token_line, getchild(print_node, 0)->token_column, getchild(print_node, 0)->token);
+    //        semantic_errors++;
+    //        return;
+    //    }
+    //    getchild(print_node, 0)->type = definition->type;
+    //} else {
+    //    //getchild(print_node, 0)->type = category_to_type2[getchild(print_node, 0)->category];
+    //    check_expression(getchild(print_node, 0), symbol_scope);
+    //}
+    check_expression(getchild(print_node, 0), symbol_scope);
 }
 
 void check_Return(struct node *return_node, struct symbol_list *symbol_scope) {
@@ -335,14 +337,18 @@ void check_Return(struct node *return_node, struct symbol_list *symbol_scope) {
 
 void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
     // check variable
-    struct symbol_list *definition = search_symbol(symbol_scope, getchild(assign, 0)->token, -1, false);
-    if (definition!=NULL) {
-        getchild(assign, 0)->type = definition->type;
-    } else {
-        getchild(assign, 0)->type = undef_type;
-        printf("Line %d, column %d: Cannot find symbol %s\n", getchild(assign, 0)->token_line, getchild(assign, 0)->token_column, getchild(assign, 0)->token);
-        semantic_errors++;
-    }
+    //struct symbol_list *definition = search_symbol(symbol_scope, getchild(assign, 0)->token, -1, false);
+    //if (definition!=NULL) {
+    //    getchild(assign, 0)->type = definition->type;
+    //    definition->is_used = true;
+    //} else {
+    //    getchild(assign, 0)->type = undef_type;
+    //    printf("Line %d, column %d: Cannot find symbol %s\n", getchild(assign, 0)->token_line, getchild(assign, 0)->token_column, getchild(assign, 0)->token);
+    //    semantic_errors++;
+    //}
+
+    // check variable
+    check_expression(getchild(assign, 0), symbol_scope);
 
     // check statement
     check_expression(getchild(assign, 1), symbol_scope);
@@ -622,9 +628,33 @@ int check_program(struct node *program) {
     // now check all FuncBody's
     for (int i=0; i<FuncBodyStack_count; i++) {
         check_FuncBody(FuncBodyStack_node[i], FuncBodyStack_symbol_scope[i]);
+        check_UnusedSymbols(FuncBodyStack_symbol_scope[i]);
     }
+    //check_UnusedSymbols(symbol_table);
     
     return semantic_errors;
+}
+
+void check_UnusedSymbols(struct symbol_list *symbol_scope) {
+    if (symbol_scope==NULL) {
+        // empty scope
+        return;
+    }
+
+    struct symbol_list *symbol;
+    for(symbol = symbol_scope->next; symbol != NULL; symbol = symbol->next) {
+        if (symbol->is_used==false && symbol->is_param==false) {
+            if (symbol->node==NULL || getchild(symbol->node, 1)==NULL || symbol->node->category!=VarDecl || symbol->is_invalid) {
+                continue;
+            }
+            //printf("Category: %s ", category_names2[symbol->node->category]);
+            printf("Line %d, column %d: Symbol %s declared but never used\n", getchild(symbol->node, 1)->token_line, getchild(symbol->node, 1)->token_column, getchild(symbol->node, 1)->token);
+            semantic_errors++;
+        }
+        //check_UnusedSymbols(symbol->child_scope);
+    }
+    
+
 }
 
 
@@ -637,6 +667,7 @@ struct symbol_list *insert_symbol(struct symbol_list *table, char *identifier, e
     new->is_function = false;
     new->is_invalid = false;
     new->is_param = false;
+    new->is_used = false;
     new->child_scope = NULL;
     new->parent_scope = NULL;
     new->next = NULL;
