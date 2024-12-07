@@ -1,0 +1,12 @@
+package main;
+
+func f0(){}
+
+func f1() string {return;}
+
+func main (f0 int, f0 float32, f0 int){
+    var a int;
+    a = f1;
+    a = f0();
+
+}

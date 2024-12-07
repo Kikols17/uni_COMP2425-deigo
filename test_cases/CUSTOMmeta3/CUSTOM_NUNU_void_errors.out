@@ -1,0 +1,59 @@
+Line 10, column 7: Operator = cannot be applied to types int, void
+Line 5, column 19: Incompatible type void in return statement
+Line 7, column 20: Symbol f0 already defined
+Line 7, column 32: Symbol f0 already defined
+Line 9, column 7: Operator = cannot be applied to types int, undef
+Line 9, column 9: Cannot find symbol f1
+===== Global Symbol Table =====
+f0	()	none
+f1	()	string
+main	(int,float32,int)	none
+
+===== Function f0() Symbol Table =====
+return		none
+
+===== Function f1() Symbol Table =====
+return		string
+
+===== Function main(int,float32,int) Symbol Table =====
+return		none
+f0		int	param
+a		int
+
+Program
+..FuncDecl
+....FuncHeader
+......Identifier(f0)
+......FuncParams
+....FuncBody
+..FuncDecl
+....FuncHeader
+......Identifier(f1)
+......String
+......FuncParams
+....FuncBody
+......Return
+..FuncDecl
+....FuncHeader
+......Identifier(main)
+......FuncParams
+........ParamDecl
+..........Int
+..........Identifier(f0)
+........ParamDecl
+..........Float32
+..........Identifier(f0)
+........ParamDecl
+..........Int
+..........Identifier(f0)
+....FuncBody
+......VarDecl
+........Int
+........Identifier(a)
+......Assign - int
+........Identifier(a) - int
+........Identifier(f1) - undef
+......Assign - int
+........Identifier(a) - int
+........Call
+..........Identifier(f0) - ()
