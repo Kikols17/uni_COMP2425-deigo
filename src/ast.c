@@ -89,7 +89,6 @@ void reversenode(struct node* node) {
 
 void addchild_allchildren(struct node *parent, struct node *child) {
     // adds the child node to all children of the parent node
-    //printf("pau\n");
     if (parent == NULL || child == NULL) {
         return;
     }
