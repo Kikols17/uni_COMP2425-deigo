@@ -315,7 +315,7 @@ void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
     //}
     check_expression(getchild(print_node, 0), symbol_scope);
     if (getchild(print_node, 0)->type == undef_type) {
-        printf("Line %d, column %d: Incompatible type %s in fmt.Println statement", print_node->token_line, print_node->token_column, type_names2[getchild(print_node, 0)->type]);
+        printf("Line %d, column %d: Incompatible type %s in fmt.Println statement\n", print_node->token_line, print_node->token_column, type_names2[getchild(print_node, 0)->type]);
         semantic_errors++;
     }
 }
