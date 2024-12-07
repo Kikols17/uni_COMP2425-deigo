@@ -100,7 +100,8 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
             if (getchild(expression, 0)->type == int_type || getchild(expression, 0)->type == float32_type) {
                 legal = true;
             } else {
-                false;
+                legal = false;
+                expression->type = undef_type;
             }
         case Not:
             if (string_op[0]=='\0') { string_op[0]='!';
@@ -108,13 +109,13 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
                 if (getchild(expression, 0)->type == bool_type) {
                     legal = true;
                 } else {
-                    false;
+                    legal = false;
+                    expression->type = bool_type;
                 }
             }
             if (!legal) {
                 printf("Line %d, column %d: Operator %s cannot be applied to type %s\n", expression->token_line, expression->token_column, string_op, type_names2[getchild(expression, 0)->type]);
                 semantic_errors++;
-                expression->type = undef_type;
             } else {
                 expression->type = getchild(expression, 0)->type;
             }
