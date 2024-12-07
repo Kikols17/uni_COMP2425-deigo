@@ -1,0 +1,611 @@
+
+package main;
+
+func returns_bool() bool {
+    // não existe "true"?
+    return 2024==2024;
+}
+
+func returns_int() int {
+    return 2024;
+}
+
+func returns_float32() float32 {
+    return 0.123;
+}
+
+func returns_string() string {
+    var str string;
+    return str;
+}
+
+
+
+func main() {
+    check_not();
+
+    check_eq();
+    check_ne();
+    
+    check_le();
+    check_lt();
+    check_gt();
+    check_ge();
+}
+
+
+
+
+
+func check_not() {
+    /* TESTING NOT */
+
+    var var_bool0, var_bool1 bool;
+    var var_int0, var_int1 int;
+    var var_float0, var_float1 float32;
+    var var_string0, var_string1 string;
+
+
+    // bool
+    var_bool0 = !var_bool1;
+    var_bool0 = !var_int1;
+    var_bool0 = !var_float1;
+    var_bool0 = !var_string1;
+
+    var_bool0 = !returns_bool();
+    var_bool0 = !returns_int();
+    var_bool0 = !returns_float32();
+    var_bool0 = !returns_string();
+
+
+    // int
+    var_int0 = !var_bool1;
+    var_int0 = !var_int1;
+    var_int0 = !var_float1;
+    var_int0 = !var_string1;
+
+    var_int0 = !returns_bool();
+    var_int0 = !returns_int();
+    var_int0 = !returns_float32();
+    var_int0 = !returns_string();
+
+
+    // float32
+    var_float0 = !var_bool1;
+    var_float0 = !var_int1;
+    var_float0 = !var_float1;
+    var_float0 = !var_string1;
+
+    var_float0 = !returns_bool();
+    var_float0 = !returns_int();
+    var_float0 = !returns_float32();
+    var_float0 = !returns_string();
+
+
+    // string
+    var_string0 = !var_bool1;
+    var_string0 = !var_int1;
+    var_string0 = !var_float1;
+    var_string0 = !var_string1;
+
+    var_string0 = !returns_bool();
+    var_string0 = !returns_int();
+    var_string0 = !returns_float32();
+    var_string0 = !returns_string();
+}
+
+
+
+func check_eq() {
+    /* TESTING EQ (==) */
+    var var_bool0, var_bool1, var_bool2 bool;
+    var var_int0, var_int1, var_int2 int;
+    var var_float0, var_float1, var_float2 float32;
+    var var_string0, var_string1, var_string2 string;
+
+
+    // bool
+    var_bool0 = var_bool1 == var_bool2;
+    var_bool0 = var_bool1 == var_int2;
+    var_bool0 = var_bool1 == var_float2;
+    var_bool0 = var_bool1 == var_string2;
+    var_bool0 = var_int1 == var_bool2;
+    var_bool0 = var_int1 == var_int2;
+    var_bool0 = var_int1 == var_float2;
+    var_bool0 = var_int1 == var_string2;
+    var_bool0 = var_float1 == var_bool2;
+    var_bool0 = var_float1 == var_int2;
+    var_bool0 = var_float1 == var_float2;
+    var_bool0 = var_float1 == var_string2;
+    var_bool0 = var_string1 == var_bool2;
+    var_bool0 = var_string1 == var_int2;
+    var_bool0 = var_string1 == var_float2;
+    var_bool0 = var_string1 == var_string2;
+
+
+    // int
+    var_int0 = var_bool1 == var_bool2;
+    var_int0 = var_bool1 == var_int2;
+    var_int0 = var_bool1 == var_float2;
+    var_int0 = var_bool1 == var_string2;
+    var_int0 = var_int1 == var_bool2;
+    var_int0 = var_int1 == var_int2;
+    var_int0 = var_int1 == var_float2;
+    var_int0 = var_int1 == var_string2;
+    var_int0 = var_float1 == var_bool2;
+    var_int0 = var_float1 == var_int2;
+    var_int0 = var_float1 == var_float2;
+    var_int0 = var_float1 == var_string2;
+    var_int0 = var_string1 == var_bool2;
+    var_int0 = var_string1 == var_int2;
+    var_int0 = var_string1 == var_float2;
+    var_int0 = var_string1 == var_string2;
+
+
+    // float32
+    var_float0 = var_bool1 == var_bool2;
+    var_float0 = var_bool1 == var_int2;
+    var_float0 = var_bool1 == var_float2;
+    var_float0 = var_bool1 == var_string2;
+    var_float0 = var_int1 == var_bool2;
+    var_float0 = var_int1 == var_int2;
+    var_float0 = var_int1 == var_float2;
+    var_float0 = var_int1 == var_string2;
+    var_float0 = var_float1 == var_bool2;
+    var_float0 = var_float1 == var_int2;
+    var_float0 = var_float1 == var_float2;
+    var_float0 = var_float1 == var_string2;
+    var_float0 = var_string1 == var_bool2;
+    var_float0 = var_string1 == var_int2;
+    var_float0 = var_string1 == var_float2;
+    var_float0 = var_string1 == var_string2;
+
+
+    // string
+    var_string0 = var_bool1 == var_bool2;
+    var_string0 = var_bool1 == var_int2;
+    var_string0 = var_bool1 == var_float2;
+    var_string0 = var_bool1 == var_string2;
+    var_string0 = var_int1 == var_bool2;
+    var_string0 = var_int1 == var_int2;
+    var_string0 = var_int1 == var_float2;
+    var_string0 = var_int1 == var_string2;
+    var_string0 = var_float1 == var_bool2;
+    var_string0 = var_float1 == var_int2;
+    var_string0 = var_float1 == var_float2;
+    var_string0 = var_float1 == var_string2;
+    var_string0 = var_string1 == var_bool2;
+    var_string0 = var_string1 == var_int2;
+    var_string0 = var_string1 == var_float2;
+    var_string0 = var_string1 == var_string2;
+}
+
+
+
+func check_ne() {
+    /* TESTING NE (!=) */
+    var var_bool0, var_bool1, var_bool2 bool;
+    var var_int0, var_int1, var_int2 int;
+    var var_float0, var_float1, var_float2 float32;
+    var var_string0, var_string1, var_string2 string;
+
+
+    // bool
+    var_bool0 = var_bool1 != var_bool2;
+    var_bool0 = var_bool1 != var_int2;
+    var_bool0 = var_bool1 != var_float2;
+    var_bool0 = var_bool1 != var_string2;
+    var_bool0 = var_int1 != var_bool2;
+    var_bool0 = var_int1 != var_int2;
+    var_bool0 = var_int1 != var_float2;
+    var_bool0 = var_int1 != var_string2;
+    var_bool0 = var_float1 != var_bool2;
+    var_bool0 = var_float1 != var_int2;
+    var_bool0 = var_float1 != var_float2;
+    var_bool0 = var_float1 != var_string2;
+    var_bool0 = var_string1 != var_bool2;
+    var_bool0 = var_string1 != var_int2;
+    var_bool0 = var_string1 != var_float2;
+    var_bool0 = var_string1 != var_string2;
+
+
+    // int
+    var_int0 = var_bool1 != var_bool2;
+    var_int0 = var_bool1 != var_int2;
+    var_int0 = var_bool1 != var_float2;
+    var_int0 = var_bool1 != var_string2;
+    var_int0 = var_int1 != var_bool2;
+    var_int0 = var_int1 != var_int2;
+    var_int0 = var_int1 != var_float2;
+    var_int0 = var_int1 != var_string2;
+    var_int0 = var_float1 != var_bool2;
+    var_int0 = var_float1 != var_int2;
+    var_int0 = var_float1 != var_float2;
+    var_int0 = var_float1 != var_string2;
+    var_int0 = var_string1 != var_bool2;
+    var_int0 = var_string1 != var_int2;
+    var_int0 = var_string1 != var_float2;
+    var_int0 = var_string1 != var_string2;
+
+
+    // float32
+    var_float0 = var_bool1 != var_bool2;
+    var_float0 = var_bool1 != var_int2;
+    var_float0 = var_bool1 != var_float2;
+    var_float0 = var_bool1 != var_string2;
+    var_float0 = var_int1 != var_bool2;
+    var_float0 = var_int1 != var_int2;
+    var_float0 = var_int1 != var_float2;
+    var_float0 = var_int1 != var_string2;
+    var_float0 = var_float1 != var_bool2;
+    var_float0 = var_float1 != var_int2;
+    var_float0 = var_float1 != var_float2;
+    var_float0 = var_float1 != var_string2;
+    var_float0 = var_string1 != var_bool2;
+    var_float0 = var_string1 != var_int2;
+    var_float0 = var_string1 != var_float2;
+    var_float0 = var_string1 != var_string2;
+
+
+    // string
+    var_string0 = var_bool1 != var_bool2;
+    var_string0 = var_bool1 != var_int2;
+    var_string0 = var_bool1 != var_float2;
+    var_string0 = var_bool1 != var_string2;
+    var_string0 = var_int1 != var_bool2;
+    var_string0 = var_int1 != var_int2;
+    var_string0 = var_int1 != var_float2;
+    var_string0 = var_int1 != var_string2;
+    var_string0 = var_float1 != var_bool2;
+    var_string0 = var_float1 != var_int2;
+    var_string0 = var_float1 != var_float2;
+    var_string0 = var_float1 != var_string2;
+    var_string0 = var_string1 != var_bool2;
+    var_string0 = var_string1 != var_int2;
+    var_string0 = var_string1 != var_float2;
+    var_string0 = var_string1 != var_string2;
+}
+
+
+
+func check_lt() {
+    /* TESTING LT (<) */
+    var var_bool0, var_bool1, var_bool2 bool;
+    var var_int0, var_int1, var_int2 int;
+    var var_float0, var_float1, var_float2 float32;
+    var var_string0, var_string1, var_string2 string;
+
+
+    // bool
+    var_bool0 = var_bool1 < var_bool2;
+    var_bool0 = var_bool1 < var_int2;
+    var_bool0 = var_bool1 < var_float2;
+    var_bool0 = var_bool1 < var_string2;
+    var_bool0 = var_int1 < var_bool2;
+    var_bool0 = var_int1 < var_int2;
+    var_bool0 = var_int1 < var_float2;
+    var_bool0 = var_int1 < var_string2;
+    var_bool0 = var_float1 < var_bool2;
+    var_bool0 = var_float1 < var_int2;
+    var_bool0 = var_float1 < var_float2;
+    var_bool0 = var_float1 < var_string2;
+    var_bool0 = var_string1 < var_bool2;
+    var_bool0 = var_string1 < var_int2;
+    var_bool0 = var_string1 < var_float2;
+    var_bool0 = var_string1 < var_string2;
+
+
+    // int
+    var_int0 = var_bool1 < var_bool2;
+    var_int0 = var_bool1 < var_int2;
+    var_int0 = var_bool1 < var_float2;
+    var_int0 = var_bool1 < var_string2;
+    var_int0 = var_int1 < var_bool2;
+    var_int0 = var_int1 < var_int2;
+    var_int0 = var_int1 < var_float2;
+    var_int0 = var_int1 < var_string2;
+    var_int0 = var_float1 < var_bool2;
+    var_int0 = var_float1 < var_int2;
+    var_int0 = var_float1 < var_float2;
+    var_int0 = var_float1 < var_string2;
+    var_int0 = var_string1 < var_bool2;
+    var_int0 = var_string1 < var_int2;
+    var_int0 = var_string1 < var_float2;
+    var_int0 = var_string1 < var_string2;
+
+
+    // float32
+    var_float0 = var_bool1 < var_bool2;
+    var_float0 = var_bool1 < var_int2;
+    var_float0 = var_bool1 < var_float2;
+    var_float0 = var_bool1 < var_string2;
+    var_float0 = var_int1 < var_bool2;
+    var_float0 = var_int1 < var_int2;
+    var_float0 = var_int1 < var_float2;
+    var_float0 = var_int1 < var_string2;
+    var_float0 = var_float1 < var_bool2;
+    var_float0 = var_float1 < var_int2;
+    var_float0 = var_float1 < var_float2;
+    var_float0 = var_float1 < var_string2;
+    var_float0 = var_string1 < var_bool2;
+    var_float0 = var_string1 < var_int2;
+    var_float0 = var_string1 < var_float2;
+    var_float0 = var_string1 < var_string2;
+
+
+    // string
+    var_string0 = var_bool1 < var_bool2;
+    var_string0 = var_bool1 < var_int2;
+    var_string0 = var_bool1 < var_float2;
+    var_string0 = var_bool1 < var_string2;
+    var_string0 = var_int1 < var_bool2;
+    var_string0 = var_int1 < var_int2;
+    var_string0 = var_int1 < var_float2;
+    var_string0 = var_int1 < var_string2;
+    var_string0 = var_float1 < var_bool2;
+    var_string0 = var_float1 < var_int2;
+    var_string0 = var_float1 < var_float2;
+    var_string0 = var_float1 < var_string2;
+    var_string0 = var_string1 < var_bool2;
+    var_string0 = var_string1 < var_int2;
+    var_string0 = var_string1 < var_float2;
+    var_string0 = var_string1 < var_string2;
+}
+
+
+
+func check_le() {
+    /* TESTING LE (<=) */
+    var var_bool0, var_bool1, var_bool2 bool;
+    var var_int0, var_int1, var_int2 int;
+    var var_float0, var_float1, var_float2 float32;
+    var var_string0, var_string1, var_string2 string;
+
+
+    // bool
+    var_bool0 = var_bool1 <= var_bool2;
+    var_bool0 = var_bool1 <= var_int2;
+    var_bool0 = var_bool1 <= var_float2;
+    var_bool0 = var_bool1 <= var_string2;
+    var_bool0 = var_int1 <= var_bool2;
+    var_bool0 = var_int1 <= var_int2;
+    var_bool0 = var_int1 <= var_float2;
+    var_bool0 = var_int1 <= var_string2;
+    var_bool0 = var_float1 <= var_bool2;
+    var_bool0 = var_float1 <= var_int2;
+    var_bool0 = var_float1 <= var_float2;
+    var_bool0 = var_float1 <= var_string2;
+    var_bool0 = var_string1 <= var_bool2;
+    var_bool0 = var_string1 <= var_int2;
+    var_bool0 = var_string1 <= var_float2;
+    var_bool0 = var_string1 <= var_string2;
+
+
+    // int
+    var_int0 = var_bool1 <= var_bool2;
+    var_int0 = var_bool1 <= var_int2;
+    var_int0 = var_bool1 <= var_float2;
+    var_int0 = var_bool1 <= var_string2;
+    var_int0 = var_int1 <= var_bool2;
+    var_int0 = var_int1 <= var_int2;
+    var_int0 = var_int1 <= var_float2;
+    var_int0 = var_int1 <= var_string2;
+    var_int0 = var_float1 <= var_bool2;
+    var_int0 = var_float1 <= var_int2;
+    var_int0 = var_float1 <= var_float2;
+    var_int0 = var_float1 <= var_string2;
+    var_int0 = var_string1 <= var_bool2;
+    var_int0 = var_string1 <= var_int2;
+    var_int0 = var_string1 <= var_float2;
+    var_int0 = var_string1 <= var_string2;
+
+
+    // float32
+    var_float0 = var_bool1 <= var_bool2;
+    var_float0 = var_bool1 <= var_int2;
+    var_float0 = var_bool1 <= var_float2;
+    var_float0 = var_bool1 <= var_string2;
+    var_float0 = var_int1 <= var_bool2;
+    var_float0 = var_int1 <= var_int2;
+    var_float0 = var_int1 <= var_float2;
+    var_float0 = var_int1 <= var_string2;
+    var_float0 = var_float1 <= var_bool2;
+    var_float0 = var_float1 <= var_int2;
+    var_float0 = var_float1 <= var_float2;
+    var_float0 = var_float1 <= var_string2;
+    var_float0 = var_string1 <= var_bool2;
+    var_float0 = var_string1 <= var_int2;
+    var_float0 = var_string1 <= var_float2;
+    var_float0 = var_string1 <= var_string2;
+
+
+    // string
+    var_string0 = var_bool1 <= var_bool2;
+    var_string0 = var_bool1 <= var_int2;
+    var_string0 = var_bool1 <= var_float2;
+    var_string0 = var_bool1 <= var_string2;
+    var_string0 = var_int1 <= var_bool2;
+    var_string0 = var_int1 <= var_int2;
+    var_string0 = var_int1 <= var_float2;
+    var_string0 = var_int1 <= var_string2;
+    var_string0 = var_float1 <= var_bool2;
+    var_string0 = var_float1 <= var_int2;
+    var_string0 = var_float1 <= var_float2;
+    var_string0 = var_float1 <= var_string2;
+    var_string0 = var_string1 <= var_bool2;
+    var_string0 = var_string1 <= var_int2;
+    var_string0 = var_string1 <= var_float2;
+    var_string0 = var_string1 <= var_string2;
+}
+
+
+
+func check_gt() {
+    /* TESTING GT (>) */
+    var var_bool0, var_bool1, var_bool2 bool;
+    var var_int0, var_int1, var_int2 int;
+    var var_float0, var_float1, var_float2 float32;
+    var var_string0, var_string1, var_string2 string;
+
+
+    // bool
+    var_bool0 = var_bool1 > var_bool2;
+    var_bool0 = var_bool1 > var_int2;
+    var_bool0 = var_bool1 > var_float2;
+    var_bool0 = var_bool1 > var_string2;
+    var_bool0 = var_int1 > var_bool2;
+    var_bool0 = var_int1 > var_int2;
+    var_bool0 = var_int1 > var_float2;
+    var_bool0 = var_int1 > var_string2;
+    var_bool0 = var_float1 > var_bool2;
+    var_bool0 = var_float1 > var_int2;
+    var_bool0 = var_float1 > var_float2;
+    var_bool0 = var_float1 > var_string2;
+    var_bool0 = var_string1 > var_bool2;
+    var_bool0 = var_string1 > var_int2;
+    var_bool0 = var_string1 > var_float2;
+    var_bool0 = var_string1 > var_string2;
+
+
+    // int
+    var_int0 = var_bool1 > var_bool2;
+    var_int0 = var_bool1 > var_int2;
+    var_int0 = var_bool1 > var_float2;
+    var_int0 = var_bool1 > var_string2;
+    var_int0 = var_int1 > var_bool2;
+    var_int0 = var_int1 > var_int2;
+    var_int0 = var_int1 > var_float2;
+    var_int0 = var_int1 > var_string2;
+    var_int0 = var_float1 > var_bool2;
+    var_int0 = var_float1 > var_int2;
+    var_int0 = var_float1 > var_float2;
+    var_int0 = var_float1 > var_string2;
+    var_int0 = var_string1 > var_bool2;
+    var_int0 = var_string1 > var_int2;
+    var_int0 = var_string1 > var_float2;
+    var_int0 = var_string1 > var_string2;
+
+
+    // float32
+    var_float0 = var_bool1 > var_bool2;
+    var_float0 = var_bool1 > var_int2;
+    var_float0 = var_bool1 > var_float2;
+    var_float0 = var_bool1 > var_string2;
+    var_float0 = var_int1 > var_bool2;
+    var_float0 = var_int1 > var_int2;
+    var_float0 = var_int1 > var_float2;
+    var_float0 = var_int1 > var_string2;
+    var_float0 = var_float1 > var_bool2;
+    var_float0 = var_float1 > var_int2;
+    var_float0 = var_float1 > var_float2;
+    var_float0 = var_float1 > var_string2;
+    var_float0 = var_string1 > var_bool2;
+    var_float0 = var_string1 > var_int2;
+    var_float0 = var_string1 > var_float2;
+    var_float0 = var_string1 > var_string2;
+
+
+    // string
+    var_string0 = var_bool1 > var_bool2;
+    var_string0 = var_bool1 > var_int2;
+    var_string0 = var_bool1 > var_float2;
+    var_string0 = var_bool1 > var_string2;
+    var_string0 = var_int1 > var_bool2;
+    var_string0 = var_int1 > var_int2;
+    var_string0 = var_int1 > var_float2;
+    var_string0 = var_int1 > var_string2;
+    var_string0 = var_float1 > var_bool2;
+    var_string0 = var_float1 > var_int2;
+    var_string0 = var_float1 > var_float2;
+    var_string0 = var_float1 > var_string2;
+    var_string0 = var_string1 > var_bool2;
+    var_string0 = var_string1 > var_int2;
+    var_string0 = var_string1 > var_float2;
+    var_string0 = var_string1 > var_string2;
+}
+
+
+
+func check_ge() {
+    /* TESTING NE (>=) */
+    var var_bool0, var_bool1, var_bool2 bool;
+    var var_int0, var_int1, var_int2 int;
+    var var_float0, var_float1, var_float2 float32;
+    var var_string0, var_string1, var_string2 string;
+
+
+    // bool
+    var_bool0 = var_bool1 >= var_bool2;
+    var_bool0 = var_bool1 >= var_int2;
+    var_bool0 = var_bool1 >= var_float2;
+    var_bool0 = var_bool1 >= var_string2;
+    var_bool0 = var_int1 >= var_bool2;
+    var_bool0 = var_int1 >= var_int2;
+    var_bool0 = var_int1 >= var_float2;
+    var_bool0 = var_int1 >= var_string2;
+    var_bool0 = var_float1 >= var_bool2;
+    var_bool0 = var_float1 >= var_int2;
+    var_bool0 = var_float1 >= var_float2;
+    var_bool0 = var_float1 >= var_string2;
+    var_bool0 = var_string1 >= var_bool2;
+    var_bool0 = var_string1 >= var_int2;
+    var_bool0 = var_string1 >= var_float2;
+    var_bool0 = var_string1 >= var_string2;
+
+
+    // int
+    var_int0 = var_bool1 >= var_bool2;
+    var_int0 = var_bool1 >= var_int2;
+    var_int0 = var_bool1 >= var_float2;
+    var_int0 = var_bool1 >= var_string2;
+    var_int0 = var_int1 >= var_bool2;
+    var_int0 = var_int1 >= var_int2;
+    var_int0 = var_int1 >= var_float2;
+    var_int0 = var_int1 >= var_string2;
+    var_int0 = var_float1 >= var_bool2;
+    var_int0 = var_float1 >= var_int2;
+    var_int0 = var_float1 >= var_float2;
+    var_int0 = var_float1 >= var_string2;
+    var_int0 = var_string1 >= var_bool2;
+    var_int0 = var_string1 >= var_int2;
+    var_int0 = var_string1 >= var_float2;
+    var_int0 = var_string1 >= var_string2;
+
+
+    // float32
+    var_float0 = var_bool1 >= var_bool2;
+    var_float0 = var_bool1 >= var_int2;
+    var_float0 = var_bool1 >= var_float2;
+    var_float0 = var_bool1 >= var_string2;
+    var_float0 = var_int1 >= var_bool2;
+    var_float0 = var_int1 >= var_int2;
+    var_float0 = var_int1 >= var_float2;
+    var_float0 = var_int1 >= var_string2;
+    var_float0 = var_float1 >= var_bool2;
+    var_float0 = var_float1 >= var_int2;
+    var_float0 = var_float1 >= var_float2;
+    var_float0 = var_float1 >= var_string2;
+    var_float0 = var_string1 >= var_bool2;
+    var_float0 = var_string1 >= var_int2;
+    var_float0 = var_string1 >= var_float2;
+    var_float0 = var_string1 >= var_string2;
+
+
+    // string
+    var_string0 = var_bool1 >= var_bool2;
+    var_string0 = var_bool1 >= var_int2;
+    var_string0 = var_bool1 >= var_float2;
+    var_string0 = var_bool1 >= var_string2;
+    var_string0 = var_int1 >= var_bool2;
+    var_string0 = var_int1 >= var_int2;
+    var_string0 = var_int1 >= var_float2;
+    var_string0 = var_int1 >= var_string2;
+    var_string0 = var_float1 >= var_bool2;
+    var_string0 = var_float1 >= var_int2;
+    var_string0 = var_float1 >= var_float2;
+    var_string0 = var_float1 >= var_string2;
+    var_string0 = var_string1 >= var_bool2;
+    var_string0 = var_string1 >= var_int2;
+    var_string0 = var_string1 >= var_float2;
+    var_string0 = var_string1 >= var_string2;
+}
