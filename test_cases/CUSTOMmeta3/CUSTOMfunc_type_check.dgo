@@ -1,0 +1,69 @@
+package main;
+
+
+func int_func() int {
+    return 1;
+}
+
+func string_func() string{
+    var res string;
+    return res;
+}
+
+func float32_func() float32{
+    return 324.21
+}
+
+func bool_func() bool{
+    return 1==1;
+}
+
+func void_func() {
+    return;
+}
+
+
+
+
+
+func main() {
+    var int_var int;
+    var string_var string;
+    var float32_var float32;
+    var bool_var bool;
+    
+
+    int_var = int_func();
+    int_var = string_func();
+    int_var = float32_func();
+    int_var = bool_func();
+    int_var = void_func();
+    
+    string_var = int_func();
+    string_var = string_func();
+    string_var = float32_func();
+    string_var = bool_func();
+    string_var = void_func();
+
+    
+    float32_var = int_func();
+    float32_var = string_func();
+    float32_var = float32_func();
+    float32_var = bool_func();
+    float32_var = void_func();
+
+
+    bool_var = int_func();
+    bool_var = string_func();
+    bool_var = float32_func();
+    bool_var = bool_func();
+    bool_var = void_func();
+
+
+
+
+
+
+    
+
+}

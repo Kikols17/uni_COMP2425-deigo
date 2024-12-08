@@ -1,0 +1,188 @@
+Line 37, column 13: Operator = cannot be applied to types int, string
+Line 38, column 13: Operator = cannot be applied to types int, float32
+Line 39, column 13: Operator = cannot be applied to types int, bool
+Line 40, column 13: Operator = cannot be applied to types int, void
+Line 42, column 16: Operator = cannot be applied to types string, int
+Line 44, column 16: Operator = cannot be applied to types string, float32
+Line 45, column 16: Operator = cannot be applied to types string, bool
+Line 46, column 16: Operator = cannot be applied to types string, void
+Line 49, column 17: Operator = cannot be applied to types float32, int
+Line 50, column 17: Operator = cannot be applied to types float32, string
+Line 52, column 17: Operator = cannot be applied to types float32, bool
+Line 53, column 17: Operator = cannot be applied to types float32, void
+Line 56, column 14: Operator = cannot be applied to types bool, int
+Line 57, column 14: Operator = cannot be applied to types bool, string
+Line 58, column 14: Operator = cannot be applied to types bool, float32
+Line 60, column 14: Operator = cannot be applied to types bool, void
+===== Global Symbol Table =====
+int_func	()	int
+string_func	()	string
+float32_func	()	float32
+bool_func	()	bool
+void_func	()	none
+main	()	none
+
+===== Function int_func() Symbol Table =====
+return		int
+
+===== Function string_func() Symbol Table =====
+return		string
+res		string
+
+===== Function float32_func() Symbol Table =====
+return		float32
+
+===== Function bool_func() Symbol Table =====
+return		bool
+
+===== Function void_func() Symbol Table =====
+return		none
+
+===== Function main() Symbol Table =====
+return		none
+int_var		int
+string_var		string
+float32_var		float32
+bool_var		bool
+
+Program
+..FuncDecl
+....FuncHeader
+......Identifier(int_func)
+......Int
+......FuncParams
+....FuncBody
+......Return
+........Natural(1) - int
+..FuncDecl
+....FuncHeader
+......Identifier(string_func)
+......String
+......FuncParams
+....FuncBody
+......VarDecl
+........String
+........Identifier(res)
+......Return
+........Identifier(res) - string
+..FuncDecl
+....FuncHeader
+......Identifier(float32_func)
+......Float32
+......FuncParams
+....FuncBody
+......Return
+........Decimal(324.21) - float32
+..FuncDecl
+....FuncHeader
+......Identifier(bool_func)
+......Bool
+......FuncParams
+....FuncBody
+......Return
+........Eq - bool
+..........Natural(1) - int
+..........Natural(1) - int
+..FuncDecl
+....FuncHeader
+......Identifier(void_func)
+......FuncParams
+....FuncBody
+......Return
+..FuncDecl
+....FuncHeader
+......Identifier(main)
+......FuncParams
+....FuncBody
+......VarDecl
+........Int
+........Identifier(int_var)
+......VarDecl
+........String
+........Identifier(string_var)
+......VarDecl
+........Float32
+........Identifier(float32_var)
+......VarDecl
+........Bool
+........Identifier(bool_var)
+......Assign - int
+........Identifier(int_var) - int
+........Call - int
+..........Identifier(int_func) - ()
+......Assign - int
+........Identifier(int_var) - int
+........Call - string
+..........Identifier(string_func) - ()
+......Assign - int
+........Identifier(int_var) - int
+........Call - float32
+..........Identifier(float32_func) - ()
+......Assign - int
+........Identifier(int_var) - int
+........Call - bool
+..........Identifier(bool_func) - ()
+......Assign - int
+........Identifier(int_var) - int
+........Call
+..........Identifier(void_func) - ()
+......Assign - string
+........Identifier(string_var) - string
+........Call - int
+..........Identifier(int_func) - ()
+......Assign - string
+........Identifier(string_var) - string
+........Call - string
+..........Identifier(string_func) - ()
+......Assign - string
+........Identifier(string_var) - string
+........Call - float32
+..........Identifier(float32_func) - ()
+......Assign - string
+........Identifier(string_var) - string
+........Call - bool
+..........Identifier(bool_func) - ()
+......Assign - string
+........Identifier(string_var) - string
+........Call
+..........Identifier(void_func) - ()
+......Assign - float32
+........Identifier(float32_var) - float32
+........Call - int
+..........Identifier(int_func) - ()
+......Assign - float32
+........Identifier(float32_var) - float32
+........Call - string
+..........Identifier(string_func) - ()
+......Assign - float32
+........Identifier(float32_var) - float32
+........Call - float32
+..........Identifier(float32_func) - ()
+......Assign - float32
+........Identifier(float32_var) - float32
+........Call - bool
+..........Identifier(bool_func) - ()
+......Assign - float32
+........Identifier(float32_var) - float32
+........Call
+..........Identifier(void_func) - ()
+......Assign - bool
+........Identifier(bool_var) - bool
+........Call - int
+..........Identifier(int_func) - ()
+......Assign - bool
+........Identifier(bool_var) - bool
+........Call - string
+..........Identifier(string_func) - ()
+......Assign - bool
+........Identifier(bool_var) - bool
+........Call - float32
+..........Identifier(float32_func) - ()
+......Assign - bool
+........Identifier(bool_var) - bool
+........Call - bool
+..........Identifier(bool_func) - ()
+......Assign - bool
+........Identifier(bool_var) - bool
+........Call
+..........Identifier(void_func) - ()
