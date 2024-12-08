@@ -24,8 +24,6 @@ func void_func() {
 
 
 
-
-
 func main() {
     var int_var int;
     var string_var string;
@@ -44,7 +42,6 @@ func main() {
     string_var = float32_func();
     string_var = bool_func();
     string_var = void_func();
-
     
     float32_var = int_func();
     float32_var = string_func();
@@ -52,18 +49,9 @@ func main() {
     float32_var = bool_func();
     float32_var = void_func();
 
-
     bool_var = int_func();
     bool_var = string_func();
     bool_var = float32_func();
     bool_var = bool_func();
     bool_var = void_func();
-
-
-
-
-
-
-    
-
 }

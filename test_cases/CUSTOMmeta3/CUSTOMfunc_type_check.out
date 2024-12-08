@@ -1,19 +1,19 @@
-Line 37, column 13: Operator = cannot be applied to types int, string
-Line 38, column 13: Operator = cannot be applied to types int, float32
-Line 39, column 13: Operator = cannot be applied to types int, bool
-Line 40, column 13: Operator = cannot be applied to types int, void
-Line 42, column 16: Operator = cannot be applied to types string, int
-Line 44, column 16: Operator = cannot be applied to types string, float32
-Line 45, column 16: Operator = cannot be applied to types string, bool
-Line 46, column 16: Operator = cannot be applied to types string, void
-Line 49, column 17: Operator = cannot be applied to types float32, int
-Line 50, column 17: Operator = cannot be applied to types float32, string
-Line 52, column 17: Operator = cannot be applied to types float32, bool
-Line 53, column 17: Operator = cannot be applied to types float32, void
-Line 56, column 14: Operator = cannot be applied to types bool, int
-Line 57, column 14: Operator = cannot be applied to types bool, string
-Line 58, column 14: Operator = cannot be applied to types bool, float32
-Line 60, column 14: Operator = cannot be applied to types bool, void
+Line 35, column 13: Operator = cannot be applied to types int, string
+Line 36, column 13: Operator = cannot be applied to types int, float32
+Line 37, column 13: Operator = cannot be applied to types int, bool
+Line 38, column 13: Operator = cannot be applied to types int, void
+Line 40, column 16: Operator = cannot be applied to types string, int
+Line 42, column 16: Operator = cannot be applied to types string, float32
+Line 43, column 16: Operator = cannot be applied to types string, bool
+Line 44, column 16: Operator = cannot be applied to types string, void
+Line 46, column 17: Operator = cannot be applied to types float32, int
+Line 47, column 17: Operator = cannot be applied to types float32, string
+Line 49, column 17: Operator = cannot be applied to types float32, bool
+Line 50, column 17: Operator = cannot be applied to types float32, void
+Line 52, column 14: Operator = cannot be applied to types bool, int
+Line 53, column 14: Operator = cannot be applied to types bool, string
+Line 54, column 14: Operator = cannot be applied to types bool, float32
+Line 56, column 14: Operator = cannot be applied to types bool, void
 ===== Global Symbol Table =====
 int_func	()	int
 string_func	()	string
