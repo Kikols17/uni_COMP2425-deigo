@@ -3,6 +3,12 @@
 #include <string.h>
 #include "ast.h"
 
+/*
+ * Trabalho realizado por:
+ *      - Francisco Amado Lapa Marques Silva - uc2022213583
+ *      - Miguel Moital Rodrigues Cabral Martins - uc2022213951
+ */
+
 const char *category_names[] = CATEGORY_NAMES
 const char *type_names[] = TYPE_NAMES
 

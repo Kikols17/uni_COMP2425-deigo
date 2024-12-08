@@ -1,6 +1,12 @@
 #ifndef _SEMANTICS_H
 #define _SEMANTICS_H
 
+/*
+ * Trabalho realizado por:
+ *      - Francisco Amado Lapa Marques Silva - uc2022213583
+ *      - Miguel Moital Rodrigues Cabral Martins - uc2022213951
+ */
+
 #include <stdbool.h>
 #include "ast.h"
 

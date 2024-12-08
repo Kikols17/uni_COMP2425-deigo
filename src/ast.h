@@ -1,6 +1,11 @@
 #ifndef _AST_H
 #define _AST_H
 
+/*
+ * Trabalho realizado por:
+ *      - Francisco Amado Lapa Marques Silva - uc2022213583
+ *      - Miguel Moital Rodrigues Cabral Martins - uc2022213951
+ */
 
 #include <stddef.h>   // preciso para o NULL (n sei pq nunca foi preciso)
 #include <stdbool.h>

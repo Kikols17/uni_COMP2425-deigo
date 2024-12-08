@@ -4,6 +4,12 @@
 #include "ast.h"
 #include "semantics.h"
 
+/*
+ * Trabalho realizado por:
+ *      - Francisco Amado Lapa Marques Silva - uc2022213583
+ *      - Miguel Moital Rodrigues Cabral Martins - uc2022213951
+ */
+
 int semantic_errors = 0;
 
 struct symbol_list *symbol_table;
@@ -315,7 +321,7 @@ void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
     //}
     check_expression(getchild(print_node, 0), symbol_scope);
     if (getchild(print_node, 0)->type == undef_type) {
-        printf("Line %d, column %d: Incompatible type %s in fmt.Println statement\n", print_node->token_line, print_node->token_column, type_names2[getchild(print_node, 0)->type]);
+        printf("Line %d, column %d: Incompatible type %s in fmt.Println statement\n", getchild(print_node, 0)->token_line, getchild(print_node, 0)->token_column, type_names2[getchild(print_node, 0)->type]);
         semantic_errors++;
     }
 }
@@ -365,12 +371,12 @@ void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
         if (getchild(assign, 0)->type==none_type) {
             sprintf(typestring0, "void");
         } else {
-            sprintf(typestring0, type_names2[getchild(assign, 0)->type]);
+            sprintf(typestring0, "%s", type_names2[getchild(assign, 0)->type]);
         }
         if (getchild(assign, 1)->type==none_type) {
             sprintf(typestring1, "void");
         } else {
-            sprintf(typestring1, type_names2[getchild(assign, 1)->type]);
+            sprintf(typestring1, "%s", type_names2[getchild(assign, 1)->type]);
         }
         printf("Line %d, column %d: Operator = cannot be applied to types %s, %s\n", assign->token_line, assign->token_column, typestring0, typestring1);
         semantic_errors++;
