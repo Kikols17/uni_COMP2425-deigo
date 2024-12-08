@@ -1,0 +1,16 @@
+package main;
+
+func main() {
+    return;
+}
+
+
+
+
+func func1() int {
+
+}
+
+func func1(a bool) int {
+    
+}

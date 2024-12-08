@@ -1,0 +1,27 @@
+package main;
+
+
+
+var c int;
+
+/* TALVEZ O 
+ * ERRO ESTEJA NO COMETÁRIO
+ * ???????????????????????
+ *  // TALVEZ ASSIM
+ */
+ // bem fixe
+func main() {
+    var a int;
+    a = 0;      // ola
+    for a<213456 {              // bdia
+        b = 15;
+        a = a+1;
+        d = 20;
+    }       // hmmmmm
+}
+
+
+
+
+
+var b float32;

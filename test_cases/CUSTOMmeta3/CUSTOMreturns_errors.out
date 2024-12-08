@@ -1,0 +1,16 @@
+Line 14, column 13: Incompatible type bool in return statement
+Line 17, column 12: Incompatible type int in return statement
+Line 20, column 12: Incompatible type float32 in return statement
+Line 24, column 12: Incompatible type string in return statement
+Line 28, column 13: Incompatible type bool in return statement
+Line 31, column 12: Incompatible type int in return statement
+Line 34, column 12: Incompatible type float32 in return statement
+Line 38, column 12: Incompatible type string in return statement
+Line 42, column 13: Incompatible type bool in return statement
+Line 45, column 12: Incompatible type int in return statement
+Line 48, column 12: Incompatible type float32 in return statement
+Line 52, column 12: Incompatible type string in return statement
+Line 56, column 13: Incompatible type bool in return statement
+Line 59, column 12: Incompatible type int in return statement
+Line 62, column 12: Incompatible type float32 in return statement
+Line 66, column 12: Incompatible type string in return statement

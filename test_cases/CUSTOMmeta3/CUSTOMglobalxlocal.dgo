@@ -1,0 +1,19 @@
+package main;
+
+
+
+var overwrite_var int;
+
+
+func main() {
+
+    overwrite_var = 3;
+
+    var overwrite_var float32;
+    overwrite_var = 1.2;
+
+    var overwrite_var int;
+    overwrite_var = 15;
+
+    return;
+}

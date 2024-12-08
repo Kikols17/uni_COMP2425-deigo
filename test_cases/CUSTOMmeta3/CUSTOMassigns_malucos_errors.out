@@ -1,0 +1,3 @@
+Line 17, column 11: Operator = cannot be applied to types float32, int
+Line 19, column 9: Cannot find symbol d
+Line 19, column 11: Operator = cannot be applied to types undef, int

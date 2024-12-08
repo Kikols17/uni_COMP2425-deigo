@@ -1,0 +1,35 @@
+Line 15, column 9: Symbol overwrite_var already defined
+Line 16, column 19: Operator = cannot be applied to types float32, int
+===== Global Symbol Table =====
+overwrite_var		int
+main	()	none
+
+===== Function main() Symbol Table =====
+return		none
+overwrite_var		float32
+
+Program
+..VarDecl
+....Int
+....Identifier(overwrite_var)
+..FuncDecl
+....FuncHeader
+......Identifier(main)
+......FuncParams
+....FuncBody
+......Assign - int
+........Identifier(overwrite_var) - int
+........Natural(3) - int
+......VarDecl
+........Float32
+........Identifier(overwrite_var)
+......Assign - float32
+........Identifier(overwrite_var) - float32
+........Decimal(1.2) - float32
+......VarDecl
+........Int
+........Identifier(overwrite_var)
+......Assign - float32
+........Identifier(overwrite_var) - float32
+........Natural(15) - int
+......Return

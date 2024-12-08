@@ -1,0 +1,67 @@
+package main;
+
+
+func main() {
+
+}
+
+
+
+
+
+
+func func_bool_bool() {
+    return 1==1;
+}
+func func_bool_int() {
+    return 1;
+}
+func func_bool_float() {
+    return 0.1;
+}
+func func_bool_string() {
+    var ret string;
+    return ret;
+}
+
+func func_int_bool() {
+    return 1==1;
+}
+func func_int_int() {
+    return 1;
+}
+func func_int_float() {
+    return 0.1;
+}
+func func_int_string() {
+    var ret string;
+    return ret;
+}
+
+func func_float_bool() {
+    return 1==1;
+}
+func func_float_int() {
+    return 1;
+}
+func func_float_float() {
+    return 0.1;
+}
+func func_float_string() {
+    var ret string;
+    return ret;
+}
+
+func func_string_bool() {
+    return 1==1;
+}
+func func_string_int() {
+    return 1;
+}
+func func_string_float() {
+    return 0.1;
+}
+func func_string_string() {
+    var ret string;
+    return ret;
+}
