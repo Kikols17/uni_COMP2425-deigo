@@ -360,7 +360,19 @@ void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
     
     // check if assign is legal
     if (getchild(assign, 0)->type == undef_type || getchild(assign, 0)->type!=getchild(assign, 1)->type) {
-        printf("Line %d, column %d: Operator = cannot be applied to types %s, %s\n", assign->token_line, assign->token_column, type_names2[getchild(assign, 0)->type], type_names2[getchild(assign, 1)->type]);
+        char typestring0[32];
+        char typestring1[32];
+        if (getchild(assign, 0)->type==none_type) {
+            sprintf(typestring0, "void");
+        } else {
+            sprintf(typestring0, type_names2[getchild(assign, 0)->type]);
+        }
+        if (getchild(assign, 1)->type==none_type) {
+            sprintf(typestring1, "void");
+        } else {
+            sprintf(typestring1, type_names2[getchild(assign, 1)->type]);
+        }
+        printf("Line %d, column %d: Operator = cannot be applied to types %s, %s\n", assign->token_line, assign->token_column, typestring0, typestring1);
         semantic_errors++;
     }
     assign->type = getchild(assign, 0)->type;
