@@ -168,13 +168,15 @@ for d in "$folder"/*; do
 		# se pasta da meta 3 e se o caso de teste conter 'erro' no nome
 		if [[ "${d:(-1)}" == "3" ]] && [[ "$i" == *"erro"* ]]; then
 			"$bin" < "$i" | sort > "$output";
+			sort < $validate > $validate.sorted
 		else
 			"$bin" "$opts" < "$i" > "$output";
+			cp $validate $validate.sorted
 		fi
 
 
 		# compara se o output e igual ao esperado do caso de teste
-		if $compare "$output" "$validate" &>/dev/null; then
+		if $compare "$output" "$validate.sorted" &>/dev/null; then
 			printf "  ✓ %s\n" "$(basename "$i")"
 		else
 			failed=$((failed + 1))
@@ -184,12 +186,14 @@ for d in "$folder"/*; do
 			# prompt que pede se deseja ver o diff quando o output nao e o esperado
 			if [ "$input_data" == "y" ]; then
 				printf "\n...............\n"
-				$diff "$output" "$validate"
+				$diff "$output" "$validate.sorted"
 				printf "...............\n"
 			else
 				echo ""
 			fi
 		fi
+
+		rm $validate.sorted
 	done
 done
 
