@@ -1,0 +1,158 @@
+Line 10, column 6: Symbol a already defined
+Line 14, column 6: Symbol b already defined
+Line 46, column 6: Symbol c already defined
+Line 50, column 6: Symbol d already defined
+Line 20, column 9: Cannot find symbol a()
+Line 20, column 7: Operator = cannot be applied to types int, undef
+Line 21, column 9: Cannot find symbol b()
+Line 21, column 7: Operator = cannot be applied to types int, undef
+Line 23, column 9: Cannot find symbol a()
+Line 23, column 7: Operator = cannot be applied to types int, undef
+Line 24, column 9: Cannot find symbol b()
+Line 24, column 7: Operator = cannot be applied to types int, undef
+Line 30, column 9: Cannot find symbol c()
+Line 30, column 7: Operator = cannot be applied to types int, undef
+Line 31, column 9: Cannot find symbol d()
+Line 31, column 7: Operator = cannot be applied to types int, undef
+Line 33, column 9: Cannot find symbol c()
+Line 33, column 7: Operator = cannot be applied to types int, undef
+Line 34, column 9: Cannot find symbol d()
+Line 34, column 7: Operator = cannot be applied to types int, undef
+Line 36, column 5: Cannot find symbol idontexistyet
+Line 36, column 21: Cannot find symbol d()
+Line 36, column 19: Operator = cannot be applied to types undef, undef
+Line 40, column 21: Cannot find symbol d()
+Line 40, column 19: Operator = cannot be applied to types int, undef
+Line 27, column 9: Symbol notused_c declared but never used
+===== Global Symbol Table =====
+notused_a		int
+a		int
+b		int
+main	()	none
+c		int
+d		int
+notused_b		int
+
+===== Function main() Symbol Table =====
+return		none
+a		int
+b		int
+notused_c		int
+c		int
+d		int
+idontexistyet		int
+
+Program
+..VarDecl
+....Int
+....Identifier(notused_a)
+..VarDecl
+....Int
+....Identifier(a)
+..VarDecl
+....Int
+....Identifier(b)
+..FuncDecl
+....FuncHeader
+......Identifier(a)
+......Int
+......FuncParams
+....FuncBody
+......Return
+........Natural(1)
+..FuncDecl
+....FuncHeader
+......Identifier(b)
+......Int
+......FuncParams
+....FuncBody
+......Return
+........Natural(2)
+..FuncDecl
+....FuncHeader
+......Identifier(main)
+......FuncParams
+....FuncBody
+......Assign - int
+........Identifier(a) - int
+........Call - undef
+..........Identifier(a) - undef
+......Assign - int
+........Identifier(b) - int
+........Call - undef
+..........Identifier(b) - undef
+......VarDecl
+........Int
+........Identifier(a)
+......VarDecl
+........Int
+........Identifier(b)
+......Assign - int
+........Identifier(a) - int
+........Call - undef
+..........Identifier(a) - undef
+......Assign - int
+........Identifier(b) - int
+........Call - undef
+..........Identifier(b) - undef
+......VarDecl
+........Int
+........Identifier(notused_c)
+......Assign - int
+........Identifier(c) - int
+........Call - undef
+..........Identifier(c) - undef
+......Assign - int
+........Identifier(d) - int
+........Call - undef
+..........Identifier(d) - undef
+......VarDecl
+........Int
+........Identifier(c)
+......VarDecl
+........Int
+........Identifier(d)
+......Assign - int
+........Identifier(c) - int
+........Call - undef
+..........Identifier(c) - undef
+......Assign - int
+........Identifier(d) - int
+........Call - undef
+..........Identifier(d) - undef
+......Assign - undef
+........Identifier(idontexistyet) - undef
+........Call - undef
+..........Identifier(d) - undef
+......VarDecl
+........Int
+........Identifier(idontexistyet)
+......Assign - int
+........Identifier(idontexistyet) - int
+........Call - undef
+..........Identifier(d) - undef
+..VarDecl
+....Int
+....Identifier(c)
+..VarDecl
+....Int
+....Identifier(d)
+..FuncDecl
+....FuncHeader
+......Identifier(c)
+......Int
+......FuncParams
+....FuncBody
+......Return
+........Natural(3)
+..FuncDecl
+....FuncHeader
+......Identifier(d)
+......Int
+......FuncParams
+....FuncBody
+......Return
+........Natural(4)
+..VarDecl
+....Int
+....Identifier(notused_b)

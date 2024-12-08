@@ -1,0 +1,54 @@
+
+package main;
+
+
+var notused_a int;
+
+
+var a, b int;
+
+func a() int {
+    return 1;
+}
+
+func b() int {
+    return 2;
+}
+
+
+func main() {
+    a = a();
+    b = b();
+    var a, b int;
+    a = a();
+    b = b();
+
+    
+    var notused_c int;
+
+
+    c = c();
+    d = d();
+    var c, d int;
+    c = c();
+    d = d();
+
+    idontexistyet = d();
+
+    var idontexistyet int;
+
+    idontexistyet = d();
+}
+
+
+var c, d int;
+
+func c() int {
+    return 3;
+}
+
+func d() int {
+    return 4;
+}
+
+var notused_b int;
