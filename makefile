@@ -1,6 +1,6 @@
 # build compiler
-gocompiler: src/lex.yy.c src/y.tab.c src/ast.c src/ast.h src/semantics.c src/semantics.h
-	clang -Wall -Wextra -Wno-unused-function -g src/lex.yy.c -o gocompiler src/y.tab.c src/ast.c src/semantics.c
+gocompiler: src/lex.yy.c src/y.tab.c src/ast.c src/ast.h src/semantics.c src/semantics.h src/codegen.c src/codegen.h
+	clang -Wall -Wextra -Wno-unused-function -g src/lex.yy.c -o gocompiler src/y.tab.c src/ast.c src/semantics.c src/codegen.c
 
 # build lex.yy.c
 src/lex.yy.c: src/gocompiler.l
@@ -33,7 +33,7 @@ runs: gocompiler
 
 
 # run all tests
-test_all: test_1 test_2 test_3
+test_all: test_1 test_2 test_3 test_4
 	@echo "All tests ran"
 
 # run tests at test_cases folder
@@ -45,6 +45,9 @@ test_2: gocompiler
 
 test_3: gocompiler
 	test_cases/test.sh -b gocompiler -m 3
+
+test_4: gocompiler
+	test_cases/test.sh -b gocompiler -m 4
 
 
 # zip gocompiler.l
@@ -59,6 +62,11 @@ zip_2: src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h
 zip_3: src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h src/semantics.c src/semantics.h
 	cd src && zip gocompiler.zip gocompiler.l gocompiler.y ast.c ast.h semantics.c semantics.h
 	mv src/gocompiler.zip gocompiler.zip
+
+zip_4: src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h src/semantics.c src/semantics.h src/codegen.c src/codegen.h
+	cd src && zip gocompiler.zip gocompiler.l gocompiler.y ast.c ast.h semantics.c semantics.h src/codegen.c src/codegen.h
+	mv src/gocompiler.zip gocompiler.zip
+
 
 
 # clean

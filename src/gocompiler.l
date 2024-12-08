@@ -10,6 +10,7 @@
     /* place here any C variables and definitions */
     #include "ast.h"
     #include "semantics.h"
+    #include "codegen.h"
     #include "y.tab.h"
     #define YY_USER_ACTION \
         token_begincolumn = yylloc.first_column = token_endcolumn; \
@@ -243,9 +244,16 @@ int main(int argc, char **argv) {
         yacc_mode = 1;
         yyparse();
         clean_tree(program);
-        if (errors==0) {
-            errors += check_program(program);
+        if (errors!=0) {
+            return 0;       // NÃO POR ISTO A 1, O MOOSHAK CONTA COMO ERRO
         }
+
+        errors += check_program(program);
+        if (errors!=0) {
+            return 0;
+        }
+        codegen_program(program);
+
     }
     return 0;
 }
