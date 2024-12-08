@@ -1,0 +1,38 @@
+package main;
+
+
+
+func func1(bool_p bool, int_p int, float_p float32, string_p string) {
+    return
+}
+
+func void_func() {
+    return
+}
+
+
+
+func main() {
+    var bool_v bool;
+    var int_v int;
+    var float_v float32;
+    var string_v string;
+
+
+    func1(bool_v, int_v, float_v, string_v);
+    func1(bool_v, int_v, float_v, void_func);
+    func1(bool_v, int_v, void_func, string_v);
+    func1(bool_v, int_v, void_func, void_func);
+    func1(bool_v, void_func, float_v, string_v);
+    func1(bool_v, void_func, float_v, void_func);
+    func1(bool_v, void_func, void_func, string_v);
+    func1(bool_v, void_func, void_func, void_func);
+    func1(void_func, int_v, float_v, string_v);
+    func1(void_func, int_v, float_v, void_func);
+    func1(void_func, int_v, void_func, string_v);
+    func1(void_func, int_v, void_func, void_func);
+    func1(void_func, void_func, float_v, string_v);
+    func1(void_func, void_func, float_v, void_func);
+    func1(void_func, void_func, void_func, string_v);
+    func1(void_func, void_func, void_func, void_func);
+}
