@@ -103,4 +103,11 @@ void codegen_program(struct node *program, struct symbol_list *table) {
         }
     }
 
+    // add entry point
+    printf("\n; Entry point\n"
+           "define i32 @main() {\n"
+           "  %%1 = call i32 @_main(i32 0)\n"
+           "  ret i32 %%1\n"
+           "}\n");
+
 }
