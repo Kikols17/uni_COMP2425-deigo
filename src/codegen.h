@@ -3,6 +3,10 @@
 
 #include "ast.h"
 
-void codegen_program(struct node *program);
+
+// type                 { bool_type,  int_type,  float32_type,  string_type,  undef_type,  none_type,  EMPTY     };   para referencia
+#define TYPE_TO_LLVM    { "i1",       "i32",     "double",      "i8*",        "ERROR_u",   "ERROR_n",  "ERROR_e" }
+
+void codegen_program(struct node *program, struct symbol_list *table);
 
 #endif

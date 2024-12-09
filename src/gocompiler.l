@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
         if (errors!=0) {
             return 0;
         }
-        codegen_program(program);
+        codegen_program(program, symbol_table);
 
     }
     return 0;
