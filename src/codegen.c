@@ -6,6 +6,7 @@
 #include "codegen.h"
 
 const char *type_to_llvm3[] = TYPE_TO_LLVM;
+const char *category_to_llvm3[] = CATEGORY_TO_LLVM;
 const enum type category_to_type3[] = CATEGORY_TO_TYPE;
 
 int temporary;   // sequence of temporary registers in a function
@@ -26,8 +27,9 @@ void codegen_indent(int ind) {
 void codegen_globalvar(struct node *vardecl, int ind) {
     struct node *type_node = getchild(vardecl, 0);
     struct node *id_node = getchild(vardecl, 1);
+    sprintf(id_node->llvm_name, "@%s", id_node->token);
     codegen_indent(ind);
-    printf("%s @%s\n", type_to_llvm3[category_to_type3[type_node->category]], id_node->token);
+    printf("%s %s\n", type_to_llvm3[category_to_type3[type_node->category]], id_node->llvm_name);
 }
 
 
@@ -35,7 +37,111 @@ void codegen_globalvar(struct node *vardecl, int ind) {
 
 
 void codegen_expression(struct node *expression, int ind) {
-    
+    switch(expression->category) {
+        case Identifier:
+            // find out the identifier's declaration node (we assume it exists)
+            break;
+
+
+
+        case Int:
+        case Natural:
+            sprintf(expression->llvm_name, "%%%d", temporary++);
+            codegen_indent(ind);
+            printf("%s = add i32 %s, 0\n", expression->llvm_name, expression->token);
+            break;
+
+        case Float32:
+        case Decimal:
+            sprintf(expression->llvm_name, "%%%d", temporary++);
+            codegen_indent(ind);
+            printf("%s = fadd float %s, 0\n", expression->llvm_name, expression->token);
+            break;
+        
+        case Bool:
+            // Bool never exists as a terminal Node, only as a type_node in a VarDecl
+            break;
+
+        case String:
+        case StrLit:
+            break;
+        
+
+
+        case Add:
+        case Sub:
+        case Mul:
+        case Div:
+        case Mod:
+            ;           // n percebo
+            codegen_indent(ind);
+            printf("; OPERATION \"%s\"\n", category_to_llvm3[expression->category]);
+            struct node *left_expression = getchild(expression, 0);
+            struct node *right_expression = getchild(expression, 1);
+
+            codegen_expression(left_expression, ind+1);
+            codegen_expression(right_expression, ind+1);
+
+            sprintf(expression->llvm_name, "%%%d", temporary++);
+
+            codegen_indent(ind);
+            printf("%s = ", expression->llvm_name);
+            if (left_expression->type==float32_type) {
+                printf("f");
+            }
+
+            printf("%s %s %s, %s;\n", category_to_llvm3[expression->category], type_to_llvm3[expression->type], left_expression->llvm_name, right_expression->llvm_name);
+
+            break;
+        
+
+
+        case Minus:
+        case Plus:
+        case Not:
+            break;
+
+
+
+        case Or:
+        case And:
+            break;
+
+
+
+        case Eq:
+        case Ne:
+            break;
+
+
+
+        case Lt:
+        case Le:
+        case Gt:
+        case Ge:
+            break;
+
+
+
+
+        default:
+            codegen_statement(expression, ind);
+            break;
+    }
+}
+
+
+void codegen_return(struct node *return_node, int ind) {
+
+    struct node *value_node = getchild(return_node, 0);
+
+    codegen_indent(ind);
+    printf("; RETURN\n");
+
+    codegen_expression(value_node, ind+1);
+
+    codegen_indent(ind);
+    printf("ret %s %s\n", type_to_llvm3[value_node->type], value_node->llvm_name);
 }
 
 
@@ -70,6 +176,7 @@ void codegen_statement(struct node *statement, int ind) {
 
     } else if (statement->category == Return) {
         //check_Return(statement, symbol_scope);
+        codegen_return(statement, ind);
 
     } else if (statement->category == Print) {
         //check_Print(statement, symbol_scope);
@@ -128,6 +235,7 @@ void codegen_funcheader(struct node *funcheader, int ind) {
 
 
 void codegen_funcbody(struct node *funcbody, int ind) {
+    temporary = 1;
     struct node_list *child = funcbody->children;
     while ((child=child->next) != NULL) {
         if (child->node->category == VarDecl) {
@@ -157,7 +265,7 @@ void codegen_function(struct node *node, int ind) {
     funcbody = getchild(node, 1);
 
     codegen_funcheader(funcheader, ind);
-    codegen_indent(ind); printf("{\n");
+    codegen_indent(ind); printf(" {\n");
     codegen_funcbody(funcbody, ind+1);
     codegen_indent(ind); printf("}\n");
 }

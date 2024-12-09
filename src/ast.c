@@ -27,6 +27,7 @@ struct node *newnode(enum category category, char *token) {
     new->children = malloc(sizeof(struct node_list));
     new->children->node = NULL;
     new->children->next = NULL;
+    memset(new->llvm_name, '\0', 16);
     return new;
 }
 
