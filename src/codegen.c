@@ -53,6 +53,7 @@ void codegen_expression(struct node *expression, int ind) {
 
             if (getchild(definition->node, 1)->llvm_name[0] == '@') {
                 sprintf(expression->llvm_name, "%%%d", temporary++);
+                codegen_indent(ind);
                 printf("%s = load %s, %s* %s\n", expression->llvm_name, type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], getchild(definition->node, 1)->llvm_name);
             } else {
                 sprintf(expression->llvm_name, "%s", getchild(definition->node, 1)->llvm_name);
@@ -234,7 +235,7 @@ void codegen_assign(struct node *assign_node, int ind) {
 
 
 void codegen_return(struct node *return_node, int ind) {
-
+    printf("\n");
     struct node *value_node = getchild(return_node, 0);
 
     codegen_indent(ind);
@@ -274,6 +275,7 @@ void codegen_block(struct node *block, int ind) {
 
 
 void codegen_if(struct node *if_node, int ind) {
+    printf("\n");
     int if_id = ++if_count;
     struct node *condition = getchild(if_node, 0);
     struct node *then_node = getchild(if_node, 1);
@@ -309,6 +311,40 @@ void codegen_if(struct node *if_node, int ind) {
 }
 
 
+void codegen_for(struct node *for_node, int ind) {
+    printf("\n");
+    int for_id = ++for_count;
+    struct node *condition = getchild(for_node, 0);
+    struct node *block_node = getchild(for_node, 1);
+
+    codegen_indent(ind);
+    printf("; FOR\n");
+    codegen_indent(ind);
+    printf("br label %%For%dcondition\n", for_id);
+    codegen_indent(ind);
+    printf("For%dcondition:\n", for_id);
+
+    codegen_indent(ind+1);
+    printf("; FOR - CONDITION\n");
+    codegen_expression(condition, ind+1);
+    codegen_indent(ind+1);
+    printf("br i1 %s, label %%For%dblock, label %%For%dend\n", condition->llvm_name, for_id, for_id);
+
+    codegen_indent(ind);
+    printf("For%dblock:\n", for_id);
+    codegen_indent(ind);
+    printf("; FOR - BLOCK\n");
+
+    codegen_block(block_node, ind+1);
+    codegen_indent(ind);
+    printf("br label %%For%dcondition\n", for_id);
+
+    codegen_indent(ind);
+    printf("For%dend:\n", for_id);
+
+}
+
+
 void codegen_statement(struct node *statement, int ind) {
     if (statement->category == Call) {
         //check_Call(statement, symbol_scope);
@@ -330,6 +366,7 @@ void codegen_statement(struct node *statement, int ind) {
 
     } else if (statement->category == For) {
         //check_For(statement, symbol_scope);
+        codegen_for(statement, ind);
 
     } else if (statement->category == ParseArgs) {
         //check_ParseArgs(statement, symbol_scope);
