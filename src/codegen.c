@@ -41,12 +41,15 @@ void codegen_globalvar(struct node *vardecl, int ind) {
 
 
 void codegen_expression(struct node *expression, int ind) {
-    struct node *left_expression = getchild(expression, 0);
-    struct node *right_expression = getchild(expression, 1);
+    struct node *left_expression;
+    struct node *right_expression;
+    struct symbol_list *definition;
 
     switch(expression->category) {
         case Identifier:
             // find out the identifier's declaration node (we assume it exists)
+            definition = search_symbol(cur_scope, expression->token, -1, false);
+            sprintf(expression->llvm_name, "%s", getchild(definition->node, 1)->llvm_name);
             break;
 
 
@@ -204,6 +207,24 @@ void codegen_call(struct node *return_node, int ind) {
 
 
 
+void codegen_assign(struct node *assign_node, int ind) {
+    struct node *var = getchild(assign_node, 0);
+    struct node *expr = getchild(assign_node, 1);
+
+    // find definition of var;
+    struct symbol_list *definition = search_symbol(cur_scope, var->token, -1, false);
+
+    // resolve expr
+    codegen_indent(ind);
+    printf("; ASSIGN \"%s\"\n", var->token);
+    codegen_expression(expr, ind+1);
+
+    codegen_indent(ind);
+    printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], definition->identifier);
+}
+
+
+
 void codegen_return(struct node *return_node, int ind) {
 
     struct node *value_node = getchild(return_node, 0);
@@ -302,7 +323,8 @@ void codegen_funcheaderparams(struct node *params) {
         if (curr > 1) {
             printf(", ");
         }
-        printf("%s %%%s", type_to_llvm3[category_to_type3[type_node->category]], id_node->token);
+        sprintf(id_node->llvm_name, "%%%s", id_node->token);
+        printf("%s %s", type_to_llvm3[category_to_type3[type_node->category]], id_node->llvm_name);
     }
 }
 
