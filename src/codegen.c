@@ -5,6 +5,8 @@
 #include "semantics.h"
 #include "codegen.h"
 
+extern struct symbol_list *symbol_table;
+
 const char *type_to_llvm3[] = TYPE_TO_LLVM;
 const char *category_to_llvm3[] = CATEGORY_TO_LLVM;
 const enum type category_to_type3[] = CATEGORY_TO_TYPE;
@@ -12,6 +14,8 @@ const enum type category_to_type3[] = CATEGORY_TO_TYPE;
 int temporary;   // sequence of temporary registers in a function
 int if_count = 0;
 int for_count = 0;
+
+struct symbol_list *cur_scope = NULL;
 
 
 void codegen_indent(int ind) {
@@ -164,6 +168,42 @@ void codegen_expression(struct node *expression, int ind) {
 }
 
 
+
+void codegen_call(struct node *return_node, int ind) {
+    struct node *id_node = getchild(return_node, 0);
+
+    struct symbol_list *definition = search_symbol(symbol_table, id_node->token, -1, true);
+    if (definition==NULL) {
+        printf("CALLHOU");
+        return;
+    }
+
+    // resolve param expressions
+    struct node *cur_param;
+    int curr = 1;
+    codegen_indent(ind);
+    printf("; CALL \"%s\"\n", definition->identifier);
+    codegen_indent(ind+1);
+    printf("; PARAMS\n");
+    while((cur_param = getchild(return_node, curr++)) != NULL) {
+        codegen_expression(cur_param, ind+1);
+    }
+
+    sprintf(return_node->llvm_name, "%%%d", temporary++);
+
+    codegen_indent(ind);
+    printf("%s = call %s @_%s(", return_node->llvm_name, type_to_llvm3[definition->type], definition->identifier);
+    curr = 1;
+    while((cur_param = getchild(return_node, curr++)) != NULL) {
+        if (curr>2)
+            printf(", ");
+        printf("%s %s", type_to_llvm3[cur_param->type], cur_param->llvm_name);
+    }
+    printf(")\n");
+}
+
+
+
 void codegen_return(struct node *return_node, int ind) {
 
     struct node *value_node = getchild(return_node, 0);
@@ -178,9 +218,18 @@ void codegen_return(struct node *return_node, int ind) {
 }
 
 
+void codegen_block(struct node *block, int ind) {
+    struct node *cur_statement;
+    int curr = 0;
+    while((cur_statement = getchild(block, curr++)) != NULL) {
+        codegen_statement(cur_statement, ind);
+    }
+}
+
+
 
 void codegen_if(struct node *if_node, int ind) {
-    if_count++;
+    int if_id = ++if_count;
     struct node *condition = getchild(if_node, 0);
     struct node *then_node = getchild(if_node, 1);
     struct node *else_node = getchild(if_node, 2);
@@ -197,27 +246,28 @@ void codegen_if(struct node *if_node, int ind) {
 
 
     codegen_indent(ind);
-    printf("If%dthen:\n", if_count);
-    //codegen_block
+    printf("If%dthen:\n", if_id);
+    codegen_block(then_node, ind+1);
     codegen_indent(ind+1);
-    printf("br label %%If%dend\n", if_count);
+    printf("br label %%If%dend\n", if_id); temporary++;
     
 
     codegen_indent(ind);
-    printf("If%delse:\n", if_count);
-    //codegen_block
+    printf("If%delse:\n", if_id);
+    codegen_block(else_node, ind+1);
     codegen_indent(ind+1);
-    printf("br label %%If%dend\n", if_count);
+    printf("br label %%If%dend\n", if_id); temporary++;
 
 
     codegen_indent(ind);
-    printf("If%dend:\n", if_count);
+    printf("If%dend:\n", if_id);
 }
 
 
 void codegen_statement(struct node *statement, int ind) {
     if (statement->category == Call) {
         //check_Call(statement, symbol_scope);
+        codegen_call(statement, ind);
 
     } else if (statement->category == Assign) {
         //check_Assign(statement, symbol_scope);
@@ -308,16 +358,19 @@ void codegen_funcbody(struct node *funcbody, int ind) {
 void codegen_function(struct node *node, int ind) {
     // declare the function
 
+
     struct node *funcheader, *funcbody;
     funcheader = getchild(node, 0);
     funcbody = getchild(node, 1);
+
+    cur_scope = search_symbol(symbol_table, getchild(funcheader,0)->token, -1, true)->child_scope;
 
     codegen_funcheader(funcheader, ind);
     codegen_indent(ind); printf(" {\n");
     codegen_funcbody(funcbody, ind+1);
 
     codegen_indent(ind+1);
-    printf("ret i32 0\n", type_to_llvm3[node->type]);
+    printf("ret i32 0\n", type_to_llvm3[node->type]);       // TODO fix this
 
     codegen_indent(ind); printf("}\n");
 }
