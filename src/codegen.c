@@ -10,6 +10,7 @@ extern struct symbol_list *symbol_table;
 const char *type_to_llvm3[] = TYPE_TO_LLVM;
 const char *category_to_llvm3[] = CATEGORY_TO_LLVM;
 const enum type category_to_type3[] = CATEGORY_TO_TYPE;
+char pointer_char[2];
 
 int temporary;   // sequence of temporary registers in a function
 int if_count = 0;
@@ -33,7 +34,7 @@ void codegen_globalvar(struct node *vardecl, int ind) {
     struct node *id_node = getchild(vardecl, 1);
     sprintf(id_node->llvm_name, "@%s", id_node->token);
     codegen_indent(ind);
-    printf("%s %s\n", type_to_llvm3[category_to_type3[type_node->category]], id_node->llvm_name);
+    printf("%s = global %s 0\n", id_node->llvm_name, type_to_llvm3[category_to_type3[type_node->category]]);
 }
 
 
@@ -220,7 +221,7 @@ void codegen_assign(struct node *assign_node, int ind) {
     codegen_expression(expr, ind+1);
 
     codegen_indent(ind);
-    printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], definition->identifier);
+    printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
 }
 
 
@@ -232,10 +233,26 @@ void codegen_return(struct node *return_node, int ind) {
     codegen_indent(ind);
     printf("; RETURN\n");
 
-    codegen_expression(value_node, ind+1);
+    if (value_node!=NULL) {
+        codegen_expression(value_node, ind+1);
+    }
+
+
+    sprintf(return_node->llvm_name, "%%%d", temporary++);
+
+    if (value_node!=NULL) {
+        codegen_indent(ind+1);
+        //printf("store %s* %s, %s* %s\n", type_to_llvm3[value_node->type], value_node->llvm_name, type_to_llvm3[value_node->type], return_node->llvm_name);
+        if (value_node->llvm_name[0] == '@') {
+            printf("%s = load %s, %s* %s\n", return_node->llvm_name, type_to_llvm3[value_node->type], type_to_llvm3[value_node->type], value_node->llvm_name );
+        } else {
+            printf("%s = add %s %s, 0\n", return_node->llvm_name, type_to_llvm3[value_node->type], value_node->llvm_name);
+        }
+    }
 
     codegen_indent(ind);
-    printf("ret %s %s\n", type_to_llvm3[value_node->type], value_node->llvm_name);
+    printf("ret %s %s\n", type_to_llvm3[value_node->type], return_node->llvm_name);
+    
 }
 
 
@@ -292,6 +309,7 @@ void codegen_statement(struct node *statement, int ind) {
 
     } else if (statement->category == Assign) {
         //check_Assign(statement, symbol_scope);
+        codegen_assign(statement, ind);
 
     } else if (statement->category == Return) {
         //check_Return(statement, symbol_scope);
