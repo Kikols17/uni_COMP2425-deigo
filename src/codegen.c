@@ -50,7 +50,14 @@ void codegen_expression(struct node *expression, int ind) {
         case Identifier:
             // find out the identifier's declaration node (we assume it exists)
             definition = search_symbol(cur_scope, expression->token, -1, false);
-            sprintf(expression->llvm_name, "%s", getchild(definition->node, 1)->llvm_name);
+
+            if (getchild(definition->node, 1)->llvm_name[0] == '@') {
+                sprintf(expression->llvm_name, "%%%d", temporary++);
+                printf("%s = load %s, %s* %s\n", expression->llvm_name, type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], getchild(definition->node, 1)->llvm_name);
+            } else {
+                sprintf(expression->llvm_name, "%s", getchild(definition->node, 1)->llvm_name);
+            }
+
             break;
 
 
