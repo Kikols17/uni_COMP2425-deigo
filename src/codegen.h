@@ -8,7 +8,7 @@
 #define TYPE_TO_LLVM    { "i1",       "i32",     "double",      "i8*",        "ERROR_u",   "ERROR_n",  "ERROR_e" }
 
 // category                 { "Program", "VarDecl", "FuncDecl", "FuncHeader", "FuncParams", "FuncBody", "ParamDecl", "Assign", "Int", "Natural", "Decimal", "Float32", "Bool", "String", "StrLit", "Identifier", "For", "If", "Block", "Call", "Return", "Print", "ParseArgs",           "Or", "And",  "Eq", "Ne",  "Lt", "Le", "Gt", "Ge",  "Add", "Sub", "Mul", "Div", "Mod",  "Not", "Minus", "Plus",     "TEMP", "None" };
-#define CATEGORY_TO_LLVM    { "",        "",        "",         "",           "",           "",         "",          "",       "",    "",        "",        "",        "",     "",       "",       "",           "",    "",   "",      "",     "",       "",      "",                    "",   "",     "eq", "ne",  "lt", "le", "gt", "ge",  "add", "sub", "mul", "div", "mod",  "",    "",      "",         "",     ""     }
+#define CATEGORY_TO_LLVM    { "",        "",        "",         "",           "",           "",         "",          "",       "",    "",        "",        "",        "",     "",       "",       "",           "",    "",   "",      "",     "",       "",      "",                    "or", "and",  "eq", "ne",  "lt", "le", "gt", "ge",  "add", "sub", "mul", "div", "rem", "",    "",      "",         "",     ""     }
 
 
 void codegen_statement(struct node *statement, int ind);

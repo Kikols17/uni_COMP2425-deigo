@@ -81,7 +81,7 @@ void codegen_expression(struct node *expression, int ind) {
             right_expression = getchild(expression, 1);
 
             codegen_indent(ind);
-            printf("; OPERATION \"%s\"\n", category_to_llvm3[expression->category]);
+            printf("; MATH OPERATION \"%s\"\n", category_to_llvm3[expression->category]);
 
             codegen_expression(left_expression, ind+1);
             codegen_expression(right_expression, ind+1);
@@ -92,6 +92,10 @@ void codegen_expression(struct node *expression, int ind) {
             printf("%s = ", expression->llvm_name);
             if (left_expression->type==float32_type) {
                 printf("f");
+            } else {
+                if (expression->category==Div || expression->category==Mod) {
+                    printf("s");
+                }
             }
 
             printf("%s %s %s, %s;\n", category_to_llvm3[expression->category], type_to_llvm3[expression->type], left_expression->llvm_name, right_expression->llvm_name);
@@ -109,6 +113,20 @@ void codegen_expression(struct node *expression, int ind) {
 
         case Or:
         case And:
+            ;
+            left_expression = getchild(expression, 0);
+            right_expression = getchild(expression, 1);
+
+            codegen_indent(ind);
+            printf("; LOGIC OPERATION \"%s\"\n", category_to_llvm3[expression->category]);
+
+            codegen_expression(left_expression, ind+1);
+            codegen_expression(right_expression, ind+1);
+
+            sprintf(expression->llvm_name, "%%%d", temporary++);
+
+            codegen_indent(ind);
+            printf("%s = %s i1 %s, %s\n", expression->llvm_name, category_to_llvm3[expression->category], left_expression->llvm_name, right_expression->llvm_name);
             break;
 
 
@@ -298,8 +316,8 @@ void codegen_function(struct node *node, int ind) {
     codegen_indent(ind); printf(" {\n");
     codegen_funcbody(funcbody, ind+1);
 
-    codegen_indent(ind);
-    printf("ret i32 0", type_to_llvm3[node->type]);
+    codegen_indent(ind+1);
+    printf("ret i32 0\n", type_to_llvm3[node->type]);
 
     codegen_indent(ind); printf("}\n");
 }
