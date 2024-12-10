@@ -31,6 +31,12 @@ runt: gocompiler
 runs: gocompiler
 	./gocompiler -s
 
+runll: gocompiler
+	./gocompiler > programa.ll
+	llc programa.ll -o programa.s
+	clang programa.s -o programa
+	./programa
+
 
 # run all tests
 test_all: test_1 test_2 test_3 test_4
