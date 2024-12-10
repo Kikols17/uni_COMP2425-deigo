@@ -33,6 +33,9 @@ runs: gocompiler
 
 runll: gocompiler
 	./gocompiler > programa.ll
+	@echo -------------------------------------------------------
+	@cat programa.ll
+	@echo -------------------------------------------------------
 	llc programa.ll -o programa.s
 	clang programa.s -o programa
 	./programa
