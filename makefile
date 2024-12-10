@@ -37,7 +37,7 @@ runll: gocompiler
 	@cat programa.ll
 	@echo -------------------------------------------------------
 	llc programa.ll -o programa.s
-	clang programa.s -o programa
+	clang programa.s -o programa -fPIE
 	./programa
 
 
@@ -73,7 +73,7 @@ zip_3: src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h src/semantics.c src
 	mv src/gocompiler.zip gocompiler.zip
 
 zip_4: src/gocompiler.l src/gocompiler.y src/ast.c src/ast.h src/semantics.c src/semantics.h src/codegen.c src/codegen.h
-	cd src && zip gocompiler.zip gocompiler.l gocompiler.y ast.c ast.h semantics.c semantics.h src/codegen.c src/codegen.h
+	cd src && zip gocompiler.zip gocompiler.l gocompiler.y ast.c ast.h semantics.c semantics.h codegen.c codegen.h
 	mv src/gocompiler.zip gocompiler.zip
 
 
