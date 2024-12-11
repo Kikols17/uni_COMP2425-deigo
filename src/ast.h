@@ -15,7 +15,7 @@ enum category               {  Program,      VarDecl,      FuncDecl,     FuncHea
 #define CATEGORY_TO_TYPE    {  undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   int_type,   int_type,  float32_type,   float32_type,   bool_type,   string_type,   string_type, undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   undef_type,   none_type }
 
 enum type           {  bool_type,  int_type,  float32_type,  string_type,  undef_type,  none_type,  EMPTY  };   // precisa de "_type", para não colidir com os types de C
-#define TYPE_NAMES  { "bool",     "int",     "float32",     "string",     "undef",     "none",     "EMPTY" };
+#define TYPE_NAMES  { "bool",     "int",     "float32",     "string",     "undef",     "void",     "EMPTY" };
 
 
 struct node {

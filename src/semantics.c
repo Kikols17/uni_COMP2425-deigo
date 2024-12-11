@@ -458,11 +458,19 @@ void check_Call(struct node *call, struct symbol_list *symbol_list) {
     call_param = call->children->next;
     printf("(");
     if ((call_param=call_param->next)!=NULL) {
-        printf("%s", type_names2[call_param->node->type]);
+        if (call_param->node->type!=none_type) {
+            printf("%s", type_names2[call_param->node->type]);
+        } else {
+            printf("none");
+        }
         //call_param->node->type = category_to_type2[call_param->node->category];
         //check_expression(call_param->node, symbol_list);
         while ((call_param=call_param->next)!=NULL) {
-            printf(",%s", type_names2[call_param->node->type]);
+            if (call_param->node->type!=none_type) {
+                printf(",%s", type_names2[call_param->node->type]);
+            } else {
+                printf(",none");
+            }
             //call_param->node->type = category_to_type2[call_param->node->category];
             //check_expression(call_param->node, symbol_list);
         }
@@ -745,12 +753,17 @@ struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, i
 
 void show_symbol_table() {
     // global scope
+    //sprintf(&type_names2[none_type], "none");
     struct symbol_list *symbol;
     printf("===== Global Symbol Table =====\n");
     for(symbol = symbol_table->next; symbol != NULL; symbol = symbol->next) {
         // “Name\t[ParamTypes]\tType[\tparam]”
         char *paramtypes = show_functionparameters(symbol);
-        printf("%s\t%s\t%s\n", symbol->identifier, paramtypes, type_names2[symbol->type]);
+        if (symbol->type != none_type) {
+            printf("%s\t%s\t%s\n", symbol->identifier, paramtypes, type_names2[symbol->type]);
+        } else {
+            printf("%s\t%s\tnone\n", symbol->identifier, paramtypes);
+        }
         free(paramtypes);
     }
     printf("\n");
@@ -772,7 +785,13 @@ void show_symbol_table() {
             if (symbol2->is_invalid) {
                 continue;
             }
-            printf("%s\t\t%s", symbol2->identifier, type_names2[symbol2->type]);
+
+            if (symbol2->type!=none_type) {
+                printf("%s\t\t%s", symbol2->identifier, type_names2[symbol2->type]);
+            } else {
+                printf("%s\t\tnone", symbol2->identifier);
+            }
+
             if (symbol2->is_param) {
                 printf("\tparam\n");
             } else {
@@ -782,6 +801,8 @@ void show_symbol_table() {
 
         printf("\n");
     }
+
+    //sprintf(&type_names2[none_type], "void");
 }
 
 char *show_functionparameters(struct symbol_list *symbol) {
