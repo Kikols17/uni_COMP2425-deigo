@@ -57,7 +57,10 @@ void codegen_expression(struct node *expression, int ind) {
                 printf("%s = load %s, %s* %s\n", expression->llvm_name, type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], getchild(definition->node, 1)->llvm_name);
             } else {
                 sprintf(expression->llvm_name, "%s", getchild(definition->node, 1)->llvm_name);
+                codegen_indent(ind);
+                printf("; Var Identifier \"%s\"\n", expression->llvm_name);
             }
+
 
             break;
 
@@ -83,6 +86,7 @@ void codegen_expression(struct node *expression, int ind) {
 
         case String:
         case StrLit:
+
             break;
         
 
@@ -229,7 +233,19 @@ void codegen_assign(struct node *assign_node, int ind) {
     codegen_expression(expr, ind+1);
 
     codegen_indent(ind);
-    printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
+    if (getchild(definition->node, 1)->llvm_name[0]=='@') {
+        printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
+    } else {
+        printf("store %s %s, %s* %%%s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->token);
+        // TODO fix this
+    }
+
+    //if (getchild(definition->node,1)->llvm_name[0]=='@') {
+    //    codegen_indent(ind);
+    //    printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
+    //} else {
+    //    printf("%s = add %s %s, 0\n", getchild(definition->node,1)->llvm_name, type_to_llvm3[definition->type], expr->llvm_name);
+    //}
 }
 
 
@@ -269,6 +285,37 @@ void codegen_block(struct node *block, int ind) {
     int curr = 0;
     while((cur_statement = getchild(block, curr++)) != NULL) {
         codegen_statement(cur_statement, ind);
+    }
+}
+
+
+
+void codegen_print(struct node *print_node, int ind) {
+    struct node *expr = getchild(print_node, 0);
+
+    codegen_indent(ind);
+    printf("; PRINTING\n");
+    codegen_expression(expr, ind+1);
+
+    printf("; TODO-----------------------\n");
+
+    codegen_indent(ind);
+    switch (expr->type) {
+        case int_type:
+            printf("call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @print_int, i32 0, i32 0), i32 %s)\n", expr->llvm_name);
+            break;
+        
+        case float32_type:
+            break;
+        
+        case string_type:
+            break;
+
+        case bool_type:
+            break;
+
+        default:
+            break;
     }
 }
 
@@ -314,8 +361,14 @@ void codegen_if(struct node *if_node, int ind) {
 void codegen_for(struct node *for_node, int ind) {
     printf("\n");
     int for_id = ++for_count;
-    struct node *condition = getchild(for_node, 0);
+    struct node *condition = NULL;
     struct node *block_node = getchild(for_node, 1);
+
+    if (block_node==NULL) {
+        block_node = getchild(for_node, 0);
+    } else {
+        condition = getchild(for_node, 0);
+    }
 
     codegen_indent(ind);
     printf("; FOR\n");
@@ -326,9 +379,14 @@ void codegen_for(struct node *for_node, int ind) {
 
     codegen_indent(ind+1);
     printf("; FOR - CONDITION\n");
-    codegen_expression(condition, ind+1);
-    codegen_indent(ind+1);
-    printf("br i1 %s, label %%For%dblock, label %%For%dend\n", condition->llvm_name, for_id, for_id);
+    if (condition!=NULL) {
+        codegen_expression(condition, ind+1);
+        codegen_indent(ind+1);
+        printf("br i1 %s, label %%For%dblock, label %%For%dend\n", condition->llvm_name, for_id, for_id);
+    } else {
+        codegen_indent(ind+1);
+        printf("br label %%For%dblock", for_id);
+    }
 
     codegen_indent(ind);
     printf("For%dblock:\n", for_id);
@@ -342,6 +400,19 @@ void codegen_for(struct node *for_node, int ind) {
     codegen_indent(ind);
     printf("For%dend:\n", for_id);
 
+}
+
+
+void codegen_parseargs(struct node *parseargs, int ind) {
+    struct node *args = getchild(parseargs, 0);
+    codegen_indent(ind);
+    printf("; PARSE ARGS\n");
+    codegen_expression(args, ind+1);
+
+    sprintf(parseargs->llvm_name, "%%%d", temporary++);
+
+    codegen_indent(ind);
+    printf("%s = call i32 @atoi(i8* %s)\n", parseargs->llvm_name, args->llvm_name);
 }
 
 
@@ -360,6 +431,7 @@ void codegen_statement(struct node *statement, int ind) {
 
     } else if (statement->category == Print) {
         //check_Print(statement, symbol_scope);
+        codegen_print(statement, ind);
 
     } else if (statement->category == If) {
         codegen_if(statement, ind);
@@ -454,7 +526,7 @@ void codegen_function(struct node *node, int ind) {
     codegen_funcbody(funcbody, ind+1);
 
     codegen_indent(ind+1);
-    printf("ret i32 0\n", type_to_llvm3[node->type]);       // TODO fix this
+    printf("ret i32 0\n"/*, type_to_llvm3[node->type]*/);       // TODO fix this
 
     codegen_indent(ind); printf("}\n");
 }
@@ -464,8 +536,19 @@ void codegen_function(struct node *node, int ind) {
 void codegen_program(struct node *program) {
     printf("; bem fixe este programa\n");
 
+    printf("; ----- String Declarations -----\n");
+    printf("@print_int = private unnamed_addr constant  [4 x i8] c\"%%d\\0A\\00\"\n");
+    printf("@print_double = private unnamed_addr constant  [7 x i8] c\"%%.08f\\0A\\00\"\n");
+    printf("@print_string = private unnamed_addr constant  [4 x i8] c\"%%s\\0A\\00\"\n");
+    printf("@print_true = private unnamed_addr constant  [6 x i8] c\"true\\0A\\00\"\n");
+    printf("@print_false = private unnamed_addr constant  [7 x i8] c\"false\\0A\\00\"\n");
+
+    printf("\n\n; ----- Imported Function -----\n"),
+    printf("declare i32 @atoi(i8*)\n");
+    printf("declare i32 @printf(i8*, ...)\n");
+
     // setup all the global variables
-    printf("; ----- Global variables -----\n");
+    printf("\n\n; ----- Global Variables -----\n");
     struct node *cur_node;
     int curr = 0;
     while((cur_node = getchild(program, curr++)) != NULL) {
