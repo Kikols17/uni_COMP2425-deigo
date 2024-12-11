@@ -51,15 +51,19 @@ void codegen_expression(struct node *expression, int ind) {
             // find out the identifier's declaration node (we assume it exists)
             definition = search_symbol(cur_scope, expression->token, -1, false);
 
-            if (getchild(definition->node, 1)->llvm_name[0] == '@') {
-                sprintf(expression->llvm_name, "%%%d", temporary++);
-                codegen_indent(ind);
-                printf("%s = load %s, %s* %s\n", expression->llvm_name, type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], getchild(definition->node, 1)->llvm_name);
-            } else {
-                sprintf(expression->llvm_name, "%s", getchild(definition->node, 1)->llvm_name);
-                codegen_indent(ind);
-                printf("; Var Identifier \"%s\"\n", expression->llvm_name);
-            }
+            sprintf(expression->llvm_name, "%%%d", temporary++);
+            codegen_indent(ind);
+            printf("%s = load %s, %s* %s\n", expression->llvm_name, type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], getchild(definition->node, 1)->llvm_name);
+
+            //if (getchild(definition->node, 1)->llvm_name[0] == '@') {
+            //    sprintf(expression->llvm_name, "%%%d", temporary++);
+            //    codegen_indent(ind);
+            //    printf("%s = load %s, %s* %s\n", expression->llvm_name, type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], type_to_llvm3[category_to_type3[getchild(definition->node, 0)->category]], getchild(definition->node, 1)->llvm_name);
+            //} else {
+            //    //sprintf(expression->llvm_name, "%s", getchild(definition->node, 1)->llvm_name);
+            //    //codegen_indent(ind);
+            //    //printf("; Var Identifier \"%s\"\n", expression->llvm_name);
+            //}
 
 
             break;
@@ -233,19 +237,14 @@ void codegen_assign(struct node *assign_node, int ind) {
     codegen_expression(expr, ind+1);
 
     codegen_indent(ind);
-    if (getchild(definition->node, 1)->llvm_name[0]=='@') {
+    //printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
+
+    if (getchild(definition->node,1)->llvm_name[0]=='@') {
+        codegen_indent(ind);
         printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
     } else {
-        printf("store %s %s, %s* %%%s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->token);
-        // TODO fix this
+        printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
     }
-
-    //if (getchild(definition->node,1)->llvm_name[0]=='@') {
-    //    codegen_indent(ind);
-    //    printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
-    //} else {
-    //    printf("%s = add %s %s, 0\n", getchild(definition->node,1)->llvm_name, type_to_llvm3[definition->type], expr->llvm_name);
-    //}
 }
 
 
@@ -457,8 +456,8 @@ void codegen_funcheaderparams(struct node *params) {
         if (curr > 1) {
             printf(", ");
         }
-        sprintf(id_node->llvm_name, "%%%s", id_node->token);
-        printf("%s %s", type_to_llvm3[category_to_type3[type_node->category]], id_node->llvm_name);
+        sprintf(id_node->llvm_name, "%%%s.ptr", id_node->token);
+        printf("%s %%%s", type_to_llvm3[category_to_type3[type_node->category]], id_node->token);   // cant be ->llvm_name, because it can't have the .ptr part
     }
 }
 
@@ -483,7 +482,53 @@ void codegen_funcheader(struct node *funcheader, int ind) {
         printf("define void @_%s(", id_node->token);
     }
     codegen_funcheaderparams(params_node);
-    printf(")");
+    printf(") {\n");
+
+
+    // add all local variables (params and local vars)
+    if (params_node==NULL) {
+        codegen_indent(ind+1);
+        printf("; NO LOCAL VARs\n");
+        return;
+    }
+    codegen_indent(ind+1);
+    printf("; LOCAL VAR DECLARATIONS\n");
+    struct symbol_list *symbol;
+    for(symbol = cur_scope->next->next; symbol != NULL; symbol = symbol->next) {
+        if (strcmp(symbol->identifier, "return")==0) {
+            continue;
+        }
+        struct node *cur_var = symbol->node;
+        struct node *var_type = getchild(cur_var, 0);
+        struct node *var_id = getchild(cur_var, 1);
+
+        if (var_id->llvm_name[0]=='\0') {
+            sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
+        }
+
+
+        codegen_indent(ind+2);
+        printf("%s = alloca %s\t\t; \\", var_id->llvm_name, type_to_llvm3[symbol->type]);
+
+        if (symbol->is_param) {
+            printf(" Input param \"%s\"\n", var_id->token);
+        } else {
+            printf(" Local variable \"%s\"\n", var_id->token);
+        }
+
+        if(var_type->type == string_type){
+            // Initialize to empty string
+            codegen_indent(ind+2);
+            printf("store i8* getelementptr inbounds ([1 x i8], [1 x i8]* @.empty_str, i32 0, i32 0), i8** %s\t; /\n", var_id->llvm_name);
+        } else if (symbol->is_param) {
+            // Store parameter value
+            codegen_indent(ind+2);
+            printf("store %s %%%s, %s* %s\t; /\n", type_to_llvm3[symbol->type], var_id->token, type_to_llvm3[symbol->type], var_id->llvm_name);
+        }
+
+    }
+    codegen_indent(ind+1);
+    printf("; LOCAL VAR DECLARATIONS - end\n\n");
 }
 
 
@@ -491,13 +536,13 @@ void codegen_funcheader(struct node *funcheader, int ind) {
 void codegen_funcbody(struct node *funcbody, int ind) {
     temporary = 1;
     struct node_list *child = funcbody->children;
-    while ((child=child->next) != NULL) {
-        if (child->node->category == VarDecl) {
-            // vardecl
-            //codegen_statement(child->node, ind);
-
-        }
-    }
+    //while ((child=child->next) != NULL) {
+    //    if (child->node->category == VarDecl) {
+    //        // vardecl
+    //        //codegen_statement(child->node, ind);
+    //        // THIS IS DONE BY THE codegen_funcheader
+    //    }
+    //}
 
     child = funcbody->children;
     while ((child=child->next) != NULL) {
@@ -522,7 +567,7 @@ void codegen_function(struct node *node, int ind) {
     cur_scope = search_symbol(symbol_table, getchild(funcheader,0)->token, -1, true)->child_scope;
 
     codegen_funcheader(funcheader, ind);
-    codegen_indent(ind); printf(" {\n");
+
     codegen_funcbody(funcbody, ind+1);
 
     codegen_indent(ind+1);
@@ -536,12 +581,14 @@ void codegen_function(struct node *node, int ind) {
 void codegen_program(struct node *program) {
     printf("; bem fixe este programa\n");
 
-    printf("; ----- String Declarations -----\n");
+    printf("; ----- Print Strings -----\n");
     printf("@print_int = private unnamed_addr constant  [4 x i8] c\"%%d\\0A\\00\"\n");
     printf("@print_double = private unnamed_addr constant  [7 x i8] c\"%%.08f\\0A\\00\"\n");
     printf("@print_string = private unnamed_addr constant  [4 x i8] c\"%%s\\0A\\00\"\n");
     printf("@print_true = private unnamed_addr constant  [6 x i8] c\"true\\0A\\00\"\n");
     printf("@print_false = private unnamed_addr constant  [7 x i8] c\"false\\0A\\00\"\n");
+
+    printf("\n\n; ----- String Declarations -----\n");
 
     printf("\n\n; ----- Imported Function -----\n"),
     printf("declare i32 @atoi(i8*)\n");
@@ -569,7 +616,7 @@ void codegen_program(struct node *program) {
     // add entry point
     printf("\n; ----- Entry point -----\n"
            "define i32 @main() {\n"
-           "  %%1 = call i32 @_main(i32 0)\n"
+           "  %%1 = call i32 @_main(i32 5)\n"
            "  ret i32 %%1\n"
            "}\n");
 
