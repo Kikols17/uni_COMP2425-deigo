@@ -678,13 +678,14 @@ int codegen_recur_stringdecl(struct node *node, int ind, int str_count) {
             sprintf(strlit_buff+strlen(strlit_buff), "%c", node->token[i]);
         }
         // remove last '"'
-        sprintf(strlit_buff+strlen(strlit_buff)-1, "\0");
+        sprintf(strlit_buff+strlen(strlit_buff)-1, "");
 
         // add "\n" to the end
         sprintf(strlit_buff+strlen(strlit_buff), "\\0A");
 
         // finally print the declaration
-        printf("@.str.%d = private unnamed_addr constant [%d x i8] c\"%s\\00\" align 1\n", str_count, ++node->strlit_size, strlit_buff);  // +1 on the strlit_size because we added the \n to the string
+        codegen_indent(ind);
+        printf("@.str.%d = private unnamed_addr constant [%zu x i8] c\"%s\\00\" align 1\n", str_count, ++node->strlit_size, strlit_buff);  // +1 on the strlit_size because we added the \n to the string
     }
     while ((next_node = getchild(node, curr++)) != NULL) {
         str_count = codegen_recur_stringdecl(next_node, 0, str_count);
