@@ -23,6 +23,7 @@ char strlit_buff[4096];
 int temporary;   // sequence of temporary registers in a function
 int if_count = 0;
 int for_count = 0;
+int printbool_count = 0;
 
 struct symbol_list *cur_scope = NULL;
 
@@ -43,6 +44,16 @@ void codegen_globalvar(struct node *vardecl, int ind) {
     sprintf(id_node->llvm_name, "@%s", id_node->token);
     codegen_indent(ind);
     printf("%s = global %s %s\n", id_node->llvm_name, type_to_llvm3[category_to_type3[type_node->category]], empty_type_llvm[category_to_type3[type_node->category]]);
+}
+
+void codegen_localvar(struct node *vardecl, int ind) {
+    // the alloca for this was already done
+    // we just need to assign vardecl->llvm_name to the correct name
+    struct node *id_node = getchild(vardecl, 1);
+
+    codegen_indent(ind);
+    printf("; VarDecl of local var \"%s\"\n", id_node->token);
+    sprintf(id_node->llvm_name, "%%%s.ptr", id_node->token);
 }
 
 
@@ -368,7 +379,18 @@ void codegen_print(struct node *print_node, int ind) {
             break;
 
         case bool_type:
-            // TODO
+            printbool_count++;
+            printf("; Printing bool\n");
+            codegen_indent(ind);    printf("br i1 %s, label %%PrintBool%dtrue, label %%PrintBool%dfalse\n", expr->llvm_name, printbool_count, printbool_count);
+            codegen_indent(ind);    printf("PrintBool%dtrue:\n", printbool_count);
+            codegen_indent(ind+1);  printf("call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([6 x i8], [6 x i8]* @.str.print_true, i64 0, i64 0))\n");
+            codegen_indent(ind+1);  printf("br label %%PrintBool%dend\n", printbool_count);
+            codegen_indent(ind);    printf("PrintBool%dfalse:\n", printbool_count);
+            codegen_indent(ind+1);  printf("call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.print_false, i64 0, i64 0))\n");
+            codegen_indent(ind+1);  printf("br label %%PrintBool%dend\n", printbool_count);
+            codegen_indent(ind);    printf("PrintBool%dend:\n", printbool_count);
+            temporary++;
+            temporary++;
             break;
 
         default:
@@ -499,6 +521,9 @@ void codegen_statement(struct node *statement, int ind) {
 
     } else if (statement->category == ParseArgs) {
         //check_ParseArgs(statement, symbol_scope);
+
+    } else if (statement->category == VarDecl) {
+        codegen_localvar(statement, ind);
     }
 }
 
@@ -561,18 +586,26 @@ struct node *codegen_funcheader(struct node *funcheader, int ind) {
         struct node *var_type = getchild(cur_var, 0);
         struct node *var_id = getchild(cur_var, 1);
 
-        if (var_id->llvm_name[0]=='\0') {
-            sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
-        }
+        //if (var_id->llvm_name[0]=='\0') {
+        //    sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
+        //}
 
 
         codegen_indent(ind+2);
-        printf("%s = alloca %s\t\t; \\", var_id->llvm_name, type_to_llvm3[symbol->type]);
+        printf("%%%s.ptr = alloca %s\t\t; \\", var_id->token, type_to_llvm3[symbol->type]); // dont assign to var_id just yet
 
         if (symbol->is_param) {
             printf(" Input param \"%s\"\n", var_id->token);
+            sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
         } else {
             printf(" Local variable \"%s\"\n", var_id->token);
+            // only assign if there is no global variable with same name
+            struct symbol_list *definition;
+            if ((definition=search_symbol(symbol_table, var_id->token, 1, false))!=NULL) {  // search for global var named like this one
+                sprintf(var_id->llvm_name, "%s", getchild(definition->node,1)->llvm_name);      // reasign to local .ptr var, when it is declared
+            } else {
+                sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
+            }
         }
 
         if(var_type->type == string_type){
@@ -607,11 +640,8 @@ void codegen_funcbody(struct node *funcbody, int ind) {
 
     child = funcbody->children;
     while ((child=child->next) != NULL) {
-        if (child->node->category != VarDecl) {
-            // statement
-            codegen_statement(child->node, ind);
-
-        }
+        // statement
+        codegen_statement(child->node, ind);
     }
 }
 
@@ -637,7 +667,6 @@ void codegen_function(struct node *node, int ind) {
     } else {
         printf("ret void\n");
     }
-    //printf("ret i32 0\n"/*, type_to_llvm3[node->type]*/);       // TODO fix this
 
     codegen_indent(ind); printf("}\n");
 }
