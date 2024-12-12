@@ -352,17 +352,17 @@ void codegen_print(struct node *print_node, int ind) {
     codegen_indent(ind);
     switch (expr->type) {
         case int_type:
-            printf("call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.print_int, i64 0, i64 0), i32 noundef %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
+            printf("call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.print_int, i64 0, i64 0), i32 %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
             temporary++;
             break;
         
         case float32_type:
-            printf("call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([7 x i8], [7 x i8]* @.str.print_float, i64 0, i64 0), double noundef %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
+            printf("call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.print_float, i64 0, i64 0), double %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
             temporary++;
             break;
         
         case string_type:
-            //printf("call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.print_float, i64 0, i64 0), double noundef %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
+            //printf("call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.print_float, i64 0, i64 0), double %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
             // TODO
             break;
 
@@ -657,8 +657,8 @@ void codegen_program(struct node *program) {
     printf("\n\n; ----- String Declarations -----\n");
 
     printf("\n\n; ----- Imported Function -----\n"),
-    printf("declare i32 @atoi(i8* noundef)\n");
-    printf("declare i32 @printf(i8* noundef,  ...)\n");
+    printf("declare i32 @atoi(i8*)\n");
+    printf("declare i32 @printf(i8*,  ...)\n");
 
     // setup all the global variables
     printf("\n\n; ----- Global Variables -----\n");
@@ -681,9 +681,9 @@ void codegen_program(struct node *program) {
 
     // add entry point
     printf("\n; ----- Entry point -----\n"
-           "define void @main() {\n"
+           "define i32 @main() {\n"
            "  call void @_main()\n"
-           "  ret void\n"
+           "  ret i32 0\n"
            "}\n");
 
 }
