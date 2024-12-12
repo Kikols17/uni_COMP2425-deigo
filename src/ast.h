@@ -27,6 +27,7 @@ struct node {
     int token_column;
     struct node_list *children;
     char llvm_name[64];     // 64-1(para o %/@) ou seja há espaço para 2^63 temps, epero q seja suficiente
+    size_t strlit_size;
 };
 
 struct node_list {

@@ -28,6 +28,7 @@ struct node *newnode(enum category category, char *token) {
     new->children->node = NULL;
     new->children->next = NULL;
     memset(new->llvm_name, '\0', 16);
+    new->strlit_size = 0;
     return new;
 }
 

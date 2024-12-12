@@ -18,6 +18,7 @@ const char *empty_type_llvm[] = EMPTY_TYPE_LLVM;
 const char *category_to_llvm3[] = CATEGORY_TO_LLVM;
 const enum type category_to_type3[] = CATEGORY_TO_TYPE;
 char pointer_char[2];
+char strlit_buff[4096];
 
 int temporary;   // sequence of temporary registers in a function
 int if_count = 0;
@@ -362,8 +363,8 @@ void codegen_print(struct node *print_node, int ind) {
             break;
         
         case string_type:
-            //printf("call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.print_float, i64 0, i64 0), double %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
-            // TODO
+            printf("call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([%zu x i8], [%zu x i8]* %s, i64 0, i64 0))\n", /*print_node->llvm_name,*/ expr->strlit_size, expr->strlit_size, expr->llvm_name);
+            temporary++;
             break;
 
         case bool_type:
@@ -643,18 +644,69 @@ void codegen_function(struct node *node, int ind) {
 
 
 
+int codegen_recur_stringdecl(struct node *node, int ind, int str_count) {
+    struct node *next_node;
+    int curr = 0;
+    if (node->category == StrLit) {
+        str_count++;
+        sprintf(node->llvm_name, "@.str.%d", str_count);
+        memset(strlit_buff, '\0', 4096);
+        for (int i=1; node->token[i]!='\0'; i++) {
+            node->strlit_size++;
+            if (node->token[i]=='\\') {
+                i++;
+                if (node->token[i]=='n') {
+                    sprintf(strlit_buff+strlen(strlit_buff), "\\0A");
+                } else if (node->token[i]=='t') {
+                    sprintf(strlit_buff+strlen(strlit_buff), "\\09");
+                } else if (node->token[i]=='\\') {
+                    sprintf(strlit_buff+strlen(strlit_buff), "\\5C");
+                } else if (node->token[i]=='\"') {
+                    sprintf(strlit_buff+strlen(strlit_buff), "\\22");
+                } else if (node->token[i]=='f') {
+                    sprintf(strlit_buff+strlen(strlit_buff), "\\0C");
+                } else if (node->token[i]=='r') {
+                    sprintf(strlit_buff+strlen(strlit_buff), "\\0D");
+                }
+                continue;
+            }
+            if (node->token[i]=='%') {
+                sprintf(strlit_buff+strlen(strlit_buff), "%%%%");
+                node->strlit_size++;
+                continue;
+            }
+            sprintf(strlit_buff+strlen(strlit_buff), "%c", node->token[i]);
+        }
+        // remove last '"'
+        sprintf(strlit_buff+strlen(strlit_buff)-1, "\0");
+
+        // add "\n" to the end
+        sprintf(strlit_buff+strlen(strlit_buff), "\\0A");
+
+        // finally print the declaration
+        printf("@.str.%d = private unnamed_addr constant [%d x i8] c\"%s\\00\" align 1\n", str_count, ++node->strlit_size, strlit_buff);  // +1 on the strlit_size because we added the \n to the string
+    }
+    while ((next_node = getchild(node, curr++)) != NULL) {
+        str_count = codegen_recur_stringdecl(next_node, 0, str_count);
+    }
+
+    return str_count;
+}
+
+
+
 void codegen_program(struct node *program) {
     printf("; bem fixe este programa\n");
 
     printf("; ----- Print Strings -----\n");
     printf("@.str.print_int = private unnamed_addr constant  [4 x i8] c\"%%d\\0A\\00\" align 1\n");
     printf("@.str.print_float = private unnamed_addr constant  [7 x i8] c\"%%.08f\\0A\\00\" align 1\n");
-    printf("@.str.print_string = private unnamed_addr constant  [4 x i8] c\"%%s\\0A\\00\" align 1\n");
     printf("@.str.print_true = private unnamed_addr constant  [6 x i8] c\"true\\0A\\00\" align 1\n");
     printf("@.str.print_false = private unnamed_addr constant  [7 x i8] c\"false\\0A\\00\" align 1\n");
     printf("@.str.empty_str = private unnamed_addr constant [1 x i8] c\"\\00\" align 1\n\n");
 
     printf("\n\n; ----- String Declarations -----\n");
+    codegen_recur_stringdecl(program, 0, 0);
 
     printf("\n\n; ----- Imported Function -----\n"),
     printf("declare i32 @atoi(i8*)\n");
