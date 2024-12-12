@@ -1,6 +1,7 @@
 #ifndef _CODEGEN_H
 #define _CODEGEN_H
 
+#include "semantics.h"
 #include "ast.h"
 
 /*
