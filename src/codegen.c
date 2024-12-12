@@ -5,6 +5,12 @@
 #include "semantics.h"
 #include "codegen.h"
 
+/*
+ * Trabalho realizado por:
+ *      - Francisco Amado Lapa Marques Silva - uc2022213583
+ *      - Miguel Moital Rodrigues Cabral Martins - uc2022213951
+ */
+
 extern struct symbol_list *symbol_table;
 
 const char *type_to_llvm3[] = TYPE_TO_LLVM;
@@ -46,6 +52,8 @@ void codegen_expression(struct node *expression, int ind) {
     struct node *left_expression;
     struct node *right_expression;
     struct symbol_list *definition;
+
+    char op_prefix = '\n';
 
     switch(expression->category) {
         case Identifier:
@@ -129,9 +137,38 @@ void codegen_expression(struct node *expression, int ind) {
         
 
 
-        case Minus:
         case Plus:
+            // do nothing?
+            break;
+        case Minus:
+            right_expression = getchild(expression, 0);
+
+            codegen_indent(ind);
+            printf("; MINUS\n");
+            
+            codegen_expression(right_expression, ind+1);
+
+            sprintf(expression->llvm_name, "%%%d", temporary++);
+
+            codegen_indent(ind);
+            printf("%s = ", expression->llvm_name);
+            if (right_expression->type==float32_type) {
+                printf("f");
+            }
+            printf("sub %s -%s, %s\n", type_to_llvm3[right_expression->type], empty_type_llvm[right_expression->type], right_expression->llvm_name);
+            break;
         case Not:
+            right_expression = getchild(expression, 0);
+
+            codegen_indent(ind);
+            printf("; NOT\n");
+
+            codegen_expression(right_expression, ind+1);
+
+            sprintf(expression->llvm_name, "%%%d", temporary++);
+
+            codegen_indent(ind);
+            printf("%s = xor i1 %s, true\n", expression->llvm_name, right_expression->llvm_name);
             break;
 
 
@@ -158,10 +195,12 @@ void codegen_expression(struct node *expression, int ind) {
 
         case Eq:
         case Ne:
+            if (op_prefix=='\n') { op_prefix=' '; }
         case Lt:
         case Le:
         case Gt:
         case Ge:
+            if (op_prefix=='\n') { if (expression->type == float32_type) {op_prefix='o';} else {op_prefix='s';} }
             ;
             left_expression = getchild(expression, 0);
             right_expression = getchild(expression, 1);
@@ -175,7 +214,11 @@ void codegen_expression(struct node *expression, int ind) {
             sprintf(expression->llvm_name, "%%%d", temporary++);
 
             codegen_indent(ind);
-            printf("%s = icmp %s %s %s, %s\n", expression->llvm_name, category_to_llvm3[expression->category], type_to_llvm3[left_expression->type], left_expression->llvm_name, right_expression->llvm_name);
+            if (expression->type == float32_type) {
+                printf("%s = fcmp %c%s %s %s, %s\n", expression->llvm_name, op_prefix, category_to_llvm3[expression->category], type_to_llvm3[left_expression->type], left_expression->llvm_name, right_expression->llvm_name);
+            } else {
+                printf("%s = icmp %c%s %s %s, %s\n", expression->llvm_name, op_prefix, category_to_llvm3[expression->category], type_to_llvm3[left_expression->type], left_expression->llvm_name, right_expression->llvm_name);
+            }
 
             break;
 
@@ -303,25 +346,28 @@ void codegen_print(struct node *print_node, int ind) {
     printf("; PRINTING\n");
     codegen_expression(expr, ind+1);
 
-    printf("; TODO-----------------------\n");
-
     //sprintf(print_node->llvm_name, "%%%d", temporary++);
+    //temporary++;
 
     codegen_indent(ind);
     switch (expr->type) {
         case int_type:
             printf("call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.print_int, i64 0, i64 0), i32 noundef %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
+            temporary++;
             break;
         
         case float32_type:
             printf("call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([7 x i8], [7 x i8]* @.str.print_float, i64 0, i64 0), double noundef %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
+            temporary++;
             break;
         
         case string_type:
             //printf("call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.print_float, i64 0, i64 0), double noundef %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
+            // TODO
             break;
 
         case bool_type:
+            // TODO
             break;
 
         default:
@@ -353,14 +399,14 @@ void codegen_if(struct node *if_node, int ind) {
     printf("If%dthen:\n", if_id);
     codegen_block(then_node, ind+1);
     codegen_indent(ind+1);
-    printf("br label %%If%dend\n", if_id); temporary++;
+    printf("br label %%If%dend\n", if_id); //temporary++;
     
 
     codegen_indent(ind);
     printf("If%delse:\n", if_id);
     codegen_block(else_node, ind+1);
     codegen_indent(ind+1);
-    printf("br label %%If%dend\n", if_id); temporary++;
+    printf("br label %%If%dend\n", if_id); //temporary++;
 
 
     codegen_indent(ind);
@@ -635,9 +681,9 @@ void codegen_program(struct node *program) {
 
     // add entry point
     printf("\n; ----- Entry point -----\n"
-           "define i32 @main() {\n"
-           "  %%1 = call i32 @_main(i32 5)\n"
-           "  ret i32 %%1\n"
+           "define void @main() {\n"
+           "  call void @_main()\n"
+           "  ret void\n"
            "}\n");
 
 }

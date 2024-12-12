@@ -169,6 +169,12 @@ for d in "$folder"/*; do
 		if [[ "${d:(-1)}" == "3" ]] && [[ "$i" == *"erro"* ]]; then
 			"$bin" < "$i" | sort > "$output";
 			sort < $validate > $validate.sorted
+		elif [[ "${d:(-1)}" == "4" ]]; then
+			"$bin" < "$i" > temp.ll;
+			llc temp.ll -o temp.s
+			clang temp.s -o temp -no-pie
+			./temp > "$output"
+			cp $validate $validate.sorted
 		else
 			"$bin" "$opts" < "$i" > "$output";
 			cp $validate $validate.sorted
