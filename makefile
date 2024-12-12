@@ -36,9 +36,7 @@ runll: gocompiler
 	@echo -------------------------------------------------------
 	@cat programa.ll
 	@echo -------------------------------------------------------
-	llc programa.ll -o programa.s
-	clang programa.s -o programa -no-pie
-	./programa
+	lli programa.ll
 
 
 # run all tests

@@ -171,9 +171,7 @@ for d in "$folder"/*; do
 			sort < $validate > $validate.sorted
 		elif [[ "${d:(-1)}" == "4" ]]; then
 			"$bin" < "$i" > temp.ll;
-			llc temp.ll -o temp.s
-			clang temp.s -o temp -no-pie
-			./temp > "$output"
+			lli temp.ll > "$output"
 			cp $validate $validate.sorted
 		else
 			"$bin" "$opts" < "$i" > "$output";
