@@ -37,7 +37,7 @@ runll: gocompiler
 	@cat programa.ll
 	@echo -------------------------------------------------------
 	llc programa.ll -o programa.s
-	clang programa.s -o programa
+	clang programa.s -o programa -no-pie
 	./programa
 
 

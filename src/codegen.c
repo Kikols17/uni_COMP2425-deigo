@@ -8,6 +8,7 @@
 extern struct symbol_list *symbol_table;
 
 const char *type_to_llvm3[] = TYPE_TO_LLVM;
+const char *empty_type_llvm[] = EMPTY_TYPE_LLVM;
 const char *category_to_llvm3[] = CATEGORY_TO_LLVM;
 const enum type category_to_type3[] = CATEGORY_TO_TYPE;
 char pointer_char[2];
@@ -34,7 +35,7 @@ void codegen_globalvar(struct node *vardecl, int ind) {
     struct node *id_node = getchild(vardecl, 1);
     sprintf(id_node->llvm_name, "@%s", id_node->token);
     codegen_indent(ind);
-    printf("%s = global %s 0\n", id_node->llvm_name, type_to_llvm3[category_to_type3[type_node->category]]);
+    printf("%s = global %s %s\n", id_node->llvm_name, type_to_llvm3[category_to_type3[type_node->category]], empty_type_llvm[category_to_type3[type_node->category]]);
 }
 
 
@@ -81,7 +82,7 @@ void codegen_expression(struct node *expression, int ind) {
         case Decimal:
             sprintf(expression->llvm_name, "%%%d", temporary++);
             codegen_indent(ind);
-            printf("%s = fadd float %s, 0\n", expression->llvm_name, expression->token);
+            printf("%s = fadd double %s, 0.0\n", expression->llvm_name, expression->token);
             break;
         
         case Bool:
@@ -194,7 +195,7 @@ void codegen_call(struct node *return_node, int ind) {
 
     struct symbol_list *definition = search_symbol(symbol_table, id_node->token, -1, true);
     if (definition==NULL) {
-        printf("CALLHOU");
+        printf("CALLHOU\n");
         return;
     }
 
@@ -209,10 +210,13 @@ void codegen_call(struct node *return_node, int ind) {
         codegen_expression(cur_param, ind+1);
     }
 
-    sprintf(return_node->llvm_name, "%%%d", temporary++);
 
     codegen_indent(ind);
-    printf("%s = call %s @_%s(", return_node->llvm_name, type_to_llvm3[definition->type], definition->identifier);
+    if (definition->type!=none_type) {
+        sprintf(return_node->llvm_name, "%%%d", temporary++);
+        printf("%s = ",return_node->llvm_name);
+    }
+    printf("call %s @_%s(", type_to_llvm3[definition->type], definition->identifier);
     curr = 1;
     while((cur_param = getchild(return_node, curr++)) != NULL) {
         if (curr>2)
@@ -256,10 +260,13 @@ void codegen_return(struct node *return_node, int ind) {
     codegen_indent(ind);
     printf("; RETURN\n");
 
-    if (value_node!=NULL) {
-        codegen_expression(value_node, ind+1);
+    if (value_node==NULL) {
+        codegen_indent(ind);
+        printf("ret void\n");
+        return;
     }
 
+    codegen_expression(value_node, ind+1);
 
     sprintf(return_node->llvm_name, "%%%d", temporary++);
 
@@ -298,16 +305,20 @@ void codegen_print(struct node *print_node, int ind) {
 
     printf("; TODO-----------------------\n");
 
+    //sprintf(print_node->llvm_name, "%%%d", temporary++);
+
     codegen_indent(ind);
     switch (expr->type) {
         case int_type:
-            printf("call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @print_int, i32 0, i32 0), i32 %s)\n", expr->llvm_name);
+            printf("call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.print_int, i64 0, i64 0), i32 noundef %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
             break;
         
         case float32_type:
+            printf("call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([7 x i8], [7 x i8]* @.str.print_float, i64 0, i64 0), double noundef %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
             break;
         
         case string_type:
+            //printf("call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.print_float, i64 0, i64 0), double noundef %s)\n", /*print_node->llvm_name,*/ expr->llvm_name);
             break;
 
         case bool_type:
@@ -463,7 +474,8 @@ void codegen_funcheaderparams(struct node *params) {
 
 
 
-void codegen_funcheader(struct node *funcheader, int ind) {
+struct node *codegen_funcheader(struct node *funcheader, int ind) {
+    // returns type_node, for convenience
 
     struct node *id_node, *type_node, *params_node;
     id_node = getchild(funcheader, 0);
@@ -489,7 +501,7 @@ void codegen_funcheader(struct node *funcheader, int ind) {
     if (params_node==NULL) {
         codegen_indent(ind+1);
         printf("; NO LOCAL VARs\n");
-        return;
+        return type_node;
     }
     codegen_indent(ind+1);
     printf("; LOCAL VAR DECLARATIONS\n");
@@ -519,7 +531,7 @@ void codegen_funcheader(struct node *funcheader, int ind) {
         if(var_type->type == string_type){
             // Initialize to empty string
             codegen_indent(ind+2);
-            printf("store i8* getelementptr inbounds ([1 x i8], [1 x i8]* @.empty_str, i32 0, i32 0), i8** %s\t; /\n", var_id->llvm_name);
+            printf("store i8* getelementptr inbounds ([1 x i8], [1 x i8]* @.str.empty_str, i32 0, i32 0), i8** %s\t; /\n", var_id->llvm_name);
         } else if (symbol->is_param) {
             // Store parameter value
             codegen_indent(ind+2);
@@ -529,6 +541,8 @@ void codegen_funcheader(struct node *funcheader, int ind) {
     }
     codegen_indent(ind+1);
     printf("; LOCAL VAR DECLARATIONS - end\n\n");
+
+    return type_node;
 }
 
 
@@ -566,12 +580,17 @@ void codegen_function(struct node *node, int ind) {
 
     cur_scope = search_symbol(symbol_table, getchild(funcheader,0)->token, -1, true)->child_scope;
 
-    codegen_funcheader(funcheader, ind);
+    struct node *type_node = codegen_funcheader(funcheader, ind);
 
     codegen_funcbody(funcbody, ind+1);
 
     codegen_indent(ind+1);
-    printf("ret i32 0\n"/*, type_to_llvm3[node->type]*/);       // TODO fix this
+    if (type_node!=NULL) {
+        printf("ret %s %s\n", type_to_llvm3[category_to_type3[type_node->category]], empty_type_llvm[category_to_type3[type_node->category]]);
+    } else {
+        printf("ret void\n");
+    }
+    //printf("ret i32 0\n"/*, type_to_llvm3[node->type]*/);       // TODO fix this
 
     codegen_indent(ind); printf("}\n");
 }
@@ -582,17 +601,18 @@ void codegen_program(struct node *program) {
     printf("; bem fixe este programa\n");
 
     printf("; ----- Print Strings -----\n");
-    printf("@print_int = private unnamed_addr constant  [4 x i8] c\"%%d\\0A\\00\"\n");
-    printf("@print_double = private unnamed_addr constant  [7 x i8] c\"%%.08f\\0A\\00\"\n");
-    printf("@print_string = private unnamed_addr constant  [4 x i8] c\"%%s\\0A\\00\"\n");
-    printf("@print_true = private unnamed_addr constant  [6 x i8] c\"true\\0A\\00\"\n");
-    printf("@print_false = private unnamed_addr constant  [7 x i8] c\"false\\0A\\00\"\n");
+    printf("@.str.print_int = private unnamed_addr constant  [4 x i8] c\"%%d\\0A\\00\" align 1\n");
+    printf("@.str.print_float = private unnamed_addr constant  [7 x i8] c\"%%.08f\\0A\\00\" align 1\n");
+    printf("@.str.print_string = private unnamed_addr constant  [4 x i8] c\"%%s\\0A\\00\" align 1\n");
+    printf("@.str.print_true = private unnamed_addr constant  [6 x i8] c\"true\\0A\\00\" align 1\n");
+    printf("@.str.print_false = private unnamed_addr constant  [7 x i8] c\"false\\0A\\00\" align 1\n");
+    printf("@.str.empty_str = private unnamed_addr constant [1 x i8] c\"\\00\" align 1\n\n");
 
     printf("\n\n; ----- String Declarations -----\n");
 
     printf("\n\n; ----- Imported Function -----\n"),
-    printf("declare i32 @atoi(i8*)\n");
-    printf("declare i32 @printf(i8*, ...)\n");
+    printf("declare i32 @atoi(i8* noundef)\n");
+    printf("declare i32 @printf(i8* noundef,  ...)\n");
 
     // setup all the global variables
     printf("\n\n; ----- Global Variables -----\n");
