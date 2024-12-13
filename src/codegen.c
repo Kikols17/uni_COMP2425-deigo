@@ -16,7 +16,6 @@ const char *type_to_llvm3[] = TYPE_TO_LLVM;
 const char *empty_type_llvm[] = EMPTY_TYPE_LLVM;
 const char *category_to_llvm3[] = CATEGORY_TO_LLVM;
 const enum type category_to_type3[] = CATEGORY_TO_TYPE;
-char pointer_char[2];
 char strlit_buff[4096];
 
 int temporary;   // sequence of temporary registers in a function
@@ -725,6 +724,7 @@ int codegen_recur_stringdecl(struct node *node, int ind, int str_count) {
 
 
 void codegen_program(struct node *program) {
+    //return;
     printf("; bem fixe este programa\n");
 
     printf("; ----- Print Strings -----\n");

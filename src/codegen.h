@@ -18,7 +18,30 @@
 #define CATEGORY_TO_LLVM    { "",        "",        "",         "",           "",           "",         "",          "",       "",    "",        "",        "",        "",     "",       "",       "",           "",    "",   "",      "",     "",       "",      "",                    "or", "and",  "eq", "ne",  "lt", "le", "gt", "ge",  "add", "sub", "mul", "div", "rem", "",    "",      "",         "",     ""     }
 
 
+void codegen_indent(int ind);
+
+void codegen_globalvar(struct node *vardecl, int ind);
+void codegen_localvar(struct node *vardecl, int ind);
+
+void codegen_expression(struct node *expression, int ind);
+void codegen_block(struct node *block, int ind);
+
+void codegen_call(struct node *return_node, int ind);
+void codegen_assign(struct node *assign_node, int ind);
+void codegen_return(struct node *return_node, int ind);
+void codegen_print(struct node *print_node, int ind);
+void codegen_if(struct node *if_node, int ind);
+void codegen_for(struct node *for_node, int ind);
+void codegen_parseargs(struct node *parseargs, int ind);
 void codegen_statement(struct node *statement, int ind);
+
+void codegen_funcheaderparams(struct node *params);
+struct node *codegen_funcheader(struct node *funcheader, int ind);
+void codegen_funcbody(struct node *funcbody, int ind);
+void codegen_function(struct node *node, int ind);
+
+int codegen_recur_stringdecl(struct node *node, int ind, int str_count);
+
 void codegen_program(struct node *program);
 
 
