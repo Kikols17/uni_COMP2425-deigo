@@ -705,10 +705,10 @@ int codegen_recur_stringdecl(struct node *node, int ind, int str_count) {
             sprintf(strlit_buff+strlen(strlit_buff), "%c", node->token[i]);
         }
         // remove last '"'
-        sprintf(strlit_buff+strlen(strlit_buff)-1, "");
+        //sprintf(strlit_buff+strlen(strlit_buff)-1, "");       // ISTO DÁ COMPILE TIME ERROR??????
 
-        // add "\n" to the end
-        sprintf(strlit_buff+strlen(strlit_buff), "\\0A");
+        // remove last '"' and add "\n" to the end
+        sprintf(strlit_buff+strlen(strlit_buff)-1, "\\0A");
 
         // finally print the declaration
         codegen_indent(ind);
@@ -724,7 +724,6 @@ int codegen_recur_stringdecl(struct node *node, int ind, int str_count) {
 
 
 void codegen_program(struct node *program) {
-    //return;
     printf("; bem fixe este programa\n");
 
     printf("; ----- Print Strings -----\n");
