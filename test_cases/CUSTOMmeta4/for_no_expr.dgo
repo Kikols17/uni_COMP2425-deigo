@@ -1,0 +1,85 @@
+package main;
+
+// PROBLEM WHEN RETURNING AT THE END OF A FOR BLOCK WITH CONDITION
+
+func main() {
+    var b bool;
+    for b{}
+
+    if b{
+        if b {
+            if b {
+
+            }
+        }
+    }
+
+    for b {
+        for b {
+            for b {
+                if b{
+
+                }
+
+                
+            }
+        }
+    }
+
+    for {
+        return;
+        if b{
+            for b{
+                
+            }
+        } else{
+            for  {
+                fmt.Println(1);
+            }
+        }
+        return;
+        for {
+
+        }
+        for{
+
+        }
+
+        if b{
+            return;
+        }
+        if b{
+            return;
+        } else { return;
+            for {
+                for{
+                    for {
+                        return;
+                    }
+                }
+            }
+        }
+        return;
+    }
+
+
+    for b{
+        if 1==2{
+            return;
+
+            for {
+                //return;
+            }
+            //fmt.Println("qq");
+
+        }
+
+     return;   
+    }
+
+    return;
+}
+
+// OPTCODE PROBLEMS HAS_RETURNED_BRANCH CANNOT BE GLOBAL
+// AS NESTED BLOCKS MIGHT TELL INCORRECTLY THEIR PARENTS THAT THEY
+// HAVE RETURNED

@@ -51,7 +51,7 @@ void check_UnusedSymbols(struct symbol_list *symbol_scope);
 
 
 struct symbol_list *insert_symbol(struct symbol_list *symbol_table, char *identifier, enum type type, struct node *node);
-struct symbol_list *search_symbol(struct symbol_list *symbol_table, char *identifier, int depth, bool is_function);
+struct symbol_list *search_symbol(struct symbol_list *symbol_table, char *identifier, int depth, bool is_function, bool allow_invalid);
 void show_symbol_table();
 
 char *show_functionparameters(struct symbol_list *symbol);

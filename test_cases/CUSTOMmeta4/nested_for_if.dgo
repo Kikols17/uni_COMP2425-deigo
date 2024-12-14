@@ -1,0 +1,28 @@
+package main;
+
+
+
+
+func main(){
+    var b bool;
+    
+    for b{
+        if b {
+            
+        } else { 
+            if b {
+                for b {
+                    if b {
+                        for b {
+
+                        }
+                    } else{
+                        for b{
+
+                        }
+                    }
+                } 
+            }
+        }
+    }
+}

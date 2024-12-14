@@ -1,0 +1,12 @@
+package main;
+
+func main() {
+    x = 1==1;   
+    fmt.Println(x);
+    var x int;
+    x = 2;
+    fmt.Println(x);
+}
+
+var x bool;
+var a int;

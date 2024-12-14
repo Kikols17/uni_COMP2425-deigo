@@ -78,7 +78,7 @@ void show(struct node *node, int depth) {
 
     struct symbol_list *symbol;
     // aviso, nao tentar perceber esta condição
-    if (symbol_table!=NULL && node->token!=NULL && node->type!=undef_type && node->is_callid && (symbol=search_symbol(symbol_table, node->token, 1, true))!=NULL) {
+    if (symbol_table!=NULL && node->token!=NULL && node->type!=undef_type && node->is_callid && (symbol=search_symbol(symbol_table, node->token, 1, true, false))!=NULL) {
         char *params_string = show_functionparameters(symbol);
         printf(" - %s\n", params_string);
         free(params_string);

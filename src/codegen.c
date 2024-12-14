@@ -50,7 +50,9 @@ void codegen_localvar(struct node *vardecl, int ind) {
     struct node *id_node = getchild(vardecl, 1);
 
     codegen_indent(ind);
-    sprintf(id_node->llvm_name, "%%%s.ptr", id_node->token);
+    //sprintf(id_node->llvm_name, "%%%s.ptr", id_node->token);
+    struct symbol_list *definition = search_symbol(cur_scope, id_node->token, 1, false, true);
+    definition->is_invalid = false;
     printf("; VarDecl of local var \"%s\", llvm_name now \"%s\"\n", id_node->token, id_node->llvm_name);
 }
 
@@ -68,7 +70,7 @@ void codegen_expression(struct node *expression, int ind) {
     switch(expression->category) {
         case Identifier:
             // find out the identifier's declaration node (we assume it exists)
-            definition = search_symbol(cur_scope, expression->token, -1, false);
+            definition = search_symbol(cur_scope, expression->token, -1, false, false);
 
             sprintf(expression->llvm_name, "%%%d", temporary++);
             codegen_indent(ind);
@@ -252,7 +254,7 @@ void codegen_expression(struct node *expression, int ind) {
 void codegen_call(struct node *return_node, int ind) {
     struct node *id_node = getchild(return_node, 0);
 
-    struct symbol_list *definition = search_symbol(symbol_table, id_node->token, -1, true);
+    struct symbol_list *definition = search_symbol(symbol_table, id_node->token, -1, true, false);
     if (definition==NULL) {
         printf("CALLHOU\n");
         return;
@@ -292,7 +294,7 @@ void codegen_assign(struct node *assign_node, int ind) {
     struct node *expr = getchild(assign_node, 1);
 
     // find definition of var;
-    struct symbol_list *definition = search_symbol(cur_scope, var->token, -1, false);
+    struct symbol_list *definition = search_symbol(cur_scope, var->token, -1, false, false);
 
     // resolve expr
     codegen_indent(ind);
@@ -519,7 +521,7 @@ void codegen_parseargs(struct node *parseargs, int ind) {
     // assign result to var
 
     // find definition of var;
-    struct symbol_list *definition = search_symbol(cur_scope, var->token, -1, false);
+    struct symbol_list *definition = search_symbol(cur_scope, var->token, -1, false, false);
 
     codegen_indent(ind);
     printf("store %s %%%d, i32* %s\n", type_to_llvm3[var->type], temp3, getchild(definition->node, 1)->llvm_name);
@@ -614,11 +616,10 @@ void codegen_funcheader_localvars(struct node *params_node, int ind) {
             printf(" Local variable \"%s\"\n", var_id->token);
             // only assign if there is no global variable with same name
             struct symbol_list *definition;
-            if ((definition=search_symbol(symbol_table, var_id->token, 1, false))!=NULL) {  // search for global var named like this one
-                sprintf(var_id->llvm_name, "%s", getchild(definition->node,1)->llvm_name);      // reasign to local .ptr var, when it is declared
-            } else {
-                sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
+            if ((definition=search_symbol(symbol_table, var_id->token, 1, false, false))!=NULL) {  // search for global var named like this one
+                symbol->is_invalid = true;      // set to false, when the var is declared, and can finally be used
             }
+            sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
         }
 
         if(var_type->type == string_type){
@@ -723,7 +724,7 @@ void codegen_function(struct node *node, int ind) {
     funcheader = getchild(node, 0);
     funcbody = getchild(node, 1);
 
-    cur_scope = search_symbol(symbol_table, getchild(funcheader,0)->token, -1, true)->child_scope;
+    cur_scope = search_symbol(symbol_table, getchild(funcheader,0)->token, -1, true, false)->child_scope;
 
     struct node *type_node;
     if (strcmp(getchild(funcheader, 0)->token, "main")==0) {

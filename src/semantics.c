@@ -33,7 +33,7 @@ void check_expression(struct node *expression, struct symbol_list *symbol_scope)
         case Identifier:
             // check if has been declared
             ;   // ?? WHY
-            struct symbol_list *declaration = search_symbol(symbol_scope, expression->token, -1, false);
+            struct symbol_list *declaration = search_symbol(symbol_scope, expression->token, -1, false, false);
             if (declaration==NULL) {
                 printf("Line %d, column %d: Cannot find symbol %s\n", expression->token_line, expression->token_column, expression->token);
                 semantic_errors++;
@@ -327,7 +327,7 @@ void check_Print(struct node *print_node, struct symbol_list *symbol_scope) {
 }
 
 void check_Return(struct node *return_node, struct symbol_list *symbol_scope) {
-    struct symbol_list *symbol_return = search_symbol(symbol_scope, "return", 1, false);
+    struct symbol_list *symbol_return = search_symbol(symbol_scope, "return", 1, false, false);
     symbol_return->node = return_node;
     // assume there is always a return symbol (already goofed up if not)
 
@@ -386,7 +386,7 @@ void check_Assign(struct node *assign, struct symbol_list *symbol_scope) {
 }
 
 void check_Call(struct node *call, struct symbol_list *symbol_list) {
-    struct symbol_list *definition = search_symbol(symbol_table, getchild(call, 0)->token, -1, true);
+    struct symbol_list *definition = search_symbol(symbol_table, getchild(call, 0)->token, -1, true, false);
     struct node_list *call_param = call->children->next;
     while ((call_param = call_param->next) != NULL) {
         check_expression(call_param->node, symbol_list);
@@ -497,7 +497,7 @@ void check_Statement(struct node *statement, struct symbol_list *symbol_scope) {
 }
 
 void check_VarDecl(struct node *vardecl, struct symbol_list *symbol_func) {
-    if (search_symbol(symbol_func, getchild(vardecl, 1)->token, 1, false)!=NULL) {
+    if (search_symbol(symbol_func, getchild(vardecl, 1)->token, 1, false, false)!=NULL) {
         printf("Line %d, column %d: Symbol %s already defined\n", getchild(vardecl, 1)->token_line, getchild(vardecl, 1)->token_column, getchild(vardecl, 1)->token);
         semantic_errors++;
     } else {
@@ -513,7 +513,7 @@ void check_FuncParams(struct node *params, struct symbol_list *symbol_func) {
 
     while ((child = child->next) != NULL) {
         // find if symbol already exists
-        already_exists = search_symbol(symbol_func, getchild(child->node, 1)->token, 1, false);
+        already_exists = search_symbol(symbol_func, getchild(child->node, 1)->token, 1, false, false);
         // dont care if it already exists, add it anyway, but mark it as "is_invalid" to not display it
         new_entry = insert_symbol(symbol_func, getchild(child->node, 1)->token, category_to_type2[getchild(child->node, 0)->category], child->node);
         if (new_entry!=NULL) {
@@ -572,7 +572,7 @@ void check_FuncDecl(struct node *declaration, struct symbol_list *symbol_global_
     // check header
     // check if function symbol already exists
     struct symbol_list *global_entry;
-    if (search_symbol(symbol_global_scope, identifier_node->token, 1, true)!=NULL  ||  search_symbol(symbol_global_scope, identifier_node->token, 1, false)!=NULL) {
+    if (search_symbol(symbol_global_scope, identifier_node->token, 1, true, false)!=NULL  ||  search_symbol(symbol_global_scope, identifier_node->token, 1, false, false)!=NULL) {
         printf("Line %d, column %d: Symbol %s already defined\n", identifier_node->token_line, identifier_node->token_column, identifier_node->token);
         semantic_errors++;
         return;
@@ -716,7 +716,7 @@ struct symbol_list *insert_symbol(struct symbol_list *table, char *identifier, e
 }
 
 // look up a symbol by its identifier (not only in current table, but also all parent tables)
-struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, int depth, bool is_function) {
+struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, int depth, bool is_function, bool allow_invalid) {
     if (table==NULL) {
         #ifdef VERBOSE
         printf("[VERBOSE] Calhou identifier=%s, depth=%d, is_function=%d\n", identifier, depth, is_function);
@@ -728,6 +728,9 @@ struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, i
     }
     struct symbol_list *symbol;
     for(symbol = table->next; symbol != NULL; symbol = symbol->next) {
+        if (!allow_invalid && symbol->is_invalid) {
+            continue;
+        }
         if(strcmp(symbol->identifier, identifier) == 0) {
             if (is_function==symbol->is_function) {
                 return symbol;
@@ -739,7 +742,7 @@ struct symbol_list *search_symbol(struct symbol_list *table, char *identifier, i
             #endif
         }
     }
-    return search_symbol(table->parent_scope, identifier, depth-1, is_function);
+    return search_symbol(table->parent_scope, identifier, depth-1, is_function, false);
 }
 
 
