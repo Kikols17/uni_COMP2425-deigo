@@ -50,8 +50,8 @@ void codegen_localvar(struct node *vardecl, int ind) {
     struct node *id_node = getchild(vardecl, 1);
 
     codegen_indent(ind);
-    printf("; VarDecl of local var \"%s\"\n", id_node->token);
     sprintf(id_node->llvm_name, "%%%s.ptr", id_node->token);
+    printf("; VarDecl of local var \"%s\", llvm_name now \"%s\"\n", id_node->token, id_node->llvm_name);
 }
 
 
@@ -302,12 +302,14 @@ void codegen_assign(struct node *assign_node, int ind) {
     codegen_indent(ind);
     //printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
 
-    if (getchild(definition->node,1)->llvm_name[0]=='@') {
-        codegen_indent(ind);
-        printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
-    } else {
-        printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
-    }
+    printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
+
+    //if (getchild(definition->node,1)->llvm_name[0]=='@') {
+    //    codegen_indent(ind);
+    //    printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
+    //} else {
+    //    printf("store %s %s, %s* %s\n", type_to_llvm3[expr->type], expr->llvm_name, type_to_llvm3[definition->type], getchild(definition->node,1)->llvm_name);
+    //}
 }
 
 
@@ -487,15 +489,43 @@ void codegen_for(struct node *for_node, int ind) {
 
 
 void codegen_parseargs(struct node *parseargs, int ind) {
-    struct node *args = getchild(parseargs, 0);
+    struct node *var = getchild(parseargs, 0);
+    struct node *arg_index = getchild(parseargs, 1);
     codegen_indent(ind);
     printf("; PARSE ARGS\n");
-    codegen_expression(args, ind+1);
 
-    sprintf(parseargs->llvm_name, "%%%d", temporary++);
+    codegen_indent(ind+1);
+    printf("; PARSE ARGS - INDEX\n");
+    //codegen_expression(var, ind+1);
+    codegen_expression(arg_index, ind+1);
+
+    //sprintf(parseargs->llvm_name, "%%%d", temporary++);
+
+    int temp1 = temporary++;
+    int temp2 = temporary++;
+    int temp3 = temporary++;
+
+    // do argv[arg_index];
+    codegen_indent(ind);
+    printf("%%%d = getelementptr i8*, i8** %%argv, i32 %s\n", temp1, arg_index->llvm_name);
+    codegen_indent(ind);
+    printf("%%%d = load i8*, i8** %%%d\n", temp2, temp1);
+    
+    // do atoi in argv[arg_index]
+    codegen_indent(ind);
+    printf("%%%d = call i32 @atoi(i8* %%%d)\n", temp3, temp2);
+    
+
+    // assign result to var
+
+    // find definition of var;
+    struct symbol_list *definition = search_symbol(cur_scope, var->token, -1, false);
 
     codegen_indent(ind);
-    printf("%s = call i32 @atoi(i8* %s)\n", parseargs->llvm_name, args->llvm_name);
+    printf("store %s %%%d, i32* %s\n", type_to_llvm3[var->type], temp3, getchild(definition->node, 1)->llvm_name);
+
+    codegen_indent(ind);
+    printf("; PARSE ARGS - END\n\n");
 }
 
 
@@ -525,6 +555,7 @@ void codegen_statement(struct node *statement, int ind) {
 
     } else if (statement->category == ParseArgs) {
         //check_ParseArgs(statement, symbol_scope);
+        codegen_parseargs(statement, ind);
 
     } else if (statement->category == VarDecl) {
         codegen_localvar(statement, ind);
@@ -608,13 +639,10 @@ void codegen_funcheader_localvars(struct node *params_node, int ind) {
 
 
 struct node *codegen_funcheader_main(struct node *funcheader, int ind) {
-    struct node *id_node, *type_node, *params_node;
-    id_node = getchild(funcheader, 0);
+    struct node *params_node;
     params_node = getchild(funcheader, 2);
     if (params_node!=NULL) {
-        type_node = getchild(funcheader, 1);
     } else {
-        type_node = NULL;
         params_node = getchild(funcheader, 1);
     }
 
@@ -632,6 +660,8 @@ struct node *codegen_funcheader_main(struct node *funcheader, int ind) {
 
     // declare local values
     codegen_funcheader_localvars(params_node, ind+1);
+
+    return NULL;
 }
 
 

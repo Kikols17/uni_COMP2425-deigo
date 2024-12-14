@@ -171,7 +171,7 @@ for d in "$folder"/*; do
 			sort < $validate > $validate.sorted
 		elif [[ "${d:(-1)}" == "4" ]]; then
 			"$bin" < "$i" > temp.ll;
-			lli temp.ll > "$output"
+			lli temp.ll 5 10 > "$output"
 			cp $validate $validate.sorted
 		else
 			"$bin" "$opts" < "$i" > "$output";
