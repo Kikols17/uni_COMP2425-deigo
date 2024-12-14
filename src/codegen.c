@@ -550,6 +550,92 @@ void codegen_funcheaderparams(struct node *params) {
 
 
 
+void codegen_funcheader_localvars(struct node *params_node, int ind) {
+    // add all local variables (params and local vars)
+    if (params_node==NULL) {
+        codegen_indent(ind);
+        printf("; NO LOCAL VARs\n");
+        return;
+    }
+    codegen_indent(ind);
+    printf("; LOCAL VAR DECLARATIONS\n");
+    struct symbol_list *symbol;
+    for(symbol = cur_scope->next->next; symbol != NULL; symbol = symbol->next) {
+        if (strcmp(symbol->identifier, "return")==0) {
+            continue;
+        }
+        struct node *cur_var = symbol->node;
+        struct node *var_type = getchild(cur_var, 0);
+        struct node *var_id = getchild(cur_var, 1);
+
+        //if (var_id->llvm_name[0]=='\0') {
+        //    sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
+        //}
+
+
+        codegen_indent(ind+1);
+        printf("%%%s.ptr = alloca %s\t\t; \\", var_id->token, type_to_llvm3[symbol->type]); // dont assign to var_id just yet
+
+        if (symbol->is_param) {
+            printf(" Input param \"%s\"\n", var_id->token);
+            sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
+        } else {
+            printf(" Local variable \"%s\"\n", var_id->token);
+            // only assign if there is no global variable with same name
+            struct symbol_list *definition;
+            if ((definition=search_symbol(symbol_table, var_id->token, 1, false))!=NULL) {  // search for global var named like this one
+                sprintf(var_id->llvm_name, "%s", getchild(definition->node,1)->llvm_name);      // reasign to local .ptr var, when it is declared
+            } else {
+                sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
+            }
+        }
+
+        if(var_type->type == string_type){
+            // Initialize to empty string
+            codegen_indent(ind+1);
+            printf("store i8* getelementptr inbounds ([1 x i8], [1 x i8]* @.str.empty_str, i32 0, i32 0), i8** %s\t; /\n", var_id->llvm_name);
+        } else if (symbol->is_param) {
+            // Store parameter value
+            codegen_indent(ind+1);
+            printf("store %s %%%s, %s* %s\t; /\n", type_to_llvm3[symbol->type], var_id->token, type_to_llvm3[symbol->type], var_id->llvm_name);
+        }
+
+    }
+    codegen_indent(ind);
+    printf("; LOCAL VAR DECLARATIONS - end\n\n");
+}
+
+
+
+struct node *codegen_funcheader_main(struct node *funcheader, int ind) {
+    struct node *id_node, *type_node, *params_node;
+    id_node = getchild(funcheader, 0);
+    params_node = getchild(funcheader, 2);
+    if (params_node!=NULL) {
+        type_node = getchild(funcheader, 1);
+    } else {
+        type_node = NULL;
+        params_node = getchild(funcheader, 1);
+    }
+
+    codegen_indent(ind);
+    printf("define i32 @main(i32 %%argc, i8** %%argv) {\n");
+
+    //codegen_indent(ind+1);
+    //printf("%%%d = sub i32 %%argc, 1\n", temporary++);
+    codegen_indent(ind+1);
+    printf("%%argc.ptr = alloca i32\t\t\t; \\ MAIN FUNC's argc\n");
+    codegen_indent(ind+1);
+    printf("store i32 %%argc, i32* %%argc.ptr\t; /\n");
+
+    // ignore ** argv, its already a pointer to a pointer
+
+    // declare local values
+    codegen_funcheader_localvars(params_node, ind+1);
+}
+
+
+
 struct node *codegen_funcheader(struct node *funcheader, int ind) {
     // returns type_node, for convenience
 
@@ -572,59 +658,7 @@ struct node *codegen_funcheader(struct node *funcheader, int ind) {
     codegen_funcheaderparams(params_node);
     printf(") {\n");
 
-
-    // add all local variables (params and local vars)
-    if (params_node==NULL) {
-        codegen_indent(ind+1);
-        printf("; NO LOCAL VARs\n");
-        return type_node;
-    }
-    codegen_indent(ind+1);
-    printf("; LOCAL VAR DECLARATIONS\n");
-    struct symbol_list *symbol;
-    for(symbol = cur_scope->next->next; symbol != NULL; symbol = symbol->next) {
-        if (strcmp(symbol->identifier, "return")==0) {
-            continue;
-        }
-        struct node *cur_var = symbol->node;
-        struct node *var_type = getchild(cur_var, 0);
-        struct node *var_id = getchild(cur_var, 1);
-
-        //if (var_id->llvm_name[0]=='\0') {
-        //    sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
-        //}
-
-
-        codegen_indent(ind+2);
-        printf("%%%s.ptr = alloca %s\t\t; \\", var_id->token, type_to_llvm3[symbol->type]); // dont assign to var_id just yet
-
-        if (symbol->is_param) {
-            printf(" Input param \"%s\"\n", var_id->token);
-            sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
-        } else {
-            printf(" Local variable \"%s\"\n", var_id->token);
-            // only assign if there is no global variable with same name
-            struct symbol_list *definition;
-            if ((definition=search_symbol(symbol_table, var_id->token, 1, false))!=NULL) {  // search for global var named like this one
-                sprintf(var_id->llvm_name, "%s", getchild(definition->node,1)->llvm_name);      // reasign to local .ptr var, when it is declared
-            } else {
-                sprintf(var_id->llvm_name, "%%%s.ptr", var_id->token);
-            }
-        }
-
-        if(var_type->type == string_type){
-            // Initialize to empty string
-            codegen_indent(ind+2);
-            printf("store i8* getelementptr inbounds ([1 x i8], [1 x i8]* @.str.empty_str, i32 0, i32 0), i8** %s\t; /\n", var_id->llvm_name);
-        } else if (symbol->is_param) {
-            // Store parameter value
-            codegen_indent(ind+2);
-            printf("store %s %%%s, %s* %s\t; /\n", type_to_llvm3[symbol->type], var_id->token, type_to_llvm3[symbol->type], var_id->llvm_name);
-        }
-
-    }
-    codegen_indent(ind+1);
-    printf("; LOCAL VAR DECLARATIONS - end\n\n");
+    codegen_funcheader_localvars(params_node, ind+1);
 
     return type_node;
 }
@@ -632,7 +666,6 @@ struct node *codegen_funcheader(struct node *funcheader, int ind) {
 
 
 void codegen_funcbody(struct node *funcbody, int ind) {
-    temporary = 1;
     struct node_list *child = funcbody->children;
     //while ((child=child->next) != NULL) {
     //    if (child->node->category == VarDecl) {
@@ -653,6 +686,7 @@ void codegen_funcbody(struct node *funcbody, int ind) {
 
 void codegen_function(struct node *node, int ind) {
     // declare the function
+    temporary = 1;
 
 
     struct node *funcheader, *funcbody;
@@ -661,12 +695,20 @@ void codegen_function(struct node *node, int ind) {
 
     cur_scope = search_symbol(symbol_table, getchild(funcheader,0)->token, -1, true)->child_scope;
 
-    struct node *type_node = codegen_funcheader(funcheader, ind);
+    struct node *type_node;
+    if (strcmp(getchild(funcheader, 0)->token, "main")==0) {
+        printf("; MAIN \"%s\"\n", getchild(funcheader, 0)->token);
+        codegen_funcheader_main(funcheader, ind);
+    } else {
+        type_node = codegen_funcheader(funcheader, ind);
+    }
 
     codegen_funcbody(funcbody, ind+1);
 
     codegen_indent(ind+1);
-    if (type_node!=NULL) {
+    if (strcmp(getchild(funcheader, 0)->token, "main")==0) {
+        printf("ret i32 0\n");
+    } else if (type_node!=NULL) {
         printf("ret %s %s\n", type_to_llvm3[category_to_type3[type_node->category]], empty_type_llvm[category_to_type3[type_node->category]]);
     } else {
         printf("ret void\n");
@@ -765,11 +807,11 @@ void codegen_program(struct node *program) {
         }
     }
 
-    // add entry point
-    printf("\n; ----- Entry point -----\n"
-           "define i32 @main() {\n"
-           "  call void @_main()\n"
-           "  ret i32 0\n"
-           "}\n");
+    //// add entry point
+    //printf("\n; ----- Entry point -----\n"
+    //       "define i32 @main() {\n"
+    //       "  call void @_main()\n"
+    //       "  ret i32 0\n"
+    //       "}\n");
 
 }
