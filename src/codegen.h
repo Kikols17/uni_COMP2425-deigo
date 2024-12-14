@@ -36,6 +36,8 @@ void codegen_parseargs(struct node *parseargs, int ind);
 void codegen_statement(struct node *statement, int ind);
 
 void codegen_funcheaderparams(struct node *params);
+void codegen_funcheader_localvars(struct node *params_node, int ind);
+struct node *codegen_funcheader_main(struct node *funcheader, int ind);
 struct node *codegen_funcheader(struct node *funcheader, int ind);
 void codegen_funcbody(struct node *funcbody, int ind);
 void codegen_function(struct node *node, int ind);
