@@ -83,8 +83,6 @@ void codegen_expression(struct node *expression, int ind) {
             //    //codegen_indent(ind);
             //    //printf("; Var Identifier \"%s\"\n", expression->llvm_name);
             //}
-
-
             break;
 
 
@@ -99,8 +97,15 @@ void codegen_expression(struct node *expression, int ind) {
         case Float32:
         case Decimal:
             sprintf(expression->llvm_name, "%%%d", temporary++);
+
+            char *e_addr;
             codegen_indent(ind);
-            printf("%s = fadd double %s, 0.0\n", expression->llvm_name, expression->token);
+            if (strchr(expression->token, '.')==NULL && ((e_addr=strchr(expression->token, 'e'))!=NULL  ||  (e_addr=strchr(expression->token, 'E'))!=NULL) ) {
+                *e_addr = '\0';
+                printf("%s = fadd double 0%s.e%s, 0.0\n", expression->llvm_name, expression->token, e_addr+1);
+            } else {
+                printf("%s = fadd double 0%s, 0.0\n", expression->llvm_name, expression->token);
+            }
             break;
         
         case Bool:
@@ -109,7 +114,7 @@ void codegen_expression(struct node *expression, int ind) {
 
         case String:
         case StrLit:
-
+            // this was already done in the codegen string preprocessing (codegen_recur_stringdecl)
             break;
         
 
@@ -210,10 +215,11 @@ void codegen_expression(struct node *expression, int ind) {
         case Le:
         case Gt:
         case Ge:
-            if (op_prefix=='\n') { if (expression->type == float32_type) {op_prefix='o';} else {op_prefix='s';} }
             ;
             left_expression = getchild(expression, 0);
             right_expression = getchild(expression, 1);
+            
+            if (op_prefix=='\n') { if (left_expression->type == float32_type) {op_prefix='o';} else {op_prefix='s';} }
 
             codegen_indent(ind);
             printf("; COMPARISON \"%s\"\n", category_to_llvm3[expression->category]);
@@ -224,7 +230,7 @@ void codegen_expression(struct node *expression, int ind) {
             sprintf(expression->llvm_name, "%%%d", temporary++);
 
             codegen_indent(ind);
-            if (expression->type == float32_type) {
+            if (left_expression->type == float32_type) {
                 printf("%s = fcmp %c%s %s %s, %s\n", expression->llvm_name, op_prefix, category_to_llvm3[expression->category], type_to_llvm3[left_expression->type], left_expression->llvm_name, right_expression->llvm_name);
             } else {
                 printf("%s = icmp %c%s %s %s, %s\n", expression->llvm_name, op_prefix, category_to_llvm3[expression->category], type_to_llvm3[left_expression->type], left_expression->llvm_name, right_expression->llvm_name);
