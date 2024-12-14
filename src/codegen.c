@@ -22,6 +22,7 @@ int temporary;   // sequence of temporary registers in a function
 int if_count = 0;
 int for_count = 0;
 int printbool_count = 0;
+bool is_main = false;
 
 struct symbol_list *cur_scope = NULL;
 
@@ -322,6 +323,11 @@ void codegen_return(struct node *return_node, int ind) {
 
     codegen_indent(ind);
     printf("; RETURN\n");
+
+    if (is_main) {
+        printf("ret i32 0");
+        return;
+    }
 
     if (value_node==NULL) {
         codegen_indent(ind);
@@ -653,7 +659,7 @@ struct node *codegen_funcheader_main(struct node *funcheader, int ind) {
     //codegen_indent(ind+1);
     //printf("%%%d = sub i32 %%argc, 1\n", temporary++);
     codegen_indent(ind+1);
-    printf("%%argc.ptr = alloca i32\t\t\t; \\ MAIN FUNC's argc\n");
+    printf("%%argc.ptr = alloca i32\t\t; \\ MAIN FUNC's argc\n");
     codegen_indent(ind+1);
     printf("store i32 %%argc, i32* %%argc.ptr\t; /\n");
 
@@ -728,9 +734,11 @@ void codegen_function(struct node *node, int ind) {
 
     struct node *type_node;
     if (strcmp(getchild(funcheader, 0)->token, "main")==0) {
+        is_main = true;
         printf("; MAIN \"%s\"\n", getchild(funcheader, 0)->token);
         codegen_funcheader_main(funcheader, ind);
     } else {
+        is_main = false;
         type_node = codegen_funcheader(funcheader, ind);
     }
 
